@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\XF\Search\Query;
 
 use XF\Search\Query\MetadataConstraint;
 use XF\Search\Query\SqlConstraint;
+use XF\Search\Query\TableReference;
 
 /**
  * Class RangeMetadataConstraint
@@ -15,6 +16,23 @@ class RangeMetadataConstraint extends MetadataConstraint
     const MATCH_LESSER  = -42;
     const MATCH_GREATER = -41;
     const MATCH_BETWEEN = -40;
+
+    /** @var TableReference[] */
+    private $tableReferences;
+
+    /**
+     * RangeMetadataConstraint constructor.
+     *
+     * @param string           $key
+     * @param mixed            $values
+     * @param int              $matchType
+     * @param TableReference[] $tableReferences
+     */
+    public function __construct($key, $values, $matchType, $tableReferences = [])
+    {
+        parent::__construct($key, $values, $matchType);
+        $this->tableReferences = $tableReferences;
+    }
 
     /**
      * @param $match
@@ -49,16 +67,28 @@ class RangeMetadataConstraint extends MetadataConstraint
      */
     public function asSqlConstraint()
     {
+        $sqlConstraint = null;
         switch ($this->matchType)
         {
             case self::MATCH_LESSER:
-                return new SqlConstraint("search_index.{$this->key} <= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("search_index.{$this->key} <= %d ", $this->values);
+                break;
             case self::MATCH_GREATER:
-                return new SqlConstraint("search_index.{$this->key} >= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("search_index.{$this->key} >= %d ", $this->values);
+                break;
             case self::MATCH_BETWEEN:
-                return new SqlConstraint("search_index.{$this->key} >= %d and search_index.{$this->key} <= %d ", $this->values);
-            default:
-                return null;
+                $sqlConstraint = new SqlConstraint("search_index.{$this->key} >= %d and search_index.{$this->key} <= %d ", $this->values);
+                break;
         }
+
+        if ($sqlConstraint && $this->tableReferences)
+        {
+            foreach ($this->tableReferences as $tableReference)
+            {
+                $sqlConstraint->addTable($tableReference);
+            }
+        }
+
+        return $sqlConstraint;
     }
 }
