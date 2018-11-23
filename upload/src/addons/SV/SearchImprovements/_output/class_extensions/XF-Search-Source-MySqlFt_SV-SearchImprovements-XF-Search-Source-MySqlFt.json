@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Search\\Source\\MySqlFt",
+    "to_class": "SV\\SearchImprovements\\XF\\Search\\Source\\MySqlFt",
+    "execute_order": 5652,
+    "active": true
+}

@@ -1,0 +1,14 @@
+{
+    "edit_format": "callback",
+    "edit_format_params": "SV_SearchImprovements_Option_ContentTypes::renderOption",
+    "data_type": "array",
+    "sub_options": [
+        "*"
+    ],
+    "validation_class": "SV_SearchImprovements_Option_ContentTypes",
+    "validation_method": "verifyOption",
+    "default_value": "[]",
+    "relations": {
+        "searchOptions": 9150
+    }
+}

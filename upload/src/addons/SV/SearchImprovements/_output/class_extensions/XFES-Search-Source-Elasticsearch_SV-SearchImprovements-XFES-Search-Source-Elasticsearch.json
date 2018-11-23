@@ -1,0 +1,6 @@
+{
+    "from_class": "XFES\\Search\\Source\\Elasticsearch",
+    "to_class": "SV\\SearchImprovements\\XFES\\Search\\Source\\Elasticsearch",
+    "execute_order": 5652,
+    "active": true
+}

@@ -1,0 +1,1 @@
+The search order to use for quick searches, searching by thread, and the default value when loading the search form.

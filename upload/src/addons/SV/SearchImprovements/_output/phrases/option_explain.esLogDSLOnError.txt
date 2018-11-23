@@ -1,0 +1,1 @@
+Option to log Search DSL when an elastic search error occurs for troubleshooting
