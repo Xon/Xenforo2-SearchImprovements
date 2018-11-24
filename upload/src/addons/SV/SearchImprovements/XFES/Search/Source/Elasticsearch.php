@@ -13,41 +13,6 @@ use XF\Search\Query;
 class Elasticsearch extends XFCP_Elasticsearch
 {
     /**
-     * @param Query\Query $query
-     * @param             $maxResults
-     * @return array
-     * @throws \XF\PrintableException
-     */
-    public function search(Query\Query $query, $maxResults)
-    {
-        $query = clone $query;
-
-        return parent::search($query, $maxResults);
-    }
-
-    /**
-     * @param Query\Query $query
-     * @param             $maxResults
-     * @return array
-     */
-    protected function getDslFromQuery(Query\Query $query, $maxResults)
-    {
-        $dsl = parent::getDslFromQuery($query, $maxResults);
-        // rewrite order-by since getDslFromQuery is inflexible
-        $orderByClause = $query->getOrder();
-        if ($orderByClause instanceof Query\SqlOrder &&
-            strpos($orderByClause->getOrder(), 'search_index.word_count') === 0)
-        {
-            $query->orderedBy('date');
-            $dsl['sort'] = [
-                ['word_count' => 'desc']
-            ];
-        }
-
-        return $dsl;
-    }
-
-    /**
      * @param Query\MetadataConstraint $metadata
      * @param array                    $filters
      * @param array                    $filtersNot
