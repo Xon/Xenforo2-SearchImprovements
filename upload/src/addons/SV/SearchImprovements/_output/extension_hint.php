@@ -8,6 +8,11 @@ namespace SV\SearchImprovements\XFES\Search\Source
 	class XFCP_Elasticsearch extends \XFES\Search\Source\Elasticsearch {}
 }
 
+namespace SV\SearchImprovements\XF\Admin\Controller
+{
+	class XFCP_Index extends \XF\Admin\Controller\Index {}
+}
+
 namespace SV\SearchImprovements\XF\Search\Query
 {
 	class XFCP_Query extends \XF\Search\Query\Query {}

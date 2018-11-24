@@ -1,0 +1,57 @@
+<style>
+	.elasticsearch-slaves {
+		display: flex;
+		flex-direction: row;
+		flex-wrap:wrap;
+		justify-content: flex-start;
+	}
+	.elasticsearch-slaves .elasticsearch-info-item {
+		flex-basis: 350px;
+	}
+</style>
+<div class="elasticsearch-info">
+	<div class="elasticsearch-info-item redis-server">
+		<dl class="pairs pairs--columns pairs--fixedSmall">
+			<dt>{{ phrase('xfes_version') }}</dt>
+			<dd>{$esVersion}</dd>
+		</dl>
+		<xf:if is="$esTestError is not empty" >
+			<div class="blockMessage blockMessage--error blockMessage--iconic">
+				{$testError}
+			</div>
+		</xf:if>
+		<xf:if is="!$esStats">
+			{{ phrase('redis_loading') }}
+
+		<xf:else/>
+			<dl class="pairs pairs--columns pairs--fixedSmall">
+				<dt>{{ phrase('xfes_documents') }}</dt>
+				<dd>{$esStats.docs.count|number} {{ parens($esStats.store.size_in_bytes|file_size) }}</dd>
+			</dl>
+			<dl class="pairs pairs--columns pairs--fixedSmall">
+				<dt>{{ phrase('xfes_index_updates') }}</dt>
+				<dd>
+					{$esStats.indexing.index_total|number}
+					<xf:if is="$esStats.indexing.index_total">
+						{{ parens(phrase('xfes_x_milliseconds_average', {'time': number($esStats.indexing.index_time_in_millis / $esStats.indexing.index_total)})) }}
+					</xf:if>
+				</dd>
+			</dl>
+			<dl class="pairs pairs--columns pairs--fixedSmall">
+				<dt>{{ phrase('xfes_searches') }}</dt>
+				<dd>
+					{$esStats.search.query_total|number}
+					<xf:if is="$esStats.search.query_total">
+						{{ parens(phrase('xfes_x_milliseconds_average', {'time': number(($esStats.search.query_time_in_millis + $esStats.search.fetch_time_in_millis) / ($esStats.search.query_total + $esStats.search.fetch_total))})) }}
+					</xf:if>
+				</dd>
+			</dl>
+			<dl class="pairs pairs--columns pairs--fixedSmall">
+				<dt>{{ phrase('xfes_allocated_memory') }}</dt>
+				<dd>
+					{$esStats.segments.memory_in_bytes|file_size}
+				</dd>
+			</dl>
+		</xf:if>
+	</div>
+</div>

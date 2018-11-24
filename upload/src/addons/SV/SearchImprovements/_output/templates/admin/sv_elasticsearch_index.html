@@ -1,0 +1,16 @@
+<xf:if is="$esVersion || $esStats">
+	<div class="block">
+		<div class="block-container">
+			<h2 class="block-header">
+				<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_env_elasticsearch_info') ? 'is-active' : '' }}" data-xf-click="toggle" data-xf-init="toggle-storage" data-storage-type="cookie" data-storage-key="collapse_env_elasticsearch_info" data-target="#js-collapse-env-elasticsearch-info">
+					{{ phrase('sv_elastic_search_info') }}
+				</span>
+			</h2>
+			<div class="block-body block-body--collapsible block-row {{ !is_toggled('collapse_env_elasticsearch_info') ? 'is-active' : '' }}" id="js-collapse-env-elasticsearch-info">
+				<div class="block-row">
+					<xf:include template="sv_elasticsearch_stats"/>
+				</div>
+			</div>
+		</div>
+	</div>
+</xf:if>
