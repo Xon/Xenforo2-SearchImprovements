@@ -13,9 +13,13 @@ class Search extends XFCP_Search
 
     public function actionSearch()
     {
-        /** @var \SV\SearchImprovements\XF\Entity\UserOption $options */
-        $options = \XF::visitor()->Option;
-        $this->shimOrder = empty($options->sv_default_search_order) ? null : $options->sv_default_search_order;
+        /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+        $visitor = \XF::visitor();
+
+        if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
+        {
+            $this->shimOrder = $visitor->Option->sv_default_search_order;
+        }
         try
         {
             return parent::actionSearch();

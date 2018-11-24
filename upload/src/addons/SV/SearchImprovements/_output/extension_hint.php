@@ -20,6 +20,7 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 
 namespace SV\SearchImprovements\XF\Entity
 {
+	class XFCP_User extends \XF\Entity\User {}
 	class XFCP_UserOption extends \XF\Entity\UserOption {}
 }
 

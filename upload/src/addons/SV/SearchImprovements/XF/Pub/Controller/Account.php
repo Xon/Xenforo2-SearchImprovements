@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use XF\Entity\User;
+use XF\Mvc\Reply\View;
 
 /**
  * Extends \XF\Pub\Controller\Account
@@ -17,16 +18,21 @@ class Account extends XFCP_Account
     {
         $form = parent::preferencesSaveProcess($visitor);
 
-        $input = $this->filter(
-            [
-                'option' => [
-                    'sv_default_search_order' => 'str',
-                ],
-            ]
-        );
+        /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+        $visitor = \XF::visitor();
+        if ($visitor->canChangeSearchOptions())
+        {
+            $input = $this->filter(
+                [
+                    'option' => [
+                        'sv_default_search_order' => 'str',
+                    ],
+                ]
+            );
 
-        $userOptions = $visitor->getRelationOrDefault('Option');
-        $form->setupEntityInput($userOptions, $input['option']);
+            $userOptions = $visitor->getRelationOrDefault('Option');
+            $form->setupEntityInput($userOptions, $input['option']);
+        }
 
         return $form;
     }
