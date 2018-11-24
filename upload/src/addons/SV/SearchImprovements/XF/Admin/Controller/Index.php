@@ -17,12 +17,13 @@ class Index extends XFCP_Index
         $addOns = \XF::app()->container('addon.cache');
         if (isset($addOns['XFES']) && $reply instanceof View)
         {
-            $esTestError = $esStats = $esVersion = null;
+            $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             /** @var \XFES\Service\Configurer $configurer */
             $configurer = $this->service('XFES:Configurer', null);
 
             if ($configurer->hasActiveConfig() && $configurer->isEnabled())
             {
+                /** @var \SV\SearchImprovements\XFES\Elasticsearch\Api $es */
                 $es = $configurer->getEsApi();
                 try
                 {
@@ -35,6 +36,7 @@ class Index extends XFCP_Index
                             /** @var \XFES\Service\Stats $service */
                             $service = $this->service('XFES:Stats', $es);
                             $esStats = $service->getStats();
+                            $esClusterStatus = $es->getClusterInfo();
                         }
                     }
                 }
@@ -44,6 +46,7 @@ class Index extends XFCP_Index
             $reply->setParam('esVersion', $esVersion);
             $reply->setParam('esTestError', $esTestError);
             $reply->setParam('esStats', $esStats);
+            $reply->setParam('esClusterStatus', $esClusterStatus);
         }
 
         return $reply;

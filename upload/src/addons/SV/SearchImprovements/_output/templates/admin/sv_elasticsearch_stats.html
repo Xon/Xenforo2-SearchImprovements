@@ -52,6 +52,47 @@
 					{$esStats.segments.memory_in_bytes|file_size}
 				</dd>
 			</dl>
+			<xf:if is="$esClusterStatus">
+				<dl class="pairs pairs--columns pairs--fixedSmall">
+					<dt>{{ phrase('sv_xfes_cluster_status') }}</dt>
+					<dd>
+						{$esClusterStatus.status}
+					</dd>
+				</dl>
+				<dl class="pairs pairs--columns pairs--fixedSmall">
+					<dt>{{ phrase('sv_xfes_active_shards') }}</dt>
+					<dd>
+						{$esClusterStatus.active_shards}
+						<xf:if is="$esClusterStatus.active_shards_percent_as_number || $esClusterStatus.active_shards_percent_as_number === 0.0 || $esClusterStatus.active_shards_percent_as_number === 0">
+							{{ parens($esClusterStatus.active_shards_percent_as_number|number . '%') }}
+						</xf:if>
+					</dd>
+				</dl>
+				<xf:if is="$esClusterStatus.initializing_shards">
+					<dl class="pairs pairs--columns pairs--fixedSmall">
+						<dt>{{ phrase('sv_xfes_initializing_shards') }}</dt>
+						<dd>
+							{$esClusterStatus.initializing_shards}
+						</dd>
+					</dl>
+				</xf:if>
+				<xf:if is="$esClusterStatus.relocating_shards">
+					<dl class="pairs pairs--columns pairs--fixedSmall">
+						<dt>{{ phrase('sv_xfes_relocating_shards') }}</dt>
+						<dd>
+							{$esClusterStatus.relocating_shards}
+						</dd>
+					</dl>
+				</xf:if>
+				<xf:if is="$esClusterStatus.unassigned_shards">
+					<dl class="pairs pairs--columns pairs--fixedSmall">
+						<dt>{{ phrase('sv_xfes_unassigned_shards') }}</dt>
+						<dd>
+							{$esClusterStatus.unassigned_shards}
+						</dd>
+					</dl>
+				</xf:if>
+			</xf:if>
 		</xf:if>
 	</div>
 </div>

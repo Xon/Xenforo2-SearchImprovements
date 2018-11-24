@@ -3,6 +3,11 @@
 // ################## THIS IS A GENERATED FILE ##################
 // DO NOT EDIT DIRECTLY. EDIT THE CLASS EXTENSIONS IN THE CONTROL PANEL.
 
+namespace SV\SearchImprovements\XFES\Elasticsearch
+{
+	class XFCP_Api extends \XFES\Elasticsearch\Api {}
+}
+
 namespace SV\SearchImprovements\XFES\Search\Source
 {
 	class XFCP_Elasticsearch extends \XFES\Search\Source\Elasticsearch {}
