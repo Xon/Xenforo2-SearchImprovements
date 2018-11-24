@@ -1,1 +1,3 @@
-Enable the use of <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.4/query-dsl-simple-query-string-query.html">simple query syntax</a> instead of highly simplified escaped.
+Enable the use of <a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.4/query-dsl-simple-query-string-query.html">simple query syntax</a> instead of highly simplified escaped.<br/>
+<br/>
+Requires XenForo Enhanced Search

@@ -60,4 +60,14 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
         parent::applyMetadataConstraint($metadata, $filters, $filtersNot);
     }
+
+    public function parseKeywords($keywords, &$error = null, &$warning = null)
+    {
+        if (\XF::options()->searchImpov_simpleQuerySyntax)
+        {
+            return str_replace('/','\/', $keywords);
+        }
+
+        return parent::parseKeywords($keywords, $error, $warning);
+    }
 }
