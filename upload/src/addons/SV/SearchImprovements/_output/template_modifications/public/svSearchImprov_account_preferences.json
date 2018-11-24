@@ -1,0 +1,9 @@
+{
+    "template": "account_preferences",
+    "description": "",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#[\\t ]*<h2 class=\"block-formSectionHeader.*?{{ phrase\\('alert_preferences'\\)#si",
+    "replace": "<xf:include template=\"svSearchImprov_account_preferences\" />\n$0"
+}

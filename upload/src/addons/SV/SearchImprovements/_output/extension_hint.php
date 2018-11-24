@@ -18,6 +18,17 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 	class XFCP_Index extends \XF\Admin\Controller\Index {}
 }
 
+namespace SV\SearchImprovements\XF\Entity
+{
+	class XFCP_UserOption extends \XF\Entity\UserOption {}
+}
+
+namespace SV\SearchImprovements\XF\Pub\Controller
+{
+	class XFCP_Account extends \XF\Pub\Controller\Account {}
+	class XFCP_Search extends \XF\Pub\Controller\Search {}
+}
+
 namespace SV\SearchImprovements\XF\Search\Query
 {
 	class XFCP_Query extends \XF\Search\Query\Query {}
