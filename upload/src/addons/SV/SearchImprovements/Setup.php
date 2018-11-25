@@ -1,6 +1,6 @@
 <?php
 
-namespace SV\ReportImprovements;
+namespace SV\SearchImprovements;
 
 use SV\Utils\InstallerHelper;
 use XF\AddOn\AbstractSetup;
