@@ -1,20 +1,22 @@
-<h2 class="block-formSectionHeader"><span class="block-formSectionHeader-aligner">{{ phrase('sv_search_options') }}</span></h2>
-<div class="block-body">
-	<xf:radiorow rowtype="noColon" 
-				 label=""
-				 explain="{{phrase('default_search_options_explain')}}"
-				 name="option[sv_default_search_order]" 
-				 value="{$xf.visitor.Option.sv_default_search_order}"				 
-				 >
+<xf:if is="$xf.visitor.canChangeSearchOptions()">
+	<h2 class="block-formSectionHeader"><span class="block-formSectionHeader-aligner">{{ phrase('sv_search_options') }}</span></h2>
+	<div class="block-body">
+		<xf:radiorow rowtype="noColon" 
+					 label=""
+					 explain="{{phrase('default_search_options_explain')}}"
+					 name="option[sv_default_search_order]" 
+					 value="{$xf.visitor.Option.sv_default_search_order}"				 
+					 >
 
-		<xf:option value="">
-			{{ phrase('default_search_order') }}
-		</xf:option>
-		<xf:option value="date">
-			{{ phrase('most_recent') }}
-		</xf:option>
-		<xf:option value="relevance">
-			{{ phrase('relevance') }}
-		</xf:option>
-	</xf:radiorow>
-</div>
+			<xf:option value="">
+				{{ phrase('default_search_order') }}
+			</xf:option>
+			<xf:option value="date">
+				{{ phrase('most_recent') }}
+			</xf:option>
+			<xf:option value="relevance">
+				{{ phrase('relevance') }}
+			</xf:option>
+		</xf:radiorow>
+	</div>
+</xf:if>
