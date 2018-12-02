@@ -5,7 +5,7 @@
     "sub_options": [
         "*"
     ],
-    "validation_class": "SV_SearchImprovements_Option_ContentTypes",
+    "validation_class": "SV\\SearchImprovements\\Option\\ContentTypes",
     "validation_method": "verifyOption",
     "default_value": "[]",
     "relations": {
