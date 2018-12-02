@@ -1,6 +1,6 @@
 {
     "edit_format": "callback",
-    "edit_format_params": "SV_SearchImprovements_Option_ContentTypes::renderOption",
+    "edit_format_params": "SV\\SearchImprovements\\Option\\ContentTypes::renderOption",
     "data_type": "array",
     "sub_options": [
         "*"
