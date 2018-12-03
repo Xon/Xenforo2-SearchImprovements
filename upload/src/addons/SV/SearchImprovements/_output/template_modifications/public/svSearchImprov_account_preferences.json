@@ -1,7 +1,7 @@
 {
     "template": "account_preferences",
     "description": "",
-    "execution_order": 10,
+    "execution_order": 6838,
     "enabled": true,
     "action": "preg_replace",
     "find": "#[\\t ]*<h2 class=\"block-formSectionHeader.*?{{ phrase\\('alert_preferences'\\)#si",
