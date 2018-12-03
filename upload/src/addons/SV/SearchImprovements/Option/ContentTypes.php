@@ -30,7 +30,8 @@ class ContentTypes extends AbstractOption
                 $choices[] = [
                     'phraseName' => \XF::phrase($app->getContentTypePhraseName($contentType)),
                     'contentType' => $contentType,
-                    'value' => isset($option->option_value[$contentType]) ? $option->option_value[$contentType] : null
+                    'value' => isset($option->option_value[$contentType]) ? $option->option_value[$contentType] : 1,
+                    'selected' => isset($option->option_value[$contentType]) ?: null,
                 ];
             }
         }
@@ -59,7 +60,12 @@ class ContentTypes extends AbstractOption
         {
             if (isset($contentTypes[$contentType]) && (bool)$value['checked'])
             {
-                $output[$contentType] = (int) $value['value'];
+                $value = (int) $value['value'];
+                if ($value === 1 || $value < 0)
+                {
+                    continue;
+                }
+                $output[$contentType] = $value;
             }
         }
 

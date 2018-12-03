@@ -3,7 +3,7 @@
 			explain="{$explainHtml}"
 			html="{$listedHtml}">
 	<xf:foreach loop="$choices" value="$choice">
-		<xf:option checked="{{ $choice.value !== null }}" name="{$inputName}[{$choice.contentType}][checked]" label="{$choice.phraseName}" value="{$choice.value}" data-hide="true">
+		<xf:option checked="{{ $choice.selected }}" name="{$inputName}[{$choice.contentType}][checked]" label="{$choice.phraseName}" value="1" data-hide="true">
 			<xf:dependent>
 				<xf:numberbox name="{$inputName}[{$choice.contentType}][value]"
 							  value="{$choice.value}"
