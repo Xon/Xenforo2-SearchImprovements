@@ -1,9 +1,9 @@
 {
     "template": "account_preferences",
     "description": "",
-    "execution_order": 6838,
+    "execution_order": 5,
     "enabled": true,
     "action": "preg_replace",
-    "find": "#[\\t ]*<h2 class=\"block-formSectionHeader.*?{{ phrase\\('alert_preferences'\\)#si",
+    "find": "#(?:[\\t ]*<h2 class=\"block-formSectionHeader.*?{{ phrase\\('alert_preferences'\\))|(?:[\\t ]*<xf:if is=\"\\$alertOptOuts)#si",
     "replace": "<xf:include template=\"svSearchImprov_account_preferences\" />\n$0"
 }
