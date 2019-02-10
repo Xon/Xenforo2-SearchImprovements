@@ -1,0 +1,1 @@
+XFES supports * for wildcard any search, if this is enabled MySQL search will support * and rewrite searches with a empty keywords into a * search

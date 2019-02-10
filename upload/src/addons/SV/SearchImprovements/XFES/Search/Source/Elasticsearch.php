@@ -68,6 +68,14 @@ class Elasticsearch extends XFCP_Elasticsearch
             return str_replace('/', '\/', $keywords);
         }
 
+        if (!empty(\XF::options()->svAllowEmptySearch))
+        {
+            if ($keywords === '')
+            {
+                $keywords = '*';
+            }
+        }
+
         return parent::parseKeywords($keywords, $error, $warning);
     }
 

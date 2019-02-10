@@ -2,11 +2,12 @@
 
 A collection of improvements to XF's enhanced search and XenForo's default MySQL search.
 
+- Allow * (or empty search string) to return results, for MySQL and XFES
 - range_query search DSL
  - allows arbitrary range queries for numerical data
 - Allow users to select the default search order independent for the forum wide setting.
 
-Elastic Search Only features:
+Elastic Search only features:
 - Per content type weighting
 - Adds Elastic Search information to the AdminCP home screen.
 - Adds a debug option to log the search DSL queries to error log for troubleshooting
