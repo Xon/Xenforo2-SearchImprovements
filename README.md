@@ -8,6 +8,7 @@ A collection of improvements to XF's enhanced search and XenForo's default MySQL
 - Allow users to select the default search order independent for the forum wide setting.
 
 Elastic Search only features:
+- Restore default search order option
 - Per content type weighting
 - Adds Elastic Search information to the AdminCP home screen.
 - Adds a debug option to log the search DSL queries to error log for troubleshooting

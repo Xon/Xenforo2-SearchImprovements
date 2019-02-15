@@ -1,0 +1,12 @@
+{
+    "edit_format": "template",
+    "edit_format_params": "option_template_svSearchOrder",
+    "data_type": "string",
+    "sub_options": [],
+    "validation_class": "",
+    "validation_method": "",
+    "default_value": "relevance",
+    "relations": {
+        "searchOptions": 9210
+    }
+}

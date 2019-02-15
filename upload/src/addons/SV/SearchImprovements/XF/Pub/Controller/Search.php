@@ -19,11 +19,18 @@ class Search extends XFCP_Search
         if ($reply instanceof View)
         {
             $input = $reply->getParam('input');
-            /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
-            $visitor = \XF::visitor();
-            if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order && empty($input['order']))
+            if (empty($input['order']))
             {
-                $reply->setParam('input', ['order' => $visitor->Option->sv_default_search_order]);
+                /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+                $visitor = \XF::visitor();
+                if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
+                {
+                    $reply->setParam('input', ['order' => $visitor->Option->sv_default_search_order]);
+                }
+                else if (!empty(\XF::options()->svDefaultSearchOrder))
+                {
+                    $reply->setParam('input', ['order' => \XF::options()->svDefaultSearchOrder]);
+                }
             }
         }
 
@@ -38,6 +45,10 @@ class Search extends XFCP_Search
         if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
         {
             $this->shimOrder = $visitor->Option->sv_default_search_order;
+        }
+        else if (!empty(\XF::options()->svDefaultSearchOrder))
+        {
+            $this->shimOrder = \XF::options()->svDefaultSearchOrder;
         }
         try
         {

@@ -1,0 +1,14 @@
+<xf:radiorow name="{$inputName}" value="{$option.option_value}"
+	label="{$option.title}"
+	hint="{$hintHtml}"
+	explain="{$explainHtml}"
+	html="{$listedHtml}">
+
+	<xf:option value="date" label="{{ phrase('most_recent') }}" />
+	<xf:if is="is_addon_active('XFES')">
+		<xf:option value="relevance" label="{{ phrase('relevance') }}" />
+	</xf:if>
+	<xf:if is="is_addon_active('SV/WordCountSearch')">
+		<xf:option value="word_count" label="{{ phrase('word_count') }}" />	
+	</xf:if>
+</xf:radiorow>
