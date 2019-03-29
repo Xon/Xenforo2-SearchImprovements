@@ -90,17 +90,23 @@ class Elasticsearch extends XFCP_Elasticsearch
             isset($dsl['query']['function_score']) ||
             isset($dsl['query']['bool']['must']['function_score']))
         {
-            $this->weightByContentType($dsl);
+            $this->weightByContentType($query, $dsl);
         }
 
         return $dsl;
     }
 
-    function weightByContentType(array &$dsl)
+    function weightByContentType(Query\Query $query, array &$dsl)
     {
         // pre content type weighting
         $contentTypeWeighting = \XF::options()->content_type_weighting;
         if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
+        {
+            return;
+        }
+
+        $types = $query->getTypes();
+        if (\is_array($types) && count($types) === 1 )
         {
             return;
         }
