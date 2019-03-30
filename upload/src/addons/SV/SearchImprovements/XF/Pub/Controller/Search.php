@@ -67,7 +67,17 @@ class Search extends XFCP_Search
             $data['order'] = $this->shimOrder;
         }
 
-        return parent::prepareSearchQuery($data, $urlConstraints);
+        $query = parent::prepareSearchQuery($data, $urlConstraints);
+
+        if (!empty(\XF::options()->svAllowEmptySearch))
+        {
+            if (!$query->getKeywords())
+            {
+                $query->withKeywords('*', $query->getTitleOnly());
+            }
+        }
+
+        return $query;
     }
 
 }
