@@ -71,7 +71,7 @@ class Search extends XFCP_Search
 
         if (!empty(\XF::options()->svAllowEmptySearch))
         {
-            if (!$query->getKeywords())
+            if (!strlen($query->getKeywords()) && !$query->getUserIds())
             {
                 $query->withKeywords('*', $query->getTitleOnly());
             }
