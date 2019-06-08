@@ -86,9 +86,12 @@ class Elasticsearch extends XFCP_Elasticsearch
         // skip specific type handler searches
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
         if (!$query->getHandlerType() &&
-            isset($dsl['sort'][0]['_score']) ||
-            isset($dsl['query']['function_score']) ||
-            isset($dsl['query']['bool']['must']['function_score']))
+            (
+                isset($dsl['sort'][0]['_score']) ||
+                isset($dsl['query']['function_score']) ||
+                isset($dsl['query']['bool']['must']['function_score'])
+            )
+        )
         {
             $this->weightByContentType($query, $dsl);
         }
@@ -111,6 +114,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        $skipContentTypes = [];
         $functions = [];
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
@@ -119,10 +123,62 @@ class Elasticsearch extends XFCP_Elasticsearch
             {
                 continue;
             }
+            if (!$weight)
+            {
+                $skipContentTypes[] = $contentType;
+                continue;
+            }
             $functions[] = [
                 "filter" => $isSingleTypeIndex ? ['term' => ['type' => $contentType]] : ['type' => ['value' => $contentType]],
                 "weight" => $weight
             ];
+        }
+
+        if ($skipContentTypes)
+        {
+            if (!isset($dsl['query']['bool']))
+            {
+                $dsl['query']['bool']['must'] = $dsl['query'];
+            }
+
+            if (empty($dsl['query']['bool']['must_not']))
+            {
+                $dsl['query']['bool']['must_not'] = [];
+            }
+
+            $filters = &$dsl['query']['bool']['must'];
+            $filtersNot = &$dsl['query']['bool']['must_not'];
+
+            if ($this->es->isSingleTypeIndex())
+            {
+                // types are now stored in a field in the index directly
+                $this->applyMetadataConstraint(new Query\MetadataConstraint('type', $skipContentTypes, 'none'), $filters, $filtersNot);
+            }
+            else
+            {
+                // type matching is a special case -- we need a long winded approach for multiple types
+                if (count($types) > 1)
+                {
+                    $subBools = [];
+                    foreach ($types AS $type)
+                    {
+                        $subBools[] = [
+                            'type' => [
+                                'value' => $type
+                            ]
+                        ];
+                    }
+                    $filtersNot[] = [
+                        'bool' => ['should' => $subBools]
+                    ];
+                }
+                else
+                {
+                    $filtersNot[] = [
+                        'type' => ['value' => reset($types)]
+                    ];
+                }
+            }
         }
 
         if (!$functions)
