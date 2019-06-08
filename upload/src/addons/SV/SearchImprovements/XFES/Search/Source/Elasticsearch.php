@@ -157,10 +157,10 @@ class Elasticsearch extends XFCP_Elasticsearch
             else
             {
                 // type matching is a special case -- we need a long winded approach for multiple types
-                if (count($types) > 1)
+                if (count($skipContentTypes) > 1)
                 {
                     $subBools = [];
-                    foreach ($types AS $type)
+                    foreach ($skipContentTypes AS $type)
                     {
                         $subBools[] = [
                             'type' => [
@@ -175,7 +175,7 @@ class Elasticsearch extends XFCP_Elasticsearch
                 else
                 {
                     $filtersNot[] = [
-                        'type' => ['value' => reset($types)]
+                        'type' => ['value' => reset($skipContentTypes)]
                     ];
                 }
             }
