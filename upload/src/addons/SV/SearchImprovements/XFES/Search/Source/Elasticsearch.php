@@ -63,12 +63,13 @@ class Elasticsearch extends XFCP_Elasticsearch
 
     public function parseKeywords($keywords, &$error = null, &$warning = null)
     {
-        if (\XF::options()->searchImpov_simpleQuerySyntax)
+        $options = \XF::options();
+        if (!empty($options->searchImpov_simpleQuerySyntax))
         {
             return str_replace('/', '\/', $keywords);
         }
 
-        if (!empty(\XF::options()->svAllowEmptySearch))
+        if (!empty($options->svAllowEmptySearch))
         {
             if ($keywords === '')
             {
@@ -99,8 +100,10 @@ class Elasticsearch extends XFCP_Elasticsearch
         return $dsl;
     }
 
-    function weightByContentType(Query\Query $query, array &$dsl)
+    protected function applyDslFilters(Query\Query $query, array &$filters, array &$filtersNot)
     {
+        parent::applyDslFilters($query, $filters, $filtersNot);
+
         // pre content type weighting
         $contentTypeWeighting = \XF::options()->content_type_weighting;
         if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
@@ -109,46 +112,22 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
 
         $types = $query->getTypes();
-        if (\is_array($types) && count($types) === 1 )
+        if (\is_array($types) && count($types) === 1)
         {
             return;
         }
 
         $skipContentTypes = [];
-        $functions = [];
-        $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
-            if ($weight == 1)
-            {
-                continue;
-            }
             if (!$weight)
             {
                 $skipContentTypes[] = $contentType;
-                continue;
             }
-            $functions[] = [
-                "filter" => $isSingleTypeIndex ? ['term' => ['type' => $contentType]] : ['type' => ['value' => $contentType]],
-                "weight" => $weight
-            ];
         }
 
         if ($skipContentTypes)
         {
-            if (!isset($dsl['query']['bool']))
-            {
-                $dsl['query']['bool']['must'] = $dsl['query'];
-            }
-
-            if (empty($dsl['query']['bool']['must_not']))
-            {
-                $dsl['query']['bool']['must_not'] = [];
-            }
-
-            $filters = &$dsl['query']['bool']['must'];
-            $filtersNot = &$dsl['query']['bool']['must_not'];
-
             if ($this->es->isSingleTypeIndex())
             {
                 // types are now stored in a field in the index directly
@@ -163,6 +142,36 @@ class Elasticsearch extends XFCP_Elasticsearch
                     ];
                 }
             }
+        }
+    }
+
+    function weightByContentType(Query\Query $query, array &$dsl)
+    {
+        // pre content type weighting
+        $contentTypeWeighting = \XF::options()->content_type_weighting;
+        if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
+        {
+            return;
+        }
+
+        $types = $query->getTypes();
+        if (\is_array($types) && count($types) === 1)
+        {
+            return;
+        }
+
+        $functions = [];
+        $isSingleTypeIndex = $this->es->isSingleTypeIndex();
+        foreach ($contentTypeWeighting as $contentType => $weight)
+        {
+            if ($weight == 1 || !$weight )
+            {
+                continue;
+            }
+            $functions[] = [
+                "filter" => $isSingleTypeIndex ? ['term' => ['type' => $contentType]] : ['type' => ['value' => $contentType]],
+                "weight" => $weight
+            ];
         }
 
         if (!$functions)
