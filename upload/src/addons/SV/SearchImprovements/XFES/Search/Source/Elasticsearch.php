@@ -104,6 +104,11 @@ class Elasticsearch extends XFCP_Elasticsearch
     {
         parent::applyDslFilters($query, $filters, $filtersNot);
 
+        if ($query->getHandlerType())
+        {
+            return;
+        }
+
         // pre content type weighting
         $contentTypeWeighting = \XF::options()->content_type_weighting;
         if (!$contentTypeWeighting || !is_array($contentTypeWeighting))

@@ -1,1 +1,1 @@
-Per content type search weighting.<br/>Value of '1' removes the weighting option.<br/>Value of 0 will prevent the content type from being searchable with multiple content types.
+Per content type search weighting for general search.<br/>Value of '1' removes the weighting option.<br/>Value of 0 will prevent the content type from being searchable with multiple content types.
