@@ -4,7 +4,6 @@ namespace SV\SearchImprovements\XF\Search\Source;
 
 use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
 use XF\Search\Query\Query;
-use XF\Search\IndexRecord;
 
 /**
  * Class MySqlFt

@@ -3,7 +3,6 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use XF\Entity\User;
-use XF\Mvc\Reply\View;
 
 /**
  * Extends \XF\Pub\Controller\Account
