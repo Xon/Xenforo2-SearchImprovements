@@ -3,7 +3,8 @@
 namespace SV\SearchImprovements\XFES\Search\Source;
 
 use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
-use XF\Search\Query;
+use XF\Search\Query\Query;
+use XF\Search\Query\MetadataConstraint;
 
 /**
  * Class Elasticsearch
@@ -13,11 +14,11 @@ use XF\Search\Query;
 class Elasticsearch extends XFCP_Elasticsearch
 {
     /**
-     * @param Query\MetadataConstraint $metadata
+     * @param MetadataConstraint $metadata
      * @param array                    $filters
      * @param array                    $filtersNot
      */
-    protected function applyMetadataConstraint(Query\MetadataConstraint $metadata, array &$filters, array &$filtersNot)
+    protected function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
     {
         if ($metadata instanceof RangeMetadataConstraint)
         {
@@ -69,19 +70,19 @@ class Elasticsearch extends XFCP_Elasticsearch
             return str_replace('/', '\/', $keywords);
         }
 
-        if (!empty($options->svAllowEmptySearch))
-        {
-            if ($keywords === '')
-            {
-                $keywords = '*';
-            }
-        }
-
         return parent::parseKeywords($keywords, $error, $warning);
     }
 
-    protected function getDslFromQuery(Query\Query $query, $maxResults)
+    protected function getDslFromQuery(Query $query, $maxResults)
     {
+        if ($query->getKeywords() === '*' && $query->getParsedKeywords() === '')
+        {
+            // getDslFromQuery/getQueryStringDsl disables relevancy if `getParsedKeywords` is empty
+            // Which then causes the weightByContentType clause to not match
+            /** @var \SV\SearchImprovements\XF\Search\Query\Query $query */
+            $query->setParsedKeywords('*');
+        }
+
         $dsl = parent::getDslFromQuery($query, $maxResults);
 
         // skip specific type handler searches
@@ -100,7 +101,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         return $dsl;
     }
 
-    protected function applyDslFilters(Query\Query $query, array &$filters, array &$filtersNot)
+    protected function applyDslFilters(Query $query, array &$filters, array &$filtersNot)
     {
         parent::applyDslFilters($query, $filters, $filtersNot);
 
@@ -136,7 +137,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             if ($this->es->isSingleTypeIndex())
             {
                 // types are now stored in a field in the index directly
-                $this->applyMetadataConstraint(new Query\MetadataConstraint('type', $skipContentTypes, 'none'), $filters, $filtersNot);
+                $this->applyMetadataConstraint(new MetadataConstraint('type', $skipContentTypes, 'none'), $filters, $filtersNot);
             }
             else
             {
@@ -150,7 +151,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
     }
 
-    function weightByContentType(Query\Query $query, array &$dsl)
+    function weightByContentType(Query $query, array &$dsl)
     {
         // pre content type weighting
         $contentTypeWeighting = \XF::options()->content_type_weighting;

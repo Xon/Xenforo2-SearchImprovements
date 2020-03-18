@@ -69,11 +69,24 @@ class Search extends XFCP_Search
 
         $query = parent::prepareSearchQuery($data, $urlConstraints);
 
-        if (!empty(\XF::options()->svAllowEmptySearch))
+        /** @var \SV\SearchImprovements\XF\Search\Search $searcher */
+        $searcher = $this->app->search();
+
+        if ($searcher->isSvAllowEmptySearch())
         {
-            if (!strlen($query->getKeywords()) && !$query->getUserIds())
+            $searcher->setSvAllowEmptySearch(false);
+            // rewrite the keyword to a *, so the user can be linked back to the query
+            // this also initializes the parsedKeywords option
+            // must re-fetch c.title_only since it gets ignored if there are no keywords...
+            if ($searcher->isQueryEmpty($query, $error))
             {
-                $query->withKeywords('*', $query->getTitleOnly());
+                $searcher->setSvAllowEmptySearch(true);
+
+                $searchRequest = new \XF\Http\Request($this->app->inputFilterer(), $data, [], []);
+                $input = $searchRequest->filter([
+                    'c.title_only' => 'uint',
+                ]);
+                $query->withKeywords('*', $input['c.title_only']);
             }
         }
 

@@ -11,6 +11,11 @@ use XF\Search\Query\MetadataConstraint;
  */
 class Query extends XFCP_Query
 {
+    public function setParsedKeywords($keywords)
+    {
+        $this->parsedKeywords = $keywords;
+    }
+
     /**
      * @param MetadataConstraint[] $metadataConstraints
      */

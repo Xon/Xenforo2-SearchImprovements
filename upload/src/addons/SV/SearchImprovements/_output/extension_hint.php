@@ -40,6 +40,11 @@ namespace SV\SearchImprovements\XF\Search\Query
 	class XFCP_Query extends \XF\Search\Query\Query {}
 }
 
+namespace SV\SearchImprovements\XF\Search
+{
+	class XFCP_Search extends \XF\Search\Search {}
+}
+
 namespace SV\SearchImprovements\XF\Search\Source
 {
 	class XFCP_MySqlFt extends \XF\Search\Source\MySqlFt {}

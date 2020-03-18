@@ -12,19 +12,6 @@ use XF\Search\Query\Query;
  */
 class MySqlFt extends XFCP_MySqlFt
 {
-    public function parseKeywords($keywords, &$error = null, &$warning = null)
-    {
-        if (!empty(\XF::options()->svAllowEmptySearch))
-        {
-            if ($keywords === '*' || $keywords === '')
-            {
-                return '';
-            }
-        }
-
-        return parent::parseKeywords($keywords, $error, $warning);
-    }
-
     /**
      * @param Query $query
      * @param       $maxResults
