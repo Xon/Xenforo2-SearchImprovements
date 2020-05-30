@@ -18,7 +18,9 @@ class RangeMetadataConstraint extends MetadataConstraint
     const MATCH_BETWEEN = -40;
 
     /** @var TableReference[] */
-    private $tableReferences;
+    protected $tableReferences;
+    /**  @var string */
+    protected $source;
 
     /**
      * RangeMetadataConstraint constructor.
@@ -27,11 +29,13 @@ class RangeMetadataConstraint extends MetadataConstraint
      * @param mixed            $values
      * @param int              $matchType
      * @param TableReference[] $tableReferences
+     * @param string           $source
      */
-    public function __construct($key, $values, $matchType, $tableReferences = [])
+    public function __construct($key, $values, $matchType, $tableReferences = [], $source = 'search_index')
     {
         parent::__construct($key, $values, $matchType);
         $this->tableReferences = $tableReferences;
+        $this->source = $source;
     }
 
     /**
@@ -71,13 +75,13 @@ class RangeMetadataConstraint extends MetadataConstraint
         switch ($this->matchType)
         {
             case self::MATCH_LESSER:
-                $sqlConstraint = new SqlConstraint("search_index.{$this->key} <= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} <= %d ", $this->values);
                 break;
             case self::MATCH_GREATER:
-                $sqlConstraint = new SqlConstraint("search_index.{$this->key} >= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d ", $this->values);
                 break;
             case self::MATCH_BETWEEN:
-                $sqlConstraint = new SqlConstraint("search_index.{$this->key} >= %d and search_index.{$this->key} <= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d and {$this->source}.{$this->key} <= %d ", $this->values);
                 break;
         }
 
