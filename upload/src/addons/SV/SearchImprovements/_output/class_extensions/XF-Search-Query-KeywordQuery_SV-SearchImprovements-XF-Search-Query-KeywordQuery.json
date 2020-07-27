@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Search\\Query\\KeywordQuery",
+    "to_class": "SV\\SearchImprovements\\XF\\Search\\Query\\KeywordQuery",
+    "execute_order": 6838,
+    "active": true
+}

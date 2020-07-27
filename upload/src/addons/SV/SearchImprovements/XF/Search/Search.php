@@ -41,6 +41,14 @@ class Search extends XFCP_Search
      */
     public function isQueryEmpty(Query\Query $query, &$error = null)
     {
+        if (\XF::$versionId >= 2020000 && !\is_callable([$query, 'getKeywords']))
+        {
+            // do feature detection to avoid looking up an unknown class
+            return parent::isQueryEmpty($query, $error);
+        }
+
+        /** @var Query\KeywordQuery $query */
+
         if ($this->svAllowEmptySearch)
         {
             $keywords = $query->getKeywords();

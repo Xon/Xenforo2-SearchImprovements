@@ -10,6 +10,7 @@ use XF\Mvc\Reply\View;
  */
 class Search extends XFCP_Search
 {
+    /** @var string|null */
     protected $shimOrder = null;
 
     public function actionIndex(ParameterBag $params)

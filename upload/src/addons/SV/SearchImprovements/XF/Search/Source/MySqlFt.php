@@ -2,42 +2,11 @@
 
 namespace SV\SearchImprovements\XF\Search\Source;
 
-use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
-use XF\Search\Query\Query;
-
-/**
- * Class MySqlFt
- *
- * @package SV\WordCountSearch\XF\Search\Source
- */
-class MySqlFt extends XFCP_MySqlFt
+if (\XF::$versionId < 2020000)
 {
-    /**
-     * @param Query $query
-     * @param       $maxResults
-     * @return array
-     */
-    public function search(Query $query, $maxResults)
-    {
-        /** @var \SV\SearchImprovements\XF\Search\Query\Query $query */
-        $query = clone $query; // do not allow others to see our manipulation for the query object
-        // rewrite metadata range queries into search_index queries
-        $constraints = $query->getMetadataConstraints();
-        foreach ($constraints as $key => $constraint)
-        {
-            if ($constraint instanceof RangeMetadataConstraint)
-            {
-                $sqlConstraint = $constraint->asSqlConstraint();
-                if ($sqlConstraint)
-                {
-                    unset($constraints[$key]);
-                    $query->withSql($sqlConstraint);
-                }
-            }
-        }
-        // XF\Search\Search & XF\Search\Query\Query aren't extendable
-        $query->setMetadataConstraints($constraints);
-
-        return parent::search($query, $maxResults);
-    }
+    \class_alias('SV\SearchImprovements\XF\Search\Source\XF2\MySqlFt', 'SV\SearchImprovements\XF\Search\Source\MySqlFt');
+}
+else
+{
+    \class_alias('SV\SearchImprovements\XF\Search\Source\XF22\MySqlFt', 'SV\SearchImprovements\XF\Search\Source\MySqlFt');
 }
