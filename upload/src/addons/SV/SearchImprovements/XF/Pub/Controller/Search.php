@@ -22,17 +22,19 @@ class Search extends XFCP_Search
             $input = $reply->getParam('input');
             if (empty($input['order']))
             {
+                $input = $input ?: [];
                 /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
                 $visitor = \XF::visitor();
                 if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
                 {
-                    $reply->setParam('input', ['order' => $visitor->Option->sv_default_search_order]);
+                    $input['order'] = $visitor->Option->sv_default_search_order;
                 }
                 else if (!empty(\XF::options()->svDefaultSearchOrder))
                 {
-                    $reply->setParam('input', ['order' => \XF::options()->svDefaultSearchOrder]);
+                    $input['order'] = \XF::options()->svDefaultSearchOrder;
                 }
             }
+            $reply->setParam('input', $input);
         }
 
         return $reply;
