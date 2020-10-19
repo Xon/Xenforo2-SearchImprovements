@@ -2,7 +2,7 @@
     "legacy_addon_id": "SV_SearchImprovements",
     "title": "Search Improvements",
     "description": "Minor search improvements",
-    "version_id": 2040100,
+    "version_id": 2040101,
     "version_string": "2.4.1",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",
@@ -12,7 +12,7 @@
     "require": {
         "XF": [2010070, "XenForo 2.1.0+"],
         "php": ["7.0.0", "PHP 7.0.0+"],
-        "SV/StandardLib": [1000000,"Standard Library by Xon v1.0.0+"]
+        "SV/StandardLib": [1020000,"Standard Library by Xon v1.2.0+"]
     },
     "icon": "fa-search"
 }
