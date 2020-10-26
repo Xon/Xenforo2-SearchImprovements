@@ -201,10 +201,29 @@ class Elasticsearch extends XFCP_Elasticsearch
      * @param float  $weight
      * @return array
      * @noinspection PhpUnusedParameterInspection
+     * @noinspection PhpMissingParamTypeInspection
      */
     function weightByContentTypePart($isSingleTypeIndex, $contentType, &$weight)
     {
         return $isSingleTypeIndex ? ['term' => ['type' => $contentType]] : ['type' => ['value' => $contentType]];
+    }
+
+    /**
+     * @param bool   $isSingleTypeIndex
+     * @param string $contentType
+     * @param float  $weight
+     * @return array
+     * @noinspection PhpMissingParamTypeInspection
+     */
+    function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
+    {
+        $term = $this->weightByContentTypePart($isSingleTypeIndex, $contentType, $weight);
+        return [
+            [
+                "filter" => $term,
+                "weight" => $weight,
+            ]
+        ];
     }
 
     function weightByContentType(Query $query, array &$dsl)
@@ -230,11 +249,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             {
                 continue;
             }
-            $filter = $this->weightByContentTypePart($isSingleTypeIndex, $contentType, $weight);
-            $functions[] = [
-                "filter" => $filter,
-                "weight" => $weight,
-            ];
+            $functions = array_merge($functions, $this->expandContentTypeWeighting($isSingleTypeIndex, $contentType, $weight));
         }
 
         if (!$functions)
