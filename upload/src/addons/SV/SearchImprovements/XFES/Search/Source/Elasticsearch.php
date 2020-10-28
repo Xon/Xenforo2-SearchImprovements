@@ -203,7 +203,7 @@ class Elasticsearch extends XFCP_Elasticsearch
      * @noinspection PhpUnusedParameterInspection
      * @noinspection PhpMissingParamTypeInspection
      */
-    function weightByContentTypePart($isSingleTypeIndex, $contentType, &$weight)
+    protected function weightByContentTypePart($isSingleTypeIndex, $contentType, &$weight)
     {
         return $isSingleTypeIndex ? ['term' => ['type' => $contentType]] : ['type' => ['value' => $contentType]];
     }
@@ -215,8 +215,12 @@ class Elasticsearch extends XFCP_Elasticsearch
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
+    protected function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
     {
+        if ($weight == 1 || !$weight )
+        {
+            return [];
+        }
         $term = $this->weightByContentTypePart($isSingleTypeIndex, $contentType, $weight);
         return [
             [
@@ -226,10 +230,15 @@ class Elasticsearch extends XFCP_Elasticsearch
         ];
     }
 
-    function weightByContentType(Query $query, array &$dsl)
+    protected function getPerContentTypeWeighting()
+    {
+        return \XF::options()->content_type_weighting;
+    }
+
+    public function weightByContentType(Query $query, array &$dsl)
     {
         // pre content type weighting
-        $contentTypeWeighting = \XF::options()->content_type_weighting;
+        $contentTypeWeighting = $this->getPerContentTypeWeighting();
         if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
         {
             return;
@@ -245,10 +254,6 @@ class Elasticsearch extends XFCP_Elasticsearch
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
-            if ($weight == 1 || !$weight )
-            {
-                continue;
-            }
             $functions = array_merge($functions, $this->expandContentTypeWeighting($isSingleTypeIndex, $contentType, $weight));
         }
 
