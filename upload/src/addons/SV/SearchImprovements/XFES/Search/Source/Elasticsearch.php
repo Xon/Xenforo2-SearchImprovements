@@ -97,7 +97,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
         // skip specific type handler searches
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
-        if (!$query->getHandlerType() &&
+        if ((!$query->getHandlerType() || $query->isForceContentWeighting()) &&
             (
                 (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score')) ||
                 isset($dsl['query']['function_score']) ||
@@ -131,7 +131,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
         // skip specific type handler searches
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
-        if (!$query->getHandlerType() &&
+        if ((!$query->getHandlerType() || $query->isForceContentWeighting()) &&
             (
                 (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score')) ||
                 isset($dsl['query']['function_score']) ||

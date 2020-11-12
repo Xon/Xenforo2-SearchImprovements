@@ -11,6 +11,19 @@ use XF\Search\Query\MetadataConstraint;
  */
 class Query extends XFCP_Query
 {
+    /** @var bool */
+    protected $forceContentWeighting = false;
+
+    public function isForceContentWeighting(): bool
+    {
+        return $this->forceContentWeighting;
+    }
+
+    public function setForceContentWeighting(bool $forceContentWeighting)
+    {
+        $this->forceContentWeighting = $forceContentWeighting;
+    }
+
     public function setParsedKeywords($keywords)
     {
         /** @noinspection PhpUndefinedFieldInspection */
