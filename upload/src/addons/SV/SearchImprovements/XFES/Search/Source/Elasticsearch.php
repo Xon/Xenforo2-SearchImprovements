@@ -95,15 +95,10 @@ class Elasticsearch extends XFCP_Elasticsearch
         /** @noinspection PhpUndefinedMethodInspection */
         $dsl = parent::getDslFromQuery($query, $maxResults);
 
-        // skip specific type handler searches
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
-        if ((!$query->getHandlerType() || $query->isForceContentWeighting()) &&
-            (
-                (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score')) ||
-                isset($dsl['query']['function_score']) ||
-                isset($dsl['query']['bool']['must']['function_score'])
-            )
-        )
+        if (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score') ||
+            isset($dsl['query']['function_score']) ||
+            isset($dsl['query']['bool']['must']['function_score']))
         {
             $this->weightByContentType($query, $dsl);
         }
@@ -129,15 +124,10 @@ class Elasticsearch extends XFCP_Elasticsearch
 
         $dsl = parent::getKeywordSearchDsl($query, $maxResults);
 
-        // skip specific type handler searches
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
-        if ((!$query->getHandlerType() || $query->isForceContentWeighting()) &&
-            (
-                (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score')) ||
-                isset($dsl['query']['function_score']) ||
-                isset($dsl['query']['bool']['must']['function_score'])
-            )
-        )
+        if (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score') ||
+            isset($dsl['query']['function_score']) ||
+            isset($dsl['query']['bool']['must']['function_score']))
         {
             $this->weightByContentType($query, $dsl);
         }
@@ -237,15 +227,27 @@ class Elasticsearch extends XFCP_Elasticsearch
 
     public function weightByContentType(Query $query, array &$dsl)
     {
+        $forceContentWeighting = \is_callable([$query, 'isForceContentWeighting'])
+            ? $query->isForceContentWeighting()
+            : false;
+        if (!$forceContentWeighting)
+        {
+            // skip specific type handler searches
+            if ($query->getHandlerType())
+            {
+                return;
+            }
+
+            $types = $query->getTypes();
+            if (\is_array($types) && count($types) === 1)
+            {
+                return;
+            }
+        }
+
         // pre content type weighting
         $contentTypeWeighting = $this->getPerContentTypeWeighting();
         if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
-        {
-            return;
-        }
-
-        $types = $query->getTypes();
-        if (\is_array($types) && count($types) === 1)
         {
             return;
         }
