@@ -60,8 +60,8 @@ class ContentTypes extends AbstractOption
         {
             if (isset($contentTypes[$contentType]) && (bool)$value['checked'])
             {
-                $value = (int) $value['value'];
-                if ($value === 1 || $value < 0)
+                $value = floatval($value['value']) + 0;
+                if ($value == 1 || $value < 0)
                 {
                     continue;
                 }
