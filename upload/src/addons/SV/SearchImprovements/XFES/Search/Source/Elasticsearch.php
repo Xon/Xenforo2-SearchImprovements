@@ -207,6 +207,7 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     protected function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
     {
+        $weight = floatval($weight) + 0;
         if ($weight == 1 || !$weight )
         {
             return [];
@@ -215,7 +216,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         return [
             [
                 "filter" => $term,
-                "weight" => $weight,
+                "weight" => (float)$weight,
             ]
         ];
     }
