@@ -1,1 +1,1 @@
-On error, Log Search DSL
+On error, log search DSL

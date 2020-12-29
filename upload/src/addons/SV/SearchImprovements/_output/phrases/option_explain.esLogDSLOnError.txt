@@ -1,1 +1,1 @@
-Option to log Search DSL for troubleshooting
+Option to log search DSL for troubleshooting
