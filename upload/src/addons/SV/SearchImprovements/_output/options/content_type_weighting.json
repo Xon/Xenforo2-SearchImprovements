@@ -9,6 +9,7 @@
     "validation_method": "verifyOption",
     "default_value": "[]",
     "relations": {
-        "searchOptions": 9150
+        "searchOptions": 9150,
+        "svSearchImprovements": 9150
     }
 }

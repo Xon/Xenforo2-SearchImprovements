@@ -7,6 +7,7 @@
     "validation_method": "",
     "default_value": "0",
     "relations": {
-        "searchOptions": 9210
+        "searchOptions": 9210,
+        "svSearchImprovements": 9210
     }
 }
