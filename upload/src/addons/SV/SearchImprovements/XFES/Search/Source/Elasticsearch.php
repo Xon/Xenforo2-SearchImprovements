@@ -127,7 +127,8 @@ class Elasticsearch extends XFCP_Elasticsearch
         // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
         if (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score') ||
             isset($dsl['query']['function_score']) ||
-            isset($dsl['query']['bool']['must']['function_score']))
+            isset($dsl['query']['bool']['must']['function_score']) ||
+            isset($dsl['query']['bool']['must'][0]['function_score']))
         {
             $this->weightByContentType($query, $dsl);
         }
