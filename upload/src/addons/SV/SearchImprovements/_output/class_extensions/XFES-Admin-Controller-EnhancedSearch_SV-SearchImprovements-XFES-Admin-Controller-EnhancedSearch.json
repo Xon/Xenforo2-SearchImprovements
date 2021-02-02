@@ -1,6 +1,0 @@
-{
-    "from_class": "XFES\\Admin\\Controller\\EnhancedSearch",
-    "to_class": "SV\\SearchImprovements\\XFES\\Admin\\Controller\\EnhancedSearch",
-    "execute_order": 6838,
-    "active": true
-}
