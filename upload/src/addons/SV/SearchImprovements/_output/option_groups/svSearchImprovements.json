@@ -1,5 +1,6 @@
 {
     "icon": "fa-search",
     "display_order": 752,
+    "advanced": false,
     "debug_only": false
 }
