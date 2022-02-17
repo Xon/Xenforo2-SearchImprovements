@@ -1,9 +1,13 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use XF\Mvc\ParameterBag;
-use XF\Mvc\Reply\View;
+use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\View as ViewReply;
 
 /**
  * Extends \XF\Pub\Controller\Search
@@ -13,25 +17,26 @@ class Search extends XFCP_Search
     /** @var string|null */
     protected $shimOrder = null;
 
+    /**
+     * @param ParameterBag $params
+     * @return AbstractReply
+     */
     public function actionIndex(ParameterBag $params)
     {
         $reply = parent::actionIndex($params);
 
-        if ($reply instanceof View)
+        if ($reply instanceof ViewReply)
         {
             $input = $reply->getParam('input');
             if (empty($input['order']))
             {
-                $input = $input ?: [];
                 /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
                 $visitor = \XF::visitor();
-                if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
+                $userSearchOrder = $visitor->getDefaultSearchOrder();
+                if ($userSearchOrder !== '')
                 {
-                    $input['order'] = $visitor->Option->sv_default_search_order;
-                }
-                else if (!empty(\XF::options()->svDefaultSearchOrder))
-                {
-                    $input['order'] = \XF::options()->svDefaultSearchOrder;
+                    $input = $input ?: [];
+                    $input['order'] = $userSearchOrder;
                 }
             }
             $reply->setParam('input', $input);
@@ -40,18 +45,17 @@ class Search extends XFCP_Search
         return $reply;
     }
 
+    /**
+     * @return AbstractReply
+     */
     public function actionSearch()
     {
         /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
-
-        if ($visitor->canChangeSearchOptions() && $visitor->Option->sv_default_search_order)
+        $userSearchOrder = $visitor->getDefaultSearchOrder();
+        if ($userSearchOrder !== '')
         {
-            $this->shimOrder = $visitor->Option->sv_default_search_order;
-        }
-        else if (!empty(\XF::options()->svDefaultSearchOrder))
-        {
-            $this->shimOrder = \XF::options()->svDefaultSearchOrder;
+            $this->shimOrder = $userSearchOrder;
         }
         try
         {
@@ -63,9 +67,14 @@ class Search extends XFCP_Search
         }
     }
 
+    /**
+     * @param array $data
+     * @param array $urlConstraints
+     * @return \XF\Search\Query\KeywordQuery
+     */
     protected function prepareSearchQuery(array $data, &$urlConstraints = [])
     {
-        if ($this->shimOrder && !$data['order'])
+        if ($this->shimOrder !== null && strlen($data['order'] ?? '') === 0)
         {
             $data['order'] = $this->shimOrder;
         }
@@ -95,5 +104,4 @@ class Search extends XFCP_Search
 
         return $query;
     }
-
 }

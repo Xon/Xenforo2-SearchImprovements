@@ -4,6 +4,8 @@ namespace SV\SearchImprovements\Option;
 
 use XF\Option\AbstractOption;
 
+use function count, floatval, class_exists;
+
 /**
  * Class ContentTypes
  *
@@ -11,27 +13,21 @@ use XF\Option\AbstractOption;
  */
 class ContentTypes extends AbstractOption
 {
-    /**
-     * @param \XF\Entity\Option $option
-     * @param array             $htmlParams
-     *
-     * @return string
-     */
-    public static function renderOption(\XF\Entity\Option $option, array $htmlParams)
+    public static function renderOption(\XF\Entity\Option $option, array $htmlParams): string
     {
         $choices = [];
 
         $app = \XF::app();
 
-        foreach ($app->getContentTypeField('search_handler_class') AS $contentType => $handlerClass)
+        foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
         {
             if (class_exists($handlerClass))
             {
                 $choices[] = [
-                    'phraseName' => \XF::phrase($app->getContentTypePhraseName($contentType)),
+                    'phraseName'  => \XF::phrase($app->getContentTypePhraseName($contentType)),
                     'contentType' => $contentType,
-                    'value' => isset($option->option_value[$contentType]) ? $option->option_value[$contentType] : 1,
-                    'selected' => isset($option->option_value[$contentType]) ?: null,
+                    'value'       => $option->option_value[$contentType] ?? 1,
+                    'selected'    => isset($option->option_value[$contentType]),
                 ];
             }
         }
@@ -40,26 +36,22 @@ class ContentTypes extends AbstractOption
             'admin:svSearchImprov_option_template_content_type_weighting',
             $option,
             $htmlParams, [
-                'choices' => $choices,
-                'nextCounter' => \count($choices)
+                'choices'     => $choices,
+                'nextCounter' => count($choices)
             ]
         );
     }
 
-    /**
-     * @param array $values
-     *
-     * @return bool
-     */
-    public static function verifyOption(array &$values)
+    public static function verifyOption(array &$values): bool
     {
         $contentTypes = \XF::app()->getContentTypeField('search_handler_class');
         $output = [];
 
-        foreach ($values AS $contentType => $value)
+        foreach ($values as $contentType => $value)
         {
-            if (isset($contentTypes[$contentType]) && (bool)$value['checked'])
+            if (isset($contentTypes[$contentType]) && ($value['checked'] ?? false))
             {
+                /** @noinspection PhpIdempotentOperationInspection */
                 $value = floatval($value['value']) + 0;
                 if ($value == 1 || $value < 0)
                 {
@@ -70,6 +62,7 @@ class ContentTypes extends AbstractOption
         }
 
         $values = $output;
+
         return true;
     }
 }

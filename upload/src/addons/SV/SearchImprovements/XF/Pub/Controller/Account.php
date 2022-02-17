@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
@@ -19,7 +22,7 @@ class Account extends XFCP_Account
 
         /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
         $visitor = \XF::visitor();
-        if ($visitor->canChangeSearchOptions())
+        if ($visitor->hasOption('svSearchOptions') && $visitor->canChangeSearchOptions())
         {
             $input = $this->filter(
                 [

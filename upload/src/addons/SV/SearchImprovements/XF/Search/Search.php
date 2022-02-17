@@ -14,26 +14,21 @@ use XF\Search\Source\AbstractSource;
  */
 class Search extends XFCP_Search
 {
+    /** @var bool */
     protected $svAllowEmptySearch = false;
 
     public function __construct(AbstractSource $source, array $types)
     {
         parent::__construct($source, $types);
-        $this->svAllowEmptySearch = !empty(\XF::options()->svAllowEmptySearch);
+        $this->svAllowEmptySearch = \XF::options()->svAllowEmptySearch ?? false;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSvAllowEmptySearch()
+    public function isSvAllowEmptySearch(): bool
     {
         return $this->svAllowEmptySearch;
     }
 
-    /**
-     * @param bool $svAllowEmptySearch
-     */
-    public function setSvAllowEmptySearch($svAllowEmptySearch)
+    public function setSvAllowEmptySearch(bool $svAllowEmptySearch)
     {
         $this->svAllowEmptySearch = $svAllowEmptySearch;
     }

@@ -2,28 +2,27 @@
 
 namespace SV\SearchImprovements\XFES\Elasticsearch;
 
+use function json_encode;
+
 /**
  * Extends \XFES\Elasticsearch\Api
  */
 class Api extends XFCP_Api
 {
-    /** @var array|null s*/
+    /** @var array|null s */
     protected $dslForError;
 
-    /** @noinspection PhpMissingReturnTypeInspection */
     public function getClusterInfo()
     {
-        return $this->request('get', "/_cluster/health", null)->getBody();
+        return $this->request('get', "/_cluster/health")->getBody();
     }
 
-    /** @noinspection PhpMissingReturnTypeInspection */
     public function search(array $dsl)
     {
-        $esLogDSL = \XF::options()->esLogDSL ?? false;
-        if ($esLogDSL)
+        if (\XF::options()->esLogDSL ?? false)
         {
             $this->dslForError = null;
-            \XF::logError(\json_encode($dsl));
+            \XF::logError(json_encode($dsl));
         }
         else
         {
@@ -42,17 +41,15 @@ class Api extends XFCP_Api
     /**
      * @param array $body
      * @return string|null
-     * @noinspection PhpMissingReturnTypeInspection
      */
     protected function getErrorMessage(array $body)
     {
         $reason = parent::getErrorMessage($body);
 
         // log DSL on error
-        $esLogDSLOnError = \XF::options()->esLogDSLOnError ?? true;
-        if ($esLogDSLOnError && $this->dslForError)
+        if ((\XF::options()->esLogDSLOnError ?? true) && $this->dslForError !== null)
         {
-            $reason = ($reason ? $reason . "\n " : '') . "DSL:" . \json_encode($this->dslForError);
+            $reason = ($reason ? $reason . "\n " : '') . "DSL:" . json_encode($this->dslForError);
         }
 
         return $reason;

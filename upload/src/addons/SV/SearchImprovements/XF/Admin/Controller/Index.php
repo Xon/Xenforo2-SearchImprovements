@@ -2,20 +2,22 @@
 
 namespace SV\SearchImprovements\XF\Admin\Controller;
 
-use XF\Mvc\Reply\View;
+use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\View as ViewReply;
 
 /**
  * Extends \XF\Admin\Controller\Index
  */
 class Index extends XFCP_Index
 {
+    /**
+     * @return AbstractReply
+     */
     public function actionIndex()
     {
         $reply = parent::actionIndex();
 
-
-        $addOns = \XF::app()->container('addon.cache');
-        if (isset($addOns['XFES']) && $reply instanceof View)
+        if ($reply instanceof ViewReply && \XF::isAddOnActive('XFES'))
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             /** @var \XFES\Service\Configurer $configurer */
@@ -40,7 +42,9 @@ class Index extends XFCP_Index
                         }
                     }
                 }
-                catch (\XFES\Elasticsearch\Exception $e) {}
+                catch (\XFES\Elasticsearch\Exception $e)
+                {
+                }
             }
 
             $reply->setParam('esVersion', $esVersion);

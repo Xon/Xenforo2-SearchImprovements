@@ -1,10 +1,15 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XFES\Search\Source;
 
 use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
+
+use function count, floatval, is_array, array_merge;
 
 /**
  * Class Elasticsearch
@@ -15,8 +20,8 @@ class Elasticsearch extends XFCP_Elasticsearch
 {
     /**
      * @param MetadataConstraint $metadata
-     * @param array                    $filters
-     * @param array                    $filtersNot
+     * @param array              $filters
+     * @param array              $filtersNot
      */
     protected function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
     {
@@ -59,13 +64,19 @@ class Elasticsearch extends XFCP_Elasticsearch
                     return;
             }
         }
+
         parent::applyMetadataConstraint($metadata, $filters, $filtersNot);
     }
 
+    /**
+     * @param string   $keywords
+     * @param string[] $error
+     * @param string[] $warning
+     * @return string
+     */
     public function parseKeywords($keywords, &$error = null, &$warning = null)
     {
-        $options = \XF::options();
-        if (!empty($options->searchImpov_simpleQuerySyntax))
+        if (\XF::options()->searchImpov_simpleQuerySyntax ?? false)
         {
             return str_replace('/', '\/', $keywords);
         }
@@ -111,15 +122,15 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        // pre content type weighting
-        $contentTypeWeighting = \XF::options()->content_type_weighting;
-        if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
+        $types = $query->getTypes();
+        if (is_array($types) && count($types) === 1)
         {
             return;
         }
 
-        $types = $query->getTypes();
-        if (\is_array($types) && count($types) === 1)
+        // pre content type weighting
+        $contentTypeWeighting = $this->getPerContentTypeWeighting();
+        if (count($contentTypeWeighting) === 0)
         {
             return;
         }
@@ -133,26 +144,30 @@ class Elasticsearch extends XFCP_Elasticsearch
             }
         }
 
-        if ($skipContentTypes)
+        if (count($skipContentTypes) === 0)
         {
-            if ($this->es->isSingleTypeIndex())
+            return;
+        }
+
+        if ($this->es->isSingleTypeIndex())
+        {
+            // types are now stored in a field in the index directly
+            $this->applyMetadataConstraint(new MetadataConstraint('type', $skipContentTypes, 'none'), $filters, $filtersNot);
+        }
+        else
+        {
+            foreach ($skipContentTypes as $type)
             {
-                // types are now stored in a field in the index directly
-                $this->applyMetadataConstraint(new MetadataConstraint('type', $skipContentTypes, 'none'), $filters, $filtersNot);
-            }
-            else
-            {
-                foreach ($skipContentTypes AS $type)
-                {
-                    $filtersNot[] = [
-                        'type' => ['value' => $type]
-                    ];
-                }
+                $filtersNot[] = [
+                    'type' => ['value' => $type]
+                ];
             }
         }
     }
 
     /**
+     * This is an extended function by 3rd party add-ons, do not change the function signature!
+     *
      * @param bool   $isSingleTypeIndex
      * @param string $contentType
      * @param float  $weight
@@ -166,6 +181,8 @@ class Elasticsearch extends XFCP_Elasticsearch
     }
 
     /**
+     * This is an extended function by 3rd party add-ons, do not change the function signature!
+     *
      * @param bool   $isSingleTypeIndex
      * @param string $contentType
      * @param float  $weight
@@ -174,12 +191,14 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     protected function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
     {
+        /** @noinspection PhpIdempotentOperationInspection */
         $weight = floatval($weight) + 0;
-        if ($weight == 1 || !$weight )
+        if ($weight == 1 || !$weight)
         {
             return [];
         }
         $term = $this->weightByContentTypePart($isSingleTypeIndex, $contentType, $weight);
+
         return [
             [
                 "filter" => $term,
@@ -188,11 +207,21 @@ class Elasticsearch extends XFCP_Elasticsearch
         ];
     }
 
+    /**
+     * This is an extended function by 3rd party add-ons, do not change the function signature!
+     *
+     * @return array
+     */
     protected function getPerContentTypeWeighting()
     {
-        return \XF::options()->content_type_weighting;
+        return \XF::options()->content_type_weighting ?? [];
     }
 
+    /**
+     * @param Query $query
+     * @param array $dsl
+     * @return void
+     */
     public function weightByContentType(Query $query, array &$dsl)
     {
         $forceContentWeighting = \is_callable([$query, 'isForceContentWeighting'])
@@ -207,7 +236,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             }
 
             $types = $query->getTypes();
-            if (\is_array($types) && count($types) === 1)
+            if (is_array($types) && count($types) === 1)
             {
                 return;
             }
@@ -215,7 +244,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
         // pre content type weighting
         $contentTypeWeighting = $this->getPerContentTypeWeighting();
-        if (!$contentTypeWeighting || !is_array($contentTypeWeighting))
+        if (count($contentTypeWeighting) === 0)
         {
             return;
         }

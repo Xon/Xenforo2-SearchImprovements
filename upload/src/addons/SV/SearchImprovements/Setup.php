@@ -18,9 +18,9 @@ use XF\Entity\User;
 class Setup extends AbstractSetup
 {
     use InstallerHelper;
-	use StepRunnerInstallTrait;
-	use StepRunnerUpgradeTrait;
-	use StepRunnerUninstallTrait;
+    use StepRunnerInstallTrait;
+    use StepRunnerUpgradeTrait;
+    use StepRunnerUninstallTrait;
 
     /**
      * Creates add-on tables.
@@ -45,7 +45,10 @@ class Setup extends AbstractSetup
 
         foreach ($this->getAlterTables() as $tableName => $callback)
         {
-            $sm->alterTable($tableName, $callback);
+            if ($sm->tableExists($tableName))
+            {
+                $sm->alterTable($tableName, $callback);
+            }
         }
     }
 
@@ -93,12 +96,7 @@ class Setup extends AbstractSetup
         }
     }
 
-
-    /**
-     * @param int|null $previousVersion
-     * @return bool True if permissions were applied.
-     */
-    protected function applyDefaultPermissions($previousVersion = null)
+    protected function applyDefaultPermissions(int $previousVersion = null): bool
     {
         $applied = false;
         $previousVersion = (int)$previousVersion;
@@ -112,41 +110,29 @@ class Setup extends AbstractSetup
 
         return $applied;
     }
-    /**
-     * @return array
-     */
-    protected function getTables()
-    {
-        $tables = [];
 
-        return $tables;
+    protected function getTables(): array
+    {
+        return [
+
+        ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getAlterTables()
+    protected function getAlterTables(): array
     {
-        $tables = [];
-
-        $tables['xf_user_option'] = function (Alter $table) {
-            $this->addOrChangeColumn($table, 'sv_default_search_order', 'varchar', 50)->setDefault('');
-        };
-
-        return $tables;
+        return [
+            'xf_user_option' => function (Alter $table) {
+                $this->addOrChangeColumn($table, 'sv_default_search_order', 'varchar', 50)->setDefault('');
+            },
+        ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getRemoveAlterTables()
+    protected function getRemoveAlterTables(): array
     {
-        $tables = [];
-
-        $tables['xf_user_option'] = function (Alter $table) {
-            $table->dropColumns(['sv_default_search_order']);
-        };
-
-        return $tables;
+        return [
+            'xf_user_option' => function (Alter $table) {
+                $table->dropColumns(['sv_default_search_order']);
+            },
+        ];
     }
 }

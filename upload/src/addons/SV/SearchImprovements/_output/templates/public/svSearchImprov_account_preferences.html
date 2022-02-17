@@ -1,4 +1,4 @@
-<xf:if is="$xf.visitor.canChangeSearchOptions()">
+<xf:if is="$xf.visitor.hasOption('svSearchOptions') && $xf.visitor.canChangeSearchOptions()">
 	<h2 class="block-formSectionHeader"><span class="block-formSectionHeader-aligner">{{ phrase('sv_search_options') }}</span></h2>
 	<div class="block-body">
 		<xf:radiorow rowtype="noColon" 

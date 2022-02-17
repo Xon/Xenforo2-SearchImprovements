@@ -27,11 +27,11 @@ class RangeMetadataConstraint extends MetadataConstraint
      *
      * @param string           $key
      * @param mixed            $values
-     * @param int              $matchType
+     * @param string|int       $matchType
      * @param TableReference[] $tableReferences
      * @param string           $source
      */
-    public function __construct($key, $values, $matchType, $tableReferences = [], $source = 'search_index')
+    public function __construct(string $key, $values, $matchType, array $tableReferences = [], string $source = 'search_index')
     {
         parent::__construct($key, $values, $matchType);
         $this->tableReferences = $tableReferences;
@@ -39,7 +39,7 @@ class RangeMetadataConstraint extends MetadataConstraint
     }
 
     /**
-     * @param $match
+     * @param string|int $match
      */
     public function setMatchType($match)
     {
@@ -85,7 +85,7 @@ class RangeMetadataConstraint extends MetadataConstraint
                 break;
         }
 
-        if ($sqlConstraint && $this->tableReferences)
+        if ($sqlConstraint !== null && $this->tableReferences)
         {
             foreach ($this->tableReferences as $tableReference)
             {
