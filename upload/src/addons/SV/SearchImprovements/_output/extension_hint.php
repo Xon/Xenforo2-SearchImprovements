@@ -33,7 +33,6 @@ namespace SV\SearchImprovements\XF\Pub\Controller
 namespace SV\SearchImprovements\XF\Search\Query
 {
 	class XFCP_KeywordQuery extends \XF\Search\Query\KeywordQuery {}
-	class XFCP_Query extends \XF\Search\Query\Query {}
 }
 
 namespace SV\SearchImprovements\XF\Search

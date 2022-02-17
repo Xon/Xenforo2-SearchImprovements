@@ -1,8 +1,12 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XF\Search;
 
 use XF\Search\Query;
+use XF\Search\Query\KeywordQuery;
 use XF\Search\Source\AbstractSource;
 
 /**
@@ -41,27 +45,13 @@ class Search extends XFCP_Search
      */
     public function isQueryEmpty(Query\Query $query, &$error = null)
     {
-        if (\XF::$versionId >= 2020000 && !\is_callable([$query, 'getKeywords']))
-        {
-            // do feature detection to avoid looking up an unknown class
-            return parent::isQueryEmpty($query, $error);
-        }
-
-        /** @var Query\KeywordQuery $query */
-
-        if ($this->svAllowEmptySearch)
+        if ($this->svAllowEmptySearch && $query instanceof KeywordQuery)
         {
             $keywords = $query->getKeywords();
             if ($keywords === '*' || $keywords === '')
             {
                 return false;
             }
-        }
-
-        // pre-XF2.1.8 support
-        if (!is_callable('parent::isQueryEmpty'))
-        {
-            return !strlen($query->getKeywords()) && !$query->getUserIds();
         }
 
         return parent::isQueryEmpty($query, $error);

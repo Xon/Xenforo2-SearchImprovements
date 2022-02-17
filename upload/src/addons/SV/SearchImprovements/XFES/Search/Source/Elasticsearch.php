@@ -74,43 +74,9 @@ class Elasticsearch extends XFCP_Elasticsearch
     }
 
     /**
-     * XF2.0/XF2.1 support
-     *
-     * @param Query $query
-     * @param int   $maxResults
-     * @return array
-     * @noinspection DuplicatedCode
-     */
-    protected function getDslFromQuery(Query $query, $maxResults)
-    {
-        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-        if ($query->getKeywords() === '*' && $query->getParsedKeywords() === '')
-        {
-            // getDslFromQuery/getQueryStringDsl disables relevancy if `getParsedKeywords` is empty
-            // Which then causes the weightByContentType clause to not match
-            /** @var \SV\SearchImprovements\XF\Search\Query\Query $query */
-            $query->setParsedKeywords('*');
-        }
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        $dsl = parent::getDslFromQuery($query, $maxResults);
-
-        // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
-        if (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score') ||
-            isset($dsl['query']['function_score']) ||
-            isset($dsl['query']['bool']['must']['function_score']))
-        {
-            $this->weightByContentType($query, $dsl);
-        }
-
-        return $dsl;
-    }
-
-    /**
      * @param \XF\Search\Query\KeywordQuery $query
      * @param int                           $maxResults
      * @return array
-     * @noinspection DuplicatedCode
      */
     public function getKeywordSearchDsl(\XF\Search\Query\KeywordQuery $query, $maxResults)
     {
