@@ -2,10 +2,14 @@
 
 namespace SV\SearchImprovements\Repository;
 
+use SV\SearchImprovements\Search\SearchSourceExtractor;
+use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
+use SV\SearchImprovements\Search\Specialized\Source as SpecializedSource;
+use \SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\XFES\Elasticsearch\Api;
 use XF\Mvc\Entity\Repository;
+use XF\Search\Data\AbstractData;
 use XF\Search\Search as XenForoSearch;
-use XFES\Search\Source\Elasticsearch as ElasticsearchSource;
 use function strlen, strtolower, class_exists;
 
 class SpecializedSearchIndex extends Repository
@@ -57,16 +61,29 @@ class SpecializedSearchIndex extends Repository
     protected function getSearchHandlerDefinitions(): array
     {
         return [
-            // 'svExample' => \XF\Search\Data\AbstractData::class,
+            // 'svExample' => \SV\SearchImprovements\Search\Specialized\AbstractData::class,
         ];
     }
 
-    protected function getSearchSource(string $contentType): ElasticsearchSource
+    /**
+     * @return string[]
+     */
+    protected function loadSearchHandlerDefinitions(): array
+    {
+        if ($this->handlerDefinitions === null)
+        {
+            $this->handlerDefinitions = $this->getSearchHandlerDefinitions();
+        }
+
+        return $this->handlerDefinitions;
+    }
+
+    protected function getSearchSource(string $contentType): SpecializedSource
     {
         $es = $this->getIndexApi($contentType);
 
-        $class = \XF::extendClass(ElasticsearchSource::class);
-        /** @var ElasticsearchSource $source */
+        $class = \XF::extendClass(SpecializedSource::class);
+        /** @var SpecializedSource $source */
         /** @noinspection PhpUnnecessaryLocalVariableInspection */
         $source = new $class($es);
 
@@ -79,7 +96,7 @@ class SpecializedSearchIndex extends Repository
      * @return XenForoSearch|null
      * @throws \Exception
      */
-    public function search(string $contentType, bool $throw)
+    public function search(string $contentType, bool $throw = true)
     {
         /** @var XenForoSearch|null $search */
         $search = $this->search[$contentType] ?? null;
@@ -88,10 +105,7 @@ class SpecializedSearchIndex extends Repository
             return $search;
         }
 
-        if ($this->handlerDefinitions === null)
-        {
-            $this->handlerDefinitions = $this->getSearchHandlerDefinitions();
-        }
+        $this->loadSearchHandlerDefinitions();
         $handlerClass = $this->handlerDefinitions[$contentType] ?? null;
         if ($handlerClass === null)
         {
@@ -138,11 +152,6 @@ class SpecializedSearchIndex extends Repository
             return null;
         }
 
-        if ($this->handlerDefinitions === null)
-        {
-            $this->handlerDefinitions = $this->getSearchHandlerDefinitions();
-        }
-
         $handler = $this->handlers[$contentType] ?? null;
         if ($handler !== null)
         {
@@ -159,5 +168,52 @@ class SpecializedSearchIndex extends Repository
         $this->handlers[$contentType] = $handler;
 
         return $handler;
+    }
+
+    protected function getQuery(\XF\Search\Search $search, SpecializedData $handler): SpecializedQuery
+    {
+        $extendClass = \XF::extendClass(SpecializedQuery::class);
+        return new $extendClass($search, $handler);
+    }
+
+    public function getQueryForSpecializedSearch(string $contentType): SpecializedQuery
+    {
+        $search = $this->search($contentType);
+        /** @var SpecializedData|AbstractData $handler */
+        $handler = $search->handler($contentType);
+        if (!($handler instanceof SpecializedData))
+        {
+            throw new \LogicException('Specialized handlers must implement ' . SpecializedData::class);
+        }
+
+        return $this->getQuery($search, $handler);
+    }
+
+    public function executeSearch(SpecializedQuery $query, int $maxResults = 0): array
+    {
+        $types = $query->getTypes();
+        if (!is_array($types) && count($types) !== 1)
+        {
+            throw new \LogicException('Specialized search indexes only support a single type');
+        }
+        $contentType = $query->getHandlerType() ?? '';
+        if (strlen($contentType) === 0)
+        {
+            throw new \LogicException('Specialized search indexes must have a content type');
+        }
+
+        if ($maxResults <= 0)
+        {
+            $maxResults = max((int)\XF::options()->maximumSearchResults, 20);
+        }
+
+        $search = $this->search($contentType);
+        $source = SearchSourceExtractor::getSource($search);
+        if (!$source instanceof SpecializedSource)
+        {
+            throw new \LogicException('Specialized search index source should be an instance of ' . SpecializedSource::class);
+        }
+
+        return $source->specializedSearch($query, $maxResults);
     }
 }
