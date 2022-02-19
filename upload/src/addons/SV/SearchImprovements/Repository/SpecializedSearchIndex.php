@@ -14,11 +14,11 @@ use function strlen, strtolower, class_exists;
 
 class SpecializedSearchIndex extends Repository
 {
-    /** @var string[]|null */
+    /** @var array<string,string>|null */
     protected $handlerDefinitions = null;
-    /** @var XenForoSearch[]|null */
+    /** @var array<string,XenForoSearch>|null */
     protected $search = null;
-    /** @var \XF\Search\Data\AbstractData[]|null */
+    /** @var array<string,\XF\Search\Data\AbstractData>|null */
     protected $handlers = null;
 
     protected function getIndexApi(string $contentType): Api
@@ -56,7 +56,7 @@ class SpecializedSearchIndex extends Repository
     /**
      * A key-value listings of specialized search handlers
      *
-     * @return string[]
+     * @return array<string,string>
      */
     protected function getSearchHandlerDefinitions(): array
     {
@@ -66,7 +66,7 @@ class SpecializedSearchIndex extends Repository
     }
 
     /**
-     * @return string[]
+     * @return array<string,string>
      */
     protected function loadSearchHandlerDefinitions(): array
     {
@@ -105,8 +105,8 @@ class SpecializedSearchIndex extends Repository
             return $search;
         }
 
-        $this->loadSearchHandlerDefinitions();
-        $handlerClass = $this->handlerDefinitions[$contentType] ?? null;
+        $handlerDefinitions = $this->loadSearchHandlerDefinitions();
+        $handlerClass = $handlerDefinitions[$contentType] ?? null;
         if ($handlerClass === null)
         {
             if ($throw)
@@ -137,7 +137,7 @@ class SpecializedSearchIndex extends Repository
     /**
      * @param string $contentType
      * @param bool   $throw
-     * @return \XF\Search\Data\AbstractData|null
+     * @return AbstractData|SpecializedData|null
      * @throws \Exception
      */
     public function getHandler(string $contentType, bool $throw = true)
@@ -152,6 +152,7 @@ class SpecializedSearchIndex extends Repository
             return null;
         }
 
+        /** @var AbstractData|SpecializedData|null $handler */
         $handler = $this->handlers[$contentType] ?? null;
         if ($handler !== null)
         {
@@ -166,6 +167,10 @@ class SpecializedSearchIndex extends Repository
 
         $handler = $searcher->handler($contentType);
         $this->handlers[$contentType] = $handler;
+        if (!($handler instanceof SpecializedData))
+        {
+            throw new \LogicException('Specialized handlers must implement ' . SpecializedData::class);
+        }
 
         return $handler;
     }
