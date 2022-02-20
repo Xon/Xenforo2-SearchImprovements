@@ -3,6 +3,7 @@ namespace SV\SearchImprovements\Search\Specialized;
 
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
+use XF\Search\IndexRecord;
 use XFES\Elasticsearch\Exception as EsException;
 use XFES\Search\Source\Elasticsearch;
 use function array_slice, count;
@@ -10,6 +11,18 @@ use function array_slice, count;
 class Source extends Elasticsearch
 {
     use MetadataSearchEnhancements;
+
+    protected function getDocument(IndexRecord $record): array
+    {
+        $document = $record->metadata;
+
+        if ($record->hidden)
+        {
+            $document['hidden'] = true;
+        }
+
+        return $document;
+    }
 
     public function specializedSearch(SpecializedQuery $query, $maxResults): array
     {

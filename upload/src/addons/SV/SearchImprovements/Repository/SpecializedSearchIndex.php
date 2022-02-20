@@ -14,8 +14,6 @@ use function strlen, strtolower, class_exists;
 
 class SpecializedSearchIndex extends Repository
 {
-    /** @var array<string,string>|null */
-    protected $handlerDefinitions = null;
     /** @var array<string,XenForoSearch>|null */
     protected $search = null;
     /** @var array<string,\XF\Search\Data\AbstractData>|null */
@@ -58,24 +56,11 @@ class SpecializedSearchIndex extends Repository
      *
      * @return array<string,string>
      */
-    protected function getSearchHandlerDefinitions(): array
+    public function getSearchHandlerDefinitions(): array
     {
         return [
-            // 'svExample' => \SV\SearchImprovements\Search\Specialized\AbstractData::class,
+            // 'svExample' => \SV\SearchImprovements\Search\Specialized\SpecializedData::class,
         ];
-    }
-
-    /**
-     * @return array<string,string>
-     */
-    protected function loadSearchHandlerDefinitions(): array
-    {
-        if ($this->handlerDefinitions === null)
-        {
-            $this->handlerDefinitions = $this->getSearchHandlerDefinitions();
-        }
-
-        return $this->handlerDefinitions;
     }
 
     protected function getSearchSource(string $contentType): SpecializedSource
@@ -105,7 +90,7 @@ class SpecializedSearchIndex extends Repository
             return $search;
         }
 
-        $handlerDefinitions = $this->loadSearchHandlerDefinitions();
+        $handlerDefinitions = $this->getSearchHandlerDefinitions();
         $handlerClass = $handlerDefinitions[$contentType] ?? null;
         if ($handlerClass === null)
         {
