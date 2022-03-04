@@ -24,35 +24,29 @@ class Optimizer extends \XFES\Service\Optimizer
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
 
+            /** @var \XFES\Service\Configurer $xfConfigurer */
+            $xfConfigurer = $this->service('XFES:Configurer', null);
+            $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
+
             /** @var Analyzer $analyzer */
             $analyzer = $this->service('SV\SearchImprovements:Specialized\Analyzer', $this->singleType, $this->es);
+            foreach($analyzer->getDefaultConfig() as $key => $value)
+            {
+                $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
+            }
             $settings = $analyzer->getAnalyzerFromConfig($analyzerConfig);
         }
 
         $configurer->purgeIndex();
-
-        $config = [];
-
-        if ($settings)
-        {
-            if (isset($config['settings']))
-            {
-                $config['settings'] = array_replace_recursive($config['settings'], $settings);
-            }
-            else
-            {
-                $config['settings'] = $settings;
-            }
-        }
-
         // if we create an index in ES6+, we must force it to be single type
         $this->es->forceSingleType($this->es->majorVersion() >= 6);
 
-        $config['mappings'] = $this->getExpectedMappingConfig();
+        $config = [
+            'settings' => $settings,
+            'mappings' => $this->getExpectedMappingConfig(),
+        ];
+        echo json_encode($config, JSON_PRETTY_PRINT) ."\n\n";
         $this->es->createIndex($config);
-
-
-        parent::optimize($settings, false);
     }
 
     protected function getBaseMapping(): array

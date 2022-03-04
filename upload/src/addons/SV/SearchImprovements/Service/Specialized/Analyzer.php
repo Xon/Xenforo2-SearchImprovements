@@ -74,7 +74,7 @@ class Analyzer extends \XFES\Service\Analyzer
         }
         $result['analysis']['analyzer']['sv_near_exact_analyzer'] = $nearExactMatchAnalyzer;
 
-        $autoCompleteFilter = $filter;
+        $autoCompleteFilter = $nearExactMatchAnalyzer;
         $autoCompleteFilter[] = 'sv_ngram_filter';
         $result['analysis']['analyzer']['sv_ngram_analyzer'] = [
             'type'      => 'custom',
