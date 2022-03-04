@@ -6,7 +6,7 @@ use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use XF\Search\IndexRecord;
 use XF\Search\Query;
 use XFES\Search\Source\Elasticsearch;
-use function count;
+use function min, strlen, count;
 
 class Source extends Elasticsearch
 {
@@ -24,7 +24,7 @@ class Source extends Elasticsearch
         return $document;
     }
 
-    public function specializedSearch(SpecializedQuery $query, $maxResults): array
+    public function specializedSearch(SpecializedQuery $query, int $maxResults): array
     {
         return $this->executeSearch(
             $query,
@@ -33,14 +33,14 @@ class Source extends Elasticsearch
         );
     }
 
-    public function getSpecializedSearchDsl(SpecializedQuery $query, $maxResults): array
+    public function getSpecializedSearchDsl(SpecializedQuery $query, int $maxResults): array
     {
         $dsl = $this->getSpecializedCommonSearchDsl($query, $maxResults);
 
         $filters = [];
         $filtersNot = [];
 
-        $queryDsl = $this->getSpecializedSearchQueryDsl($query, $filters, $filtersNot);
+        $queryDsl = $this->getSpecializedSearchQueryDsl($query, $maxResults, $filters, $filtersNot);
         $this->applyDslFilters($query, $filters, $filtersNot);
 
         $queryDsl = $this->getSearchQueryFunctionScoreDsl($query, $queryDsl);
@@ -51,7 +51,7 @@ class Source extends Elasticsearch
         return $dsl;
     }
 
-    protected function getSpecializedCommonSearchDsl(SpecializedQuery $query, $maxResults): array
+    protected function getSpecializedCommonSearchDsl(SpecializedQuery $query, int $maxResults): array
     {
         $dsl = [];
 
@@ -86,13 +86,14 @@ class Source extends Elasticsearch
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, array &$filters, array &$filtersNot): array
+    protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, int $maxResults, array &$filters, array &$filtersNot): array
     {
         // todo: make configurable
         $fieldBoost = '^1.5';
         $ngramBoost = '';
         $exactBoost = '^2';
         $multiMatchType = 'most_fields'; //'best_fields'
+        $fuzziness = 'AUTO:0,5'; // https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
         //if ($this->es->majorVersion() > 7)
         //{
         //    $multiMatchType = 'bool_prefix';
@@ -125,6 +126,11 @@ class Source extends Elasticsearch
             'operator' => 'or',
             //'operator' => count($fields) === 1 ? 'and' : 'or',
         ];
+        if (strlen($fuzziness) !== 0)
+        {
+            $queryDsl['fuzziness'] = $fuzziness;
+            $queryDsl['max_expansions'] = min($maxResults, 50);
+        }
 
         return [
             'multi_match' => $queryDsl,
