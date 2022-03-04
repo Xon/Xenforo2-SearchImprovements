@@ -11,12 +11,15 @@ use SV\SearchImprovements\Search\AbstractDataSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use XF\Search\Data\AbstractData;
 use XF\Search\Source\AbstractSource;
+use function is_array, in_array, class_exists;
 
 /**
  * Extends \XF\Search\Search
  */
 class SearchPatch extends XFCP_SearchPatch
 {
+    /** @var string|null */
+    public $specializedTypeFilter = null;
     /** @var bool */
     public $specializedIndexProxying = false;
     /** @var array<string,string> */
@@ -41,6 +44,13 @@ class SearchPatch extends XFCP_SearchPatch
 
     public function isValidContentType($type): bool
     {
+        if ($this->specializedTypeFilter !== null)
+        {
+            return $this->specializedTypeFilter === $type &&
+                   isset($this->additionalTypes[$type]) &&
+                   class_exists($this->additionalTypes[$type]);
+        }
+
         $isValid = parent::isValidContentType($type);
         // ensure the special handler is loaded
         if ($isValid && isset($this->additionalTypes[$type]))
@@ -142,8 +152,9 @@ class SearchPatch extends XFCP_SearchPatch
     {
         if ($this->specializedIndexProxying)
         {
-            foreach ($this->additionalHandlers as $handler)
+            foreach ($this->additionalTypes as $specializedType => $handlerClass)
             {
+                $handler = $this->handler($specializedType);
                 if ($handler->canReassignContent())
                 {
                     $source = AbstractDataSourceExtractor::getSearcher($handler);
@@ -159,12 +170,16 @@ class SearchPatch extends XFCP_SearchPatch
     {
         if ($this->specializedIndexProxying)
         {
-            foreach ($this->additionalHandlers as $specializedType => $handler)
+            // xf-rebuild:search calls with `truncate([])` before isValidContentType is called
+            $type = $type === [] ? null : $type;
+            $types = $type === null || is_array($type) ? $type : [$type];
+            foreach ($this->additionalTypes as $specializedType => $handlerClass)
             {
-                if ($type === null || $specializedType === $type)
+                if ($types === null || in_array($specializedType, $types, true))
                 {
+                    $handler = $this->handler($specializedType);
                     $source = AbstractDataSourceExtractor::getSearcher($handler);
-                    $source->truncate($type);
+                    $source->truncate($specializedType);
                 }
             }
         }

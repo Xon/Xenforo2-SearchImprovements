@@ -2,29 +2,57 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
-use SV\ElasticSearchEssentials\XFES\Service\Configurer;
-
 /**
  * Extends \XFES\Service\Optimizer
  */
 class Optimizer extends \XFES\Service\Optimizer
 {
+    /** @var string */
+    protected $singleType;
+
+    public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
+    {
+        $this->singleType = $singleType;
+        parent::__construct($app, $es);
+    }
+
     public function optimize(array $settings = [], $updateConfig = false)
     {
         /** @var Configurer $configurer */
-        $configurer = $this->service('XFES:Configurer', $this->es);
+        $configurer = $this->service('SV\SearchImprovements:Specialized\Configurer', $this->singleType, $this->es);
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
 
-            /** @var \XFES\Service\Analyzer $analyzer */
-            $analyzer = $this->service('XFES:Analyzer', $this->es);
+            /** @var Analyzer $analyzer */
+            $analyzer = $this->service('SV\SearchImprovements:Specialized\Analyzer', $this->singleType, $this->es);
             $settings = $analyzer->getAnalyzerFromConfig($analyzerConfig);
         }
 
         $configurer->purgeIndex();
 
-        parent::optimize($settings, $updateConfig);
+        $config = [];
+
+        if ($settings)
+        {
+            if (isset($config['settings']))
+            {
+                $config['settings'] = array_replace_recursive($config['settings'], $settings);
+            }
+            else
+            {
+                $config['settings'] = $settings;
+            }
+        }
+
+        // if we create an index in ES6+, we must force it to be single type
+        $this->es->forceSingleType($this->es->majorVersion() >= 6);
+
+        $config['mappings'] = $this->getExpectedMappingConfig();
+        $this->es->createIndex($config);
+
+
+        parent::optimize($settings, false);
     }
 
     protected function getBaseMapping(): array
@@ -55,7 +83,16 @@ class Optimizer extends \XFES\Service\Optimizer
 
     public function getExpectedMappingConfig()
     {
-        $expectedMapping = parent::getExpectedMappingConfig();
+        $this->app->search()->specializedTypeFilter = $this->singleType;
+        try
+        {
+            $expectedMapping = parent::getExpectedMappingConfig();
+        }
+        finally
+        {
+            $this->app->search()->specializedTypeFilter = null;
+        }
+
 
         if ($this->es->majorVersion() >= 5)
         {
@@ -72,7 +109,7 @@ class Optimizer extends \XFES\Service\Optimizer
         ];
         $ngramTextType = [
             'type'     => $textType,
-            'analyzer' => 'sv_ngram_filter',
+            'analyzer' => 'sv_ngram_analyzer',
         ];
 
         $apply = function (array &$properties) use ($textType, $exactTextType, $ngramTextType) {

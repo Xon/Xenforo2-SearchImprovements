@@ -189,7 +189,7 @@ class SpecializedSearchIndex extends Repository
         return $this->getQuery($search, $handler);
     }
 
-    public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = true): \XF\ResultSet
+    public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = false): \XF\ResultSet
     {
         $types = $query->getTypes();
         if (!is_array($types) && count($types) !== 1)

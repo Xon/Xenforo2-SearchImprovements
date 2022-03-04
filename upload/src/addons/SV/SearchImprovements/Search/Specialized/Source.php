@@ -5,9 +5,8 @@ use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use XF\Search\IndexRecord;
 use XF\Search\Query;
-use XFES\Elasticsearch\Exception as EsException;
 use XFES\Search\Source\Elasticsearch;
-use function version_compare, array_map, array_slice, count;
+use function count;
 
 class Source extends Elasticsearch
 {
@@ -126,5 +125,16 @@ class Source extends Elasticsearch
         return [
             'multi_match' => $queryDsl,
         ];
+    }
+
+    public function truncate($type = null)
+    {
+        if ($type === null)
+        {
+            throw new \LogicException('Specialized index requires an explicit type to truncate');
+        }
+        /** @var \SV\SearchImprovements\Service\Specialized\Optimizer $optimizer */
+        $optimizer = \XF::app()->service('SV\SearchImprovements:Specialized\Optimizer', $type, $this->es);
+        $optimizer->optimize([], true);
     }
 }

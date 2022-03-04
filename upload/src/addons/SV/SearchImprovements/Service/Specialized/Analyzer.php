@@ -2,6 +2,8 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use XFES\Service\Optimizer;
+
 /**
  * Extends \XFES\Service\Analyzer
  */
@@ -24,9 +26,12 @@ class Analyzer extends \XFES\Service\Analyzer
     protected $minNgramSize = 1;
     /** @var int */
     protected $maxNgramSize = 32;
+    /** @var string */
+    protected $singleType;
 
-    public function __construct(\XF\App $app, \XFES\Elasticsearch\Api $es)
+    public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
     {
+        $this->singleType = $singleType;
         parent::__construct($app, $es);
 
         if ($this->getEsApi()->majorVersion() >= 7)
@@ -131,5 +136,21 @@ class Analyzer extends \XFES\Service\Analyzer
         $ngramVars['max_gram'] = $sizeSanitizer((int)$ngramVars['max_gram'], (int)$defaultNgram['max_gram']);
 
         return $ngramVars;
+    }
+
+    public function updateAnalyzer(array $config)
+    {
+        $settings = $this->getAnalyzerFromConfig($config);
+
+        if (!$this->es->indexExists())
+        {
+            /** @var Optimizer $optimizer */
+            $optimizer = $this->service('SV\SearchImprovements:Specialized\Optimizer', $this->singleType, $this->es);
+            $optimizer->optimize($settings, true);
+
+            return;
+        }
+
+        parent::updateAnalyzer($config);
     }
 }
