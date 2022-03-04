@@ -103,7 +103,8 @@ class Optimizer extends \XFES\Service\Optimizer
         ];
         $ngramTextType = [
             'type'     => $textType,
-            'analyzer' => 'sv_ngram_analyzer',
+            'analyzer' => 'sv_ngram_analyzer_index',
+            'search_analyzer' => 'sv_ngram_analyzer_search',
         ];
 
         $apply = function (array &$properties) use ($textType, $exactTextType, $ngramTextType) {

@@ -49,22 +49,8 @@ class Analyzer extends \XFES\Service\Analyzer
     {
         $result = parent::getAnalyzerFromConfig($config);
 
-        $filter = [];
-        $filter[] = 'lowercase';
-
-        $doFolding = $config['ascii_folding'] ?? true;
-        if ($doFolding)
-        {
-            $filter[] = 'asciifolding';
-        }
-
-        if (isset($result['analysis']['filter']['xf_stemmer']['language']))
-        {
-            $filter[] = 'xf_stemmer';
-        }
-
         // always generate analyzer configuration, even if it isn't used
-        $nearExactMatchAnalyzer = $result['analysis']['analyzer']['default'];
+        $nearExactMatchAnalyzer = $xfDefault = $result['analysis']['analyzer']['default'];
         foreach ($nearExactMatchAnalyzer['filter'] as $key => $value)
         {
             if ($value === 'xf_stop' || $value === 'xf_stemmer')
@@ -76,10 +62,15 @@ class Analyzer extends \XFES\Service\Analyzer
 
         $autoCompleteFilter = $nearExactMatchAnalyzer;
         $autoCompleteFilter[] = 'sv_ngram_filter';
-        $result['analysis']['analyzer']['sv_ngram_analyzer'] = [
+        $result['analysis']['analyzer']['sv_ngram_analyzer_index'] = [
             'type'      => 'custom',
             'tokenizer' => 'standard',
             'filter'    => $autoCompleteFilter,
+        ];
+        $result['analysis']['analyzer']['sv_ngram_analyzer_search'] = [
+            'type'      => 'custom',
+            'tokenizer' => 'standard',
+            'filter'    => $xfDefault,
         ];
         $result['analysis']['filter']['sv_ngram_filter'] = $this->getNgramFilter($config['sv_ngram'] ?? []);
 
