@@ -38,7 +38,8 @@ $structure->behaviors['SV\SearchImprovements:SpecializedIndexable'] = [
     'checkForUpdates' => ['tag'],
 ];
 ```
-    - Usage example;
+
+Usage example;
 ```php
 /** @var SpecializedSearchIndex $repo */
 $repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
