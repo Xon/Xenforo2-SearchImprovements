@@ -88,21 +88,18 @@ class Source extends Elasticsearch
     /** @noinspection PhpUnusedParameterInspection */
     protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, int $maxResults, array &$filters, array &$filtersNot): array
     {
-        // todo: make configurable
-        $fieldBoost = '^1.5';
-        $ngramBoost = '';
-        $exactBoost = '^2';
-        $multiMatchType = 'most_fields'; //'best_fields'
-        $fuzziness = 'AUTO:0,5'; // https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness
-        //if ($this->es->majorVersion() > 7)
-        //{
-        //    $multiMatchType = 'bool_prefix';
-        //}
+
 
         // generate actual search field list
         $simpleFieldList = $query->textFields();
+        $fieldBoost = $query->fieldBoost();
+
         $withNgram = $query->isWithNgram();
+        $ngramBoost = $query->ngramBoost();
+
         $withExact = $query->isWithExact();
+        $exactBoost = $query->exactBoost();
+
         $fields = [];
         foreach ($simpleFieldList as $field)
         {
@@ -117,6 +114,8 @@ class Source extends Elasticsearch
             }
         }
 
+        $multiMatchType = $query->matchQueryType();
+        $fuzziness = $query->fuzzyMatching();
         // multi-match creates multiple match statements and bolts them together depending on the 'type' field
         // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#
         $queryDsl = [
