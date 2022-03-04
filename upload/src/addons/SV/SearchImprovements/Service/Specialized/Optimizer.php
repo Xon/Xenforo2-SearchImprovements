@@ -45,7 +45,7 @@ class Optimizer extends \XFES\Service\Optimizer
             'settings' => $settings,
             'mappings' => $this->getExpectedMappingConfig(),
         ];
-        echo json_encode($config, JSON_PRETTY_PRINT) ."\n\n";
+
         $this->es->createIndex($config);
     }
 
