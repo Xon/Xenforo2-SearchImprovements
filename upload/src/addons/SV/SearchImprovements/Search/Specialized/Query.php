@@ -22,7 +22,9 @@ class Query extends \XF\Search\Query\Query
     {
         parent::__construct($search);
 
+        $this->orderedBy('_score');
         $this->forTypeHandlerBasic($handler);
+        $this->types = [];
     }
 
     public function text(): string

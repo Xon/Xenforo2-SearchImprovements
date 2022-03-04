@@ -27,6 +27,27 @@ class Optimizer extends \XFES\Service\Optimizer
         parent::optimize($settings, $updateConfig);
     }
 
+    protected function getBaseMapping(): array
+    {
+        $version = $this->es->majorVersion();
+        //$textType = ($version >= 5 ? 'text' : 'string');
+        $mapping = [
+            '_source'    => ['enabled' => false],
+            '_all'       => ['enabled' => false],
+            'properties' => [
+                'hidden' => ['type' => 'boolean'],
+            ],
+        ];
+
+        if ($version >= 6)
+        {
+            // this is disabled in 6+
+            unset($mapping['_all']);
+        }
+
+        return $mapping;
+    }
+
     public function getExpectedMappingConfig()
     {
         $expectedMapping = parent::getExpectedMappingConfig();

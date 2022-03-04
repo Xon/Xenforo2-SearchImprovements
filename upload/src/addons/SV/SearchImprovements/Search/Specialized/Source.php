@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Search\Specialized;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use XF\Search\IndexRecord;
+use XF\Search\Query;
 use XFES\Elasticsearch\Exception as EsException;
 use XFES\Search\Source\Elasticsearch;
 use function array_slice, count;
@@ -48,8 +49,7 @@ class Source extends Elasticsearch
 
     public function getSpecializedSearchDsl(SpecializedQuery $query, $maxResults): array
     {
-        $dsl = $this->getCommonSearchDsl($query, $maxResults);
-        $dsl['fields'] = [];
+        $dsl = $this->getSpecializedCommonSearchDsl($query, $maxResults);
 
         $filters = [];
         $filtersNot = [];
@@ -63,6 +63,59 @@ class Source extends Elasticsearch
         $dsl['query'] = $queryDsl ?: ['match_all' => (object)[]];
 
         return $dsl;
+    }
+
+    protected function getSpecializedCommonSearchDsl(SpecializedQuery $query, $maxResults): array
+    {
+        $dsl = [];
+
+        $fields = $query->textFields();
+        if ($this->es->majorVersion() >= 5)
+        {
+            // fields is no longer accessible. stored_fields only works if explicitly stored. _source
+            // only works if it hasn't been removed. docvalue_fields works consistently.
+            if (
+                $this->es->majorVersion() == 6 &&
+                version_compare($this->es->version(), '6.4.0', '>=')
+            )
+            {
+                $dsl['docvalue_fields'] = array_map(function (string $field) {
+                    return [
+                        'field'  => $field,
+                        'format' => 'use_field_mapping'
+                    ];
+                }, $fields);
+            }
+            else
+            {
+                $dsl['docvalue_fields'] = $fields;
+            }
+
+            $dsl['_source'] = false;
+        }
+        else
+        {
+            $dsl['fields'] = $fields;
+        }
+
+        $dsl['size'] = $this->getSearchSizeDsl($query, $maxResults);
+        $dsl['sort'] = $this->getSearchSortDsl($query);
+        if (count($dsl['sort']) === 0)
+        {
+            unset($dsl['sort']);
+        }
+
+        return $dsl;
+    }
+
+    protected function getSearchSortDsl(Query\Query $query): array
+    {
+        if ($query->getOrder() === '_score')
+        {
+            return [];
+        }
+
+        return parent::getSearchSortDsl($query);
     }
 
     /** @noinspection PhpUnusedParameterInspection */
