@@ -93,6 +93,10 @@ class Source extends Elasticsearch
         $ngramBoost = '';
         $exactBoost = '^2';
         $multiMatchType = 'most_fields'; //'best_fields'
+        //if ($this->es->majorVersion() > 7)
+        //{
+        //    $multiMatchType = 'bool_prefix';
+        //}
 
         // generate actual search field list
         $simpleFieldList = $query->textFields();
