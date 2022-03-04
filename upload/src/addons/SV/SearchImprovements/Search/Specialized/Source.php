@@ -7,7 +7,7 @@ use XF\Search\IndexRecord;
 use XF\Search\Query;
 use XFES\Elasticsearch\Exception as EsException;
 use XFES\Search\Source\Elasticsearch;
-use function array_slice, count;
+use function version_compare, array_map, array_slice, count;
 
 class Source extends Elasticsearch
 {
@@ -44,7 +44,13 @@ class Source extends Elasticsearch
             throw \XF::phrasedException('xfes_search_could_not_be_completed_try_again_later');
         }
 
-        return array_slice($hits, 0, $maxResults);
+        $matches = [];
+        foreach ($hits as $hit)
+        {
+            $matches[$hit['id']] = (array)$hit['fields'];
+        }
+
+        return array_slice($matches, 0, $maxResults);
     }
 
     public function getSpecializedSearchDsl(SpecializedQuery $query, $maxResults): array
@@ -148,10 +154,11 @@ class Source extends Elasticsearch
         // multi-match creates multiple match statements and bolts them together depending on the 'type' field
         // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#
         $queryDsl = [
-            'type'             => $multiMatchType,
-            'query'            => $query->text(),
-            'fields'           => $fields,
-            'default_operator' => count($fields) === 1 ? 'and' : 'or',
+            'type'     => $multiMatchType,
+            'query'    => $query->text(),
+            'fields'   => $fields,
+            'operator' => 'or',
+            //'operator' => count($fields) === 1 ? 'and' : 'or',
         ];
 
         return [

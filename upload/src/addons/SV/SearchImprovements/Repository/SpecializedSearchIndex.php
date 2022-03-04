@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\Repository;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Search\Specialized\Source as SpecializedSource;
@@ -58,9 +59,7 @@ class SpecializedSearchIndex extends Repository
      */
     public function getSearchHandlerDefinitions(): array
     {
-        return [
-            // 'svExample' => \SV\SearchImprovements\Search\Specialized\SpecializedData::class,
-        ];
+        return $this->app()->getContentTypeField('specialized_search_handler_class');
     }
 
     protected function getSearchSource(string $contentType): SpecializedSource
@@ -112,8 +111,19 @@ class SpecializedSearchIndex extends Repository
         }
 
         $class = \XF::extendClass(XenForoSearch::class);
-        /** @var XenForoSearch $search */
-        $search = new $class($this->getSearchSource($contentType), [$contentType => $handlerClass]);
+
+        $shimSearchForSpecialization = Globals::$shimSearchForSpecialization ?? false;
+        Globals::$shimSearchForSpecialization = false;
+        try
+        {
+            /** @var XenForoSearch $search */
+            $search = new $class($this->getSearchSource($contentType), [$contentType => $handlerClass]);
+        }
+        finally
+        {
+            Globals::$shimSearchForSpecialization = $shimSearchForSpecialization;
+        }
+
         $this->search[$contentType] = $search;
 
         return $search;
@@ -127,7 +137,7 @@ class SpecializedSearchIndex extends Repository
      */
     public function getHandler(string $contentType, bool $throw = true)
     {
-        if (\XF::options()->xfesEnabled ?? false)
+        if (!(\XF::options()->xfesEnabled ?? false))
         {
             if ($throw)
             {

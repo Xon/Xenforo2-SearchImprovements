@@ -28,12 +28,21 @@ Elasticsearch only features:
     - Implementation bits;
         - A XenForo search handler must implement; `\SV\SearchImprovements\Search\Specialized\SpecializedData`
             - This handler really shouldn't be registered with `search_handler_class` content type field.
-        - Extend `\SV\SearchImprovements\Repository\SpecializedSearchIndex::getSearchHandlerDefinitions`
+        - The following content type fields must be implemented;
+          - specialized_search_handler_class
+          - entity
+        - Add the behavior `SV\SearchImprovements:SpecializedIndexable` to the entity.
+```php
+$structure->behaviors['SV\SearchImprovements:SpecializedIndexable'] = [
+    'content_type' => 'sv_tag',
+    'checkForUpdates' => ['tag'],
+];
+```
     - Usage example;
 ```php
 /** @var SpecializedSearchIndex $repo */
 $repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
-$query = $repo->getQueryForSpecializedSearch('sv-tag');
+$query = $repo->getQueryForSpecializedSearch('sv_tag');
 $query->matchQuery($q, ['tag'])
       ->withNgram()
       ->withExact();

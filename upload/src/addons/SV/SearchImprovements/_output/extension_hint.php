@@ -38,6 +38,7 @@ namespace SV\SearchImprovements\XF\Search\Query
 namespace SV\SearchImprovements\XF\Search
 {
 	class XFCP_Search extends \XF\Search\Search {}
+	class XFCP_SearchPatch extends \XF\Search\Search {}
 }
 
 namespace SV\SearchImprovements\XF\Search\Source

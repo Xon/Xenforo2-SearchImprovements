@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Search\\Search",
+    "to_class": "SV\\SearchImprovements\\XF\\Search\\SearchPatch",
+    "execute_order": 1,
+    "active": true
+}

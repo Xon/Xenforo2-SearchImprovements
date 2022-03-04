@@ -44,6 +44,11 @@ class Optimizer extends \XFES\Service\Optimizer
             // this is disabled in 6+
             unset($mapping['_all']);
         }
+        // todo remove
+        if ($this->es->isSingleTypeIndex())
+        {
+            $mapping['properties']['type'] = ['type' => 'keyword'];
+        }
 
         return $mapping;
     }

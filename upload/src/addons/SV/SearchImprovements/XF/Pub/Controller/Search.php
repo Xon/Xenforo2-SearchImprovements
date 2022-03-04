@@ -17,6 +17,12 @@ class Search extends XFCP_Search
     /** @var string|null */
     protected $shimOrder = null;
 
+    public function preDispatch($action, ParameterBag $params)
+    {
+        \XF::app()->search()->specializedIndexProxying = false;
+        parent::preDispatch($action, $params);
+    }
+
     /**
      * @param ParameterBag $params
      * @return AbstractReply
