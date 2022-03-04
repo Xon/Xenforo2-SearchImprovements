@@ -46,19 +46,15 @@ $query = $repo->getQueryForSpecializedSearch('sv_tag');
 $query->matchQuery($q, ['tag'])
       ->withNgram()
       ->withExact();
-$hits = $repo->executeSearch($query, $maxResults);
+$tags = $repo->executeSearch($query, $maxResults)->getResultsData();
 $results = [];
-foreach ($hits AS $tag)
+foreach ($tags AS $tag)
 {
-    $tag = $tag['fields']['tag'] ?? null;
-    if ($tag !== null)
-    {
-        $results[] = [
-            'id' => $tag,
-            'text' => $tag,
-            'q' => $q
-        ];
-    }
+    $results[] = [
+        'id' => $tag->tag,
+        'text' => $tag->tag,
+        'q' => $q
+    ];
 }
   ```
   

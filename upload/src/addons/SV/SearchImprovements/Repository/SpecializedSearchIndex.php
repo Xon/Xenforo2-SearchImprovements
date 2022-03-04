@@ -189,7 +189,7 @@ class SpecializedSearchIndex extends Repository
         return $this->getQuery($search, $handler);
     }
 
-    public function executeSearch(SpecializedQuery $query, int $maxResults = 0): array
+    public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = true): \XF\ResultSet
     {
         $types = $query->getTypes();
         if (!is_array($types) && count($types) !== 1)
@@ -214,6 +214,8 @@ class SpecializedSearchIndex extends Repository
             throw new \LogicException('Specialized search index source should be an instance of ' . SpecializedSource::class);
         }
 
-        return $source->specializedSearch($query, $maxResults);
+        $results = $source->specializedSearch($query, $maxResults);
+
+        return $search->getResultSet($results)->limitResults($maxResults, $applyVisitorPermissions);
     }
 }
