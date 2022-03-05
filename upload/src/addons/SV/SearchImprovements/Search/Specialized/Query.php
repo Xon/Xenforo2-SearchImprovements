@@ -24,8 +24,8 @@ class Query extends \XF\Search\Query\Query
     /** @var string */
     protected $ngramBoost = '';
     /**  @var string */
-    //protected $fuzziness = '';
-    protected $fuzziness = 'AUTO:0,5';
+    protected $fuzziness = '';
+    //protected $fuzziness = 'AUTO:0,5';
     /** @var string */
     protected $matchQueryType = 'most_fields'; //'best_fields';
 
