@@ -16,6 +16,12 @@ class SpecializedIndexable extends Indexable
 
     public function contentType(): string
     {
-        return $this->config['content_type'] ?? parent::contentType();
+        $contentType = $this->config['content_type'] ?? parent::contentType();
+        if (!\is_string($contentType) && \is_callable($contentType))
+        {
+            $contentType = $contentType();
+        }
+
+        return $contentType;
     }
 }
