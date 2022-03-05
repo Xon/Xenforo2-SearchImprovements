@@ -1,0 +1,6 @@
+{
+    "from_class": "XFES\\Repository\\IndexFailed",
+    "to_class": "SV\\SearchImprovements\\XFES\\Repository\\IndexFailed",
+    "execute_order": 6838,
+    "active": true
+}

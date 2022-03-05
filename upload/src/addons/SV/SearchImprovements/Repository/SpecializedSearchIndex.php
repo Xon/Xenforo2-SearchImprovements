@@ -62,7 +62,7 @@ class SpecializedSearchIndex extends Repository
         return $this->app()->getContentTypeField('specialized_search_handler_class');
     }
 
-    protected function getSearchSource(string $contentType): SpecializedSource
+    public function getSearchSource(string $contentType): SpecializedSource
     {
         $es = $this->getIndexApi($contentType);
 

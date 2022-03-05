@@ -8,9 +8,19 @@ namespace SV\SearchImprovements\XFES\Elasticsearch
 	class XFCP_Api extends \XFES\Elasticsearch\Api {}
 }
 
+namespace SV\SearchImprovements\XFES\Repository
+{
+	class XFCP_IndexFailed extends \XFES\Repository\IndexFailed {}
+}
+
 namespace SV\SearchImprovements\XFES\Search\Source
 {
 	class XFCP_Elasticsearch extends \XFES\Search\Source\Elasticsearch {}
+}
+
+namespace SV\SearchImprovements\XFES\Service
+{
+	class XFCP_RetryFailed extends \XFES\Service\RetryFailed {}
 }
 
 namespace SV\SearchImprovements\XF\Admin\Controller
