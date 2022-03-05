@@ -29,14 +29,31 @@ Elasticsearch only features:
         - A XenForo search handler must implement; `\SV\SearchImprovements\Search\Specialized\SpecializedData`
             - This handler really shouldn't be registered with `search_handler_class` content type field.
         - The following content type fields must be implemented;
-          - specialized_search_handler_class
-          - entity
+          - `specialized_search_handler_class`
+          - `entity`
         - Add the behavior `SV\SearchImprovements:SpecializedIndexable` to the entity.
+        - Add `MetadataStructure::KEYWORD` or `MetadataStructure::STR` fields in `setupMetadataStructure`. 
+           - These fields will be rewritten to add .exact & .ngram subfields. To skip this pass.
+           - `MetadataStructure::KEYWORD` - shortish text which is semi-structured such as tags or usernames
+           - `MetadataStructure::STR` - Arbitrary text which uses phrases of text
 ```php
-$structure->behaviors['SV\SearchImprovements:SpecializedIndexable'] = [
-    'content_type' => 'sv_tag',
-    'checkForUpdates' => ['tag'],
-];
+public static function getStructure(Structure $structure)
+{
+...
+    $structure->behaviors['SV\SearchImprovements:SpecializedIndexable'] = [
+        'content_type' => 'sv_tag',
+        'checkForUpdates' => ['tag'],
+    ];
+...
+}
+...
+public function setupMetadataStructure(MetadataStructure $structure)
+{
+    // this field will be rewritten for querying with getQueryForSpecializedSearch
+    $structure->addField('tag', MetadataStructure::KEYWORD);
+    // skip rewriting
+    $structure->addField('description', MetadataStructure::STR, ['skip-rewrite' => true]);
+}
 ```
 
 Usage example;

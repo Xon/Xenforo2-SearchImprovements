@@ -71,7 +71,7 @@ class Optimizer extends \XFES\Service\Optimizer
         // todo remove
         if ($this->es->isSingleTypeIndex())
         {
-            $mapping['properties']['type'] = ['type' => 'keyword'];
+            $mapping['properties']['type'] = ['type' => 'keyword', 'skip-rewrite' => true];
         }
 
         return $mapping;
@@ -105,7 +105,9 @@ class Optimizer extends \XFES\Service\Optimizer
         $apply = function (array &$properties) use ($textType, $keywordType) {
             foreach ($properties as $column => &$mdColumn)
             {
-                if ($column === 'type')
+                $skipRewrite = (bool)($mdColumn['skip-rewrite'] ?? false);
+                unset($mdColumn['skip-rewrite']);
+                if ($skipRewrite)
                 {
                     continue;
                 }
