@@ -9,6 +9,8 @@ class Optimizer extends \XFES\Service\Optimizer
 {
     /** @var string */
     protected $singleType;
+    /** @var bool  */
+    protected $ngramStripeWhiteSpace = true;
 
     public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
     {
@@ -77,6 +79,7 @@ class Optimizer extends \XFES\Service\Optimizer
 
     public function getExpectedMappingConfig()
     {
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $this->app->search()->specializedTypeFilter = $this->singleType;
         try
         {
@@ -99,7 +102,6 @@ class Optimizer extends \XFES\Service\Optimizer
             $keywordType = 'string';
         }
 
-
         $apply = function (array &$properties) use ($textType, $keywordType) {
             foreach ($properties as $column => &$mdColumn)
             {
@@ -118,7 +120,7 @@ class Optimizer extends \XFES\Service\Optimizer
                     ];
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,
-                        'analyzer' => 'sv_keyword_ngram',
+                        'analyzer' => $this->ngramStripeWhiteSpace ? 'sv_keyword_ngram_no_whitespace' : 'sv_keyword_ngram',
                         'search_analyzer' => 'sv_near_exact',
                     ];
                 }

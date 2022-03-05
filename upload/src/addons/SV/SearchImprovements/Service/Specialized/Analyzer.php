@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\Service\Specialized;
 
 use XFES\Service\Optimizer;
-use function min, array_values;
+use function array_values;
 
 /**
  * Extends \XFES\Service\Analyzer
@@ -62,6 +62,13 @@ class Analyzer extends \XFES\Service\Analyzer
         }
         $simpleFilter = array_values($simpleFilter);
 
+        // custom character filters (before tokenization)
+        $result['analysis']['char_filter']['sv_strip_white_space'] = [
+            'type' => 'pattern_replace',
+            'pattern' => '\\s*',
+            'replacement' => '',
+        ];
+
         $edgeNgram = $this->getNgramFilter($config['sv_ngram'] ?? []);
         $result['analysis']['filter']['sv_text_edge_ngram_filter'] = $edgeNgram;
 
@@ -86,6 +93,14 @@ class Analyzer extends \XFES\Service\Analyzer
         ];
         $result['analysis']['analyzer']['sv_keyword_ngram'] = [
             'type'      => 'custom',
+            'tokenizer' => 'sv_keyword_ngram_tokenizer',
+            'filter'    => $simpleFilter,
+        ];
+        $result['analysis']['analyzer']['sv_keyword_ngram_no_whitespace'] = [
+            'type'      => 'custom',
+            'char_filter' => [
+                'sv_strip_white_space',
+            ],
             'tokenizer' => 'sv_keyword_ngram_tokenizer',
             'filter'    => $simpleFilter,
         ];
