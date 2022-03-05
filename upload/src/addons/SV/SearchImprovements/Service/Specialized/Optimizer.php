@@ -114,24 +114,24 @@ class Optimizer extends \XFES\Service\Optimizer
                     unset($mdColumn['index']);
                     $mdColumn['fields']['exact'] = [
                         'type' => $textType,
-                        'analyzer' => 'sv_keyword_near_exact',
+                        'analyzer' => 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,
                         'analyzer' => 'sv_keyword_ngram',
-                        'search_analyzer' => 'sv_keyword_near_exact',
+                        'search_analyzer' => 'sv_near_exact',
                     ];
                 }
                 else if ($mdColumn['type'] === $textType)
                 {
                     $mdColumn['fields']['exact'] = [
                         'type' => $textType,
-                        'analyzer' => 'sv_text_near_exact',
+                        'analyzer' => 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,
                         'analyzer' => 'sv_text_edge_ngram',
-                        'search_analyzer' => 'sv_text_near_exact',
+                        'search_analyzer' => 'sv_near_exact',
                     ];
                 }
             }

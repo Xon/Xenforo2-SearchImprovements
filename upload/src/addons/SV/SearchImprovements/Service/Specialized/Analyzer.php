@@ -63,31 +63,36 @@ class Analyzer extends \XFES\Service\Analyzer
         $simpleFilter = array_values($simpleFilter);
 
         $edgeNgram = $this->getNgramFilter($config['sv_ngram'] ?? []);
-        $ngram = $edgeNgram;
-        $ngram['type'] = 'ngram';
-        $result['analysis']['filter']['sv_edge_ngram_filter'] = $edgeNgram;
-        $result['analysis']['tokenizer']['sv_ngram_tokenizer'] = $ngram;
+        $result['analysis']['filter']['sv_text_edge_ngram_filter'] = $edgeNgram;
 
-        $result['analysis']['analyzer']['sv_keyword_near_exact'] = [
+        // custom tokenizer
+        $result['analysis']['tokenizer']['sv_keyword_ngram_tokenizer'] = [
+            'type' => 'ngram',
+            'min_gram'    => $edgeNgram['min_gram'],
+            'max_gram'    => $edgeNgram['max_gram'],
+            'token_chars' => [
+                'letter',
+                'digit',
+                'punctuation',
+                'symbol',
+            ]
+        ];
+
+        // custom filters (after tokenization)
+        $result['analysis']['analyzer']['sv_near_exact'] = [
             'type'      => 'custom',
-            'tokenizer' => 'keyword',
+            'tokenizer' => 'standard',
             'filter'    => $simpleFilter,
         ];
         $result['analysis']['analyzer']['sv_keyword_ngram'] = [
             'type'      => 'custom',
-            'tokenizer' => 'sv_ngram_tokenizer',
+            'tokenizer' => 'sv_keyword_ngram_tokenizer',
             'filter'    => $simpleFilter,
         ];
-        $result['analysis']['analyzer']['sv_text_near_exact'] = [
-            'type'      => 'custom',
-            'tokenizer' => 'standard',
-            'filter'    => $simpleFilter,
-        ];
-        $simpleFilter[] = 'sv_edge_ngram_filter';
         $result['analysis']['analyzer']['sv_text_edge_ngram'] = [
             'type'      => 'custom',
             'tokenizer' => 'standard',
-            'filter'    => $simpleFilter,
+            'filter'    => array_merge($simpleFilter, ['sv_text_edge_ngram_filter']),
         ];
 
         if ($this->getEsApi()->majorVersion() >= 7)
@@ -114,7 +119,7 @@ class Analyzer extends \XFES\Service\Analyzer
     {
         $currentConfig = parent::getConfigFromAnalyzer($analysis);
 
-        $ngramFilter = $analysis['filter']['sv_edge_ngram_filter'] ?? null;
+        $ngramFilter = $analysis['filter']['sv_text_edge_ngram_filter'] ?? null;
         if (\is_array($ngramFilter))
         {
             $currentConfig['sv_ngram'] = $this->getNgramFilter($ngramFilter);
