@@ -91,29 +91,48 @@ class Optimizer extends \XFES\Service\Optimizer
         if ($this->es->majorVersion() >= 5)
         {
             $textType = 'text';
+            $keywordType = 'keyword';
         }
         else
         {
             $textType = 'string';
+            $keywordType = 'string';
         }
 
-        $exactTextType = [
-            'type'     => $textType,
-            'analyzer' => 'sv_near_exact_analyzer',
-        ];
-        $ngramTextType = [
-            'type'     => $textType,
-            'analyzer' => 'sv_ngram_analyzer_index',
-            'search_analyzer' => 'sv_ngram_analyzer_search',
-        ];
 
-        $apply = function (array &$properties) use ($textType, $exactTextType, $ngramTextType) {
-            foreach ($properties as &$mdColumn)
+        $apply = function (array &$properties) use ($textType, $keywordType) {
+            foreach ($properties as $column => &$mdColumn)
             {
-                if ($mdColumn['type'] === $textType && !isset($mdColumn['index']))
+                if ($column === 'type')
                 {
-                    $mdColumn['fields']['exact'] = $exactTextType;
-                    $mdColumn['fields']['ngram'] = $ngramTextType;
+                    continue;
+                }
+
+                if ($mdColumn['type'] === $keywordType || ($mdColumn['index'] ?? '') === 'not_analyzed')
+                {
+                    $mdColumn['type'] = $textType;
+                    unset($mdColumn['index']);
+                    $mdColumn['fields']['exact'] = [
+                        'type' => $textType,
+                        'analyzer' => 'sv_keyword_near_exact',
+                    ];
+                    $mdColumn['fields']['ngram'] = [
+                        'type' => $textType,
+                        'analyzer' => 'sv_keyword_ngram',
+                        'search_analyzer' => 'sv_keyword_near_exact',
+                    ];
+                }
+                else if ($mdColumn['type'] === $textType)
+                {
+                    $mdColumn['fields']['exact'] = [
+                        'type' => $textType,
+                        'analyzer' => 'sv_text_near_exact',
+                    ];
+                    $mdColumn['fields']['ngram'] = [
+                        'type' => $textType,
+                        'analyzer' => 'sv_text_edge_ngram',
+                        'search_analyzer' => 'sv_text_near_exact',
+                    ];
                 }
             }
         };

@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\Service\Specialized;
 
 use XFES\Service\Optimizer;
+use function min, array_values;
 
 /**
  * Extends \XFES\Service\Analyzer
@@ -11,9 +12,9 @@ class Analyzer extends \XFES\Service\Analyzer
 {
     /** @var array */
     protected $ngramDefault = [
-        'type' => 'edgeNGram',
+        'type' => 'edge_ngram',
         'min_gram'    => 2,
-        'max_gram'    => 25,
+        'max_gram'    => 20,
         'token_chars' => [
             'letter',
             'digit',
@@ -34,9 +35,9 @@ class Analyzer extends \XFES\Service\Analyzer
         $this->singleType = $singleType;
         parent::__construct($app, $es);
 
-        if ($this->getEsApi()->majorVersion() >= 7)
+        if ($this->getEsApi()->majorVersion() < 7)
         {
-            $this->ngramDefault['type'] = 'edge_ngram';
+            $this->ngramDefault['type'] = 'edgeNGram';
         }
     }
 
@@ -50,29 +51,44 @@ class Analyzer extends \XFES\Service\Analyzer
         $result = parent::getAnalyzerFromConfig($config);
 
         // always generate analyzer configuration, even if it isn't used
-        $nearExactMatchAnalyzer = $xfDefault = $result['analysis']['analyzer']['default'];
-        foreach ($nearExactMatchAnalyzer['filter'] as $key => $value)
+        $nearExactMatchAnalyzer = $result['analysis']['analyzer']['default'];
+        $simpleFilter = $nearExactMatchAnalyzer['filter'];
+        foreach ($simpleFilter as $key => $value)
         {
             if ($value === 'xf_stop' || $value === 'xf_stemmer')
             {
-                unset($nearExactMatchAnalyzer['filter'][$key]);
+                unset($simpleFilter[$key]);
             }
         }
-        $result['analysis']['analyzer']['sv_near_exact_analyzer'] = $nearExactMatchAnalyzer;
+        $simpleFilter = array_values($simpleFilter);
 
-        $autoCompleteFilter = $nearExactMatchAnalyzer;
-        $autoCompleteFilter[] = 'sv_ngram_filter';
-        $result['analysis']['analyzer']['sv_ngram_analyzer_index'] = [
+        $edgeNgram = $this->getNgramFilter($config['sv_ngram'] ?? []);
+        $ngram = $edgeNgram;
+        $ngram['type'] = 'ngram';
+        $result['analysis']['filter']['sv_edge_ngram_filter'] = $edgeNgram;
+        $result['analysis']['tokenizer']['sv_ngram_tokenizer'] = $ngram;
+
+        $result['analysis']['analyzer']['sv_keyword_near_exact'] = [
+            'type'      => 'custom',
+            'tokenizer' => 'keyword',
+            'filter'    => $simpleFilter,
+        ];
+        $result['analysis']['analyzer']['sv_keyword_ngram'] = [
+            'type'      => 'custom',
+            'tokenizer' => 'sv_ngram_tokenizer',
+            'filter'    => $simpleFilter,
+        ];
+        $result['analysis']['analyzer']['sv_text_near_exact'] = [
             'type'      => 'custom',
             'tokenizer' => 'standard',
-            'filter'    => $autoCompleteFilter,
+            'filter'    => $simpleFilter,
         ];
-        $result['analysis']['analyzer']['sv_ngram_analyzer_search'] = [
+        $simpleFilter[] = 'sv_edge_ngram_filter';
+        $result['analysis']['analyzer']['sv_text_edge_ngram'] = [
             'type'      => 'custom',
             'tokenizer' => 'standard',
-            'filter'    => $xfDefault,
+            'filter'    => $simpleFilter,
         ];
-        $result['analysis']['filter']['sv_ngram_filter'] = $this->getNgramFilter($config['sv_ngram'] ?? []);
 
         if ($this->getEsApi()->majorVersion() >= 7)
         {
@@ -98,7 +114,7 @@ class Analyzer extends \XFES\Service\Analyzer
     {
         $currentConfig = parent::getConfigFromAnalyzer($analysis);
 
-        $ngramFilter = $analysis['filter']['sv_ngram_filter'] ?? null;
+        $ngramFilter = $analysis['filter']['sv_edge_ngram_filter'] ?? null;
         if (\is_array($ngramFilter))
         {
             $currentConfig['sv_ngram'] = $this->getNgramFilter($ngramFilter);
