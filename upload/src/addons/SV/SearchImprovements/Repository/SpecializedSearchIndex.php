@@ -15,9 +15,9 @@ use function strlen, strtolower, class_exists;
 
 class SpecializedSearchIndex extends Repository
 {
-    /** @var array<string,XenForoSearch>|null */
+    /** @var array<class-string,XenForoSearch>|null */
     protected $search = null;
-    /** @var array<string,\XF\Search\Data\AbstractData>|null */
+    /** @var array<class-string,\XF\Search\Data\AbstractData>|null */
     protected $handlers = null;
 
     protected function getIndexApi(string $contentType): Api
@@ -55,7 +55,7 @@ class SpecializedSearchIndex extends Repository
     /**
      * A key-value listings of specialized search handlers
      *
-     * @return array<string,string>
+     * @return array<string,class-string>
      */
     public function getSearchHandlerDefinitions(): array
     {
