@@ -1,0 +1,6 @@
+{
+    "from_class": "XFES\\Service\\Optimizer",
+    "to_class": "SV\\SearchImprovements\\XFES\\Service\\Optimizer",
+    "execute_order": 68380,
+    "active": true
+}

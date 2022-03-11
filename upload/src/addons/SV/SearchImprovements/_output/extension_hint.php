@@ -25,6 +25,7 @@ namespace SV\SearchImprovements\XFES\Search\Source
 
 namespace SV\SearchImprovements\XFES\Service
 {
+	class XFCP_Optimizer extends \XFES\Service\Optimizer {}
 	class XFCP_RetryFailed extends \XFES\Service\RetryFailed {}
 }
 
