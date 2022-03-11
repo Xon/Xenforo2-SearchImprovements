@@ -37,10 +37,7 @@ class Optimizer extends \XFES\Service\Optimizer
                 $xfConfigurer = $this->service('XFES:Configurer', null);
                 $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
 
-                foreach ($analyzer->getDefaultConfig() as $key => $value)
-                {
-                    $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
-                }
+                $this->seedFromMainIndex($analyzer, $xfConfigurer, $xfAnalyzerConfig, $analyzerConfig);
             }
             $settings = $analyzer->getAnalyzerFromConfig($analyzerConfig);
         }
@@ -55,6 +52,22 @@ class Optimizer extends \XFES\Service\Optimizer
         ];
 
         $this->es->createIndex($config);
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    protected function seedFromMainIndex(SpecializedAnalyzer $analyzer, \XFES\Service\Configurer $xfConfigurer, array $xfAnalyzerConfig, array &$analyzerConfig)
+    {
+        foreach ($analyzer->getDefaultConfig() as $key => $value)
+        {
+            $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
+        }
+
+        // force the minimum ngram size to a better default
+        $ngramConfig = $analyzer->getNgramFilter([]);
+        if (isset($analyzerConfig['sv_ess_ngram']['min_gram']) && $analyzerConfig['sv_ess_ngram']['min_gram'] < $ngramConfig['min_gram'])
+        {
+            $analyzerConfig['sv_ess_ngram']['min_gram'] = $ngramConfig['min_gram'];
+        }
     }
 
     protected function getBaseMapping(): array
