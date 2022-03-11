@@ -32,9 +32,7 @@ class RetryFailed extends XFCP_RetryFailed
 
     protected function svAllSpecializedRetries(float &$maxRunTime = null)
     {
-        /** @var SpecializedSearchIndex  $repo*/
-        $repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
-        $specializedContentTypes = $repo->getSearchHandlerDefinitions();
+        $specializedContentTypes = $this->getSpecializedSearchIndexRepo()->getSearchHandlerDefinitions();
 
         foreach($specializedContentTypes as $type => $handler)
         {
@@ -59,11 +57,9 @@ class RetryFailed extends XFCP_RetryFailed
     {
         /** @var \SV\SearchImprovements\XFES\Repository\IndexFailed $indexFailedRepo */
         $indexFailedRepo = $this->repository('XFES:IndexFailed');
-        /** @var SpecializedSearchIndex  $repo*/
-        $repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
 
         $es = $this->es;
-        $this->es = $repo->getSearchSource($type);
+        $this->es = $this->getSpecializedSearchIndexRepo()->getSearchSource($type);
         $indexFailedRepo->svSpecializedContentTypes = $type;
         try
         {
@@ -74,5 +70,13 @@ class RetryFailed extends XFCP_RetryFailed
             $indexFailedRepo->svSpecializedContentTypes = null;
             $this->es = $es;
         }
+    }
+
+    /**
+     * @return \XF\Mvc\Entity\Repository|SpecializedSearchIndex
+     */
+    protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
+    {
+        return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }

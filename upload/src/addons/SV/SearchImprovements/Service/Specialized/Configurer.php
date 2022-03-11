@@ -2,6 +2,9 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
+use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
+
 class Configurer extends \XFES\Service\Configurer
 {
     /** @var string */
@@ -38,8 +41,8 @@ class Configurer extends \XFES\Service\Configurer
 
     public function getAnalyzerConfig(): array
     {
-        /** @var Analyzer $analyzer */
-        $analyzer = $this->service('SV\SearchImprovements:Specialized\Analyzer', $this->singleType, $this->es);
+        /** @var SpecializedAnalyzer $analyzer */
+        $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
         return $analyzer->getCurrentConfig();
     }
 
@@ -47,12 +50,12 @@ class Configurer extends \XFES\Service\Configurer
     {
         $this->purgeIndex();
 
-        /** @var Analyzer $analyzer */
-        $analyzer = $this->service('SV\SearchImprovements:Specialized\Analyzer', $this->singleType, $this->es);
+        /** @var SpecializedAnalyzer $analyzer */
+        $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
         $analyzerDsl = $analyzer->getAnalyzerFromConfig($analyzerConfig);
 
-        /** @var Optimizer $optimizer */
-        $optimizer = $this->service('SV\SearchImprovements:Specialized\Optimizer', $this->singleType, $this->es);
+        /** @var SpecializedOptimizer $optimizer */
+        $optimizer = $this->service(SpecializedOptimizer::class, $this->singleType, $this->es);
         $optimizer->optimize($analyzerDsl);
     }
 }

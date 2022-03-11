@@ -2,6 +2,9 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
+use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
+
 /**
  * Extends \XFES\Service\Optimizer
  */
@@ -20,8 +23,8 @@ class Optimizer extends \XFES\Service\Optimizer
 
     public function optimize(array $settings = [], $updateConfig = false)
     {
-        /** @var Configurer $configurer */
-        $configurer = $this->service('SV\SearchImprovements:Specialized\Configurer', $this->singleType, $this->es);
+        /** @var SpecializedConfigurer $configurer */
+        $configurer = $this->service(SpecializedConfigurer::class, $this->singleType, $this->es);
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
@@ -30,8 +33,8 @@ class Optimizer extends \XFES\Service\Optimizer
             $xfConfigurer = $this->service('XFES:Configurer', null);
             $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
 
-            /** @var Analyzer $analyzer */
-            $analyzer = $this->service('SV\SearchImprovements:Specialized\Analyzer', $this->singleType, $this->es);
+            /** @var SpecializedAnalyzer $analyzer */
+            $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
             foreach($analyzer->getDefaultConfig() as $key => $value)
             {
                 $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
