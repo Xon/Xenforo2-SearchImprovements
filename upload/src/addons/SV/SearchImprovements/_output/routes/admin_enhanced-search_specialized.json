@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "enhanced-search",
+    "sub_name": "specialized",
+    "format": "specialized/:str<content_type>/",
+    "build_class": "",
+    "build_method": "",
+    "controller": "XFES:EnhancedSearch",
+    "context": "svSearchImprovements_xfes_indexes",
+    "action_prefix": "Specialized"
+}

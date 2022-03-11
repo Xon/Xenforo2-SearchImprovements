@@ -69,7 +69,7 @@ class Analyzer extends \XFES\Service\Analyzer
             'replacement' => '',
         ];
 
-        $edgeNgram = $this->getNgramFilter($config['sv_ngram'] ?? []);
+        $edgeNgram = $this->getNgramFilter($config['sv_ess_ngram'] ?? []);
         $result['analysis']['filter']['sv_text_edge_ngram_filter'] = $edgeNgram;
 
         // custom tokenizer
@@ -122,9 +122,9 @@ class Analyzer extends \XFES\Service\Analyzer
     {
         $defaultConfig = parent::getDefaultConfig();
 
-        if (!array_key_exists('sv_ngram', $defaultConfig))
+        if (!array_key_exists('sv_ess_ngram', $defaultConfig))
         {
-            $defaultConfig['sv_ngram'] = $this->getNgramDefault();
+            $defaultConfig['sv_ess_ngram'] = $this->getNgramDefault();
         }
 
         return $defaultConfig;
@@ -137,7 +137,7 @@ class Analyzer extends \XFES\Service\Analyzer
         $ngramFilter = $analysis['filter']['sv_text_edge_ngram_filter'] ?? null;
         if (is_array($ngramFilter))
         {
-            $currentConfig['sv_ngram'] = $this->getNgramFilter($ngramFilter);
+            $currentConfig['sv_ess_ngram'] = $this->getNgramFilter($ngramFilter);
         }
 
         return $currentConfig;

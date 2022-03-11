@@ -20,14 +20,14 @@ class SpecializedSearchIndex extends Repository
     /** @var array<class-string,\XF\Search\Data\AbstractData>|null */
     protected $handlers = null;
 
-    public function getIndexApi(string $contentType): Api
+    public function getIndexApi(string $contentType, array $config = []): Api
     {
         if (strlen($contentType) === 0)
         {
             throw new \LogicException('Expected content type');
         }
 
-        $config = \XF::app()->options()->xfesConfig ?? [];
+        $config = (\XF::app()->options()->xfesConfig ?? []) + $config;
 
         if (strlen($config['index'] ?? '') === 0)
         {

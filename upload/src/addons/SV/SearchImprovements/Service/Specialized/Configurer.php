@@ -5,6 +5,7 @@ namespace SV\SearchImprovements\Service\Specialized;
 use SV\SearchImprovements\Repository\SpecializedSearchIndex;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
+use function is_array;
 
 class Configurer extends \XFES\Service\Configurer
 {
@@ -13,11 +14,12 @@ class Configurer extends \XFES\Service\Configurer
 
     public function __construct(\XF\App $app, string $singleType, $config = null)
     {
+        $this->app = $app;
         $this->singleType = $singleType;
         $config = $config ?? [];
-        if ($config === null)
+        if (is_array($config))
         {
-            $this->es = $this->getSpecializedSearchIndexRepo()->getIndexApi($singleType);
+            $config = $this->getSpecializedSearchIndexRepo()->getIndexApi($singleType, $config ?? []);
         }
 
         parent::__construct($app, $config);

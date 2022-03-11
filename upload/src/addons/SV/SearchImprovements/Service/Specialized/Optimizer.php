@@ -159,4 +159,36 @@ class Optimizer extends \XFES\Service\Optimizer
 
         return $expectedMapping;
     }
+
+    public function getLiveMappingConfig()
+    {
+        try
+        {
+            $config = $this->es->getIndexInfo();
+        }
+        catch (\XFES\Elasticsearch\RequestException $e)
+        {
+            return true;
+        }
+        catch (\XFES\Elasticsearch\Exception $e)
+        {
+            return false;
+        }
+
+        if (!$config || empty($config['mappings']))
+        {
+            return true;
+        }
+
+        $liveMappings = $config['mappings'];
+        $mappingType = key($liveMappings);
+        if ($mappingType === '_doc')
+        {
+            // ES7 may not have an explicit type, so we may _doc as the type, whereas we're expecting "xf".
+            // When this happens, we won't be passing types into URLs, so we should be able to ignore it.
+            $liveMappings = [$this->es->getSingleTypeName() => $liveMappings['_doc']];
+        }
+
+        return $liveMappings;
+    }
 }

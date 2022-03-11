@@ -1,0 +1,9 @@
+{
+    "template": "xfes_optimize",
+    "description": "Make optimize multi-index aware",
+    "execution_order": 6838,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "link('enhanced-search/optimize')",
+    "replace": "link('enhanced-search/optimize', null, {'content_type':$contentType})"
+}

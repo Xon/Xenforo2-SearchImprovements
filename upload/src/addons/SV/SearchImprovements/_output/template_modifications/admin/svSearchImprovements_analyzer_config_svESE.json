@@ -1,0 +1,9 @@
+{
+    "template": "svESE_xfes_macros_analyzer_config",
+    "description": "Make ESE analyzer config multi-index aware",
+    "execution_order": 6838,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#<xf:checkboxrow>.*?sv_ess_exact\\]\\[title\\].*?apply_to_search.*?</xf:checkboxrow>#si",
+    "replace": "<xf:if is=\"!$__globals.contentType\">\n$0\n</xf:if>"
+}

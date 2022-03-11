@@ -1,0 +1,67 @@
+<xf:title>{{ phrase('admin_navigation.svSearchImprovements_xfes_indexes') }}</xf:title>
+
+<xf:if is="!$xf.options.xfesEnabled">
+	<div class="blockMessage blockMessage--important blockMessage--iconic">
+		{{ phrase('xfes_enhanced_search_not_currently_enabled') }}
+	</div>
+</xf:if>
+
+<xf:if is="!$version">
+	<div class="blockMessage blockMessage--error blockMessage--iconic">
+		{{ phrase('xfes_elasticsearch_server_could_not_be_reached') }}
+	</div>
+	<xf:elseif is="$testError is not empty" />
+	<div class="blockMessage blockMessage--error blockMessage--iconic">
+		{$testError}
+	</div>
+</xf:if>
+
+<div class="block-container">
+	<div class="block-body">
+		<xf:datalist data-xf-init="responsive-data-list">
+			<xf:datarow rowtype="header">
+				<xf:cell class="dataList-cell--min">{{ phrase('content_type') }}</xf:cell>
+				<xf:cell>{{ phrase('xfes_stats') }}</xf:cell>
+				<xf:cell>{{ phrase('xfes_optimization_required') }}</xf:cell>
+				<xf:cell class="dataList-cell--action">&nbsp;</xf:cell>
+			</xf:datarow>
+			<xf:foreach loop="$indexes" key="$contentType" value="$index">
+				<xf:datarow>
+					<xf:cell class="dataList-cell--min">{$index.phrase}</xf:cell>
+					<xf:cell>
+						<xf:if is="$index.stats">
+							<dl class="pairs pairs--columns pairs--fixedSmall">
+								<dt>{{ phrase('xfes_documents') }}</dt>
+								<dd>{$index.stats.docs.count|number} {{ parens($index.stats.store.size_in_bytes|file_size) }}</dd>
+							</dl>
+							<dl class="pairs pairs--columns pairs--fixedSmall">
+								<dt>{{ phrase('xfes_index_updates') }}</dt>
+								<dd>{$index.stats.indexing.index_total|number}</dd>
+							</dl>
+							<dl class="pairs pairs--columns pairs--fixedSmall">
+								<dt>{{ phrase('xfes_searches') }}</dt>
+								<dd>
+									{$index.stats.search.query_total|number}
+									<xf:if is="$index.stats.search.query_total">
+										{{ parens(phrase('xfes_x_milliseconds_average', {'time': number(($index.stats.search.query_time_in_millis + $index.stats.search.fetch_time_in_millis) / ($index.stats.search.query_total + $index.stats.search.fetch_total))})) }}
+									</xf:if>
+								</dd>
+							</dl>
+						</xf:if>
+					</xf:cell>
+					<xf:cell>
+						<xf:if is="$index.isOptimizable">
+							<xf:button href="{{ link('enhanced-search/optimize', null, {'content_type':$contentType}) }}" data-xf-click="overlay">{{ phrase('xfes_optimize_now') }}</xf:button>
+						<xf:else/>
+							{{ phrase('no') }}
+						</xf:if>
+					</xf:cell>
+					<xf:action href="{{ $contentType
+									 ? link('enhanced-search/specialized', {'content_type':$contentType})
+									 : link('enhanced-search')
+									 }}">{{ phrase('view') }}</xf:action>
+				</xf:datarow>
+			</xf:foreach>
+		</xf:datalist>
+	</div>
+</div>

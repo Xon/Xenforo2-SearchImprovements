@@ -1,0 +1,9 @@
+{
+    "template": "xfes_index",
+    "description": "Make enhanced search config page multi-index aware",
+    "execution_order": 68380,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#([\\t ]*<xf:button href=\"{{ link\\('enhanced-search/config'.*?</xf:button>)(.*?)([\\t ]*<xf:form action=\"{{ link\\('enhanced-search/options'.*?</xf:form>)#si",
+    "replace": "<xf:if is=\"!$contentType\">\n$1\n</xf:if>\n$2\n<xf:if is=\"!$contentType\">\n$3\n</xf:if>"
+}
