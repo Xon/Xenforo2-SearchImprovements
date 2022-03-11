@@ -8,8 +8,8 @@ use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigure
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply;
 use XF\Mvc\Reply\AbstractReply;
-use XF\Mvc\Reply\Redirect as RedirectReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Data\AbstractData;
 use XFES\Service\Stats as StatsService;
@@ -19,23 +19,58 @@ use XFES\Service\Stats as StatsService;
  */
 class EnhancedSearch extends XFCP_EnhancedSearch
 {
+    /** @var string */
+    protected $svShimContentType = '';
+
     public function preDispatch($action, ParameterBag $params)
     {
+        parent::preDispatch($action, $params);
+
         /** @var \SV\SearchImprovements\XF\Search\SearchPatch $search */
         $search = \XF::app()->search();
         $search->specializedIndexProxying = false;
-        parent::preDispatch($action, $params);
+
+        /** @var \SV\SearchImprovements\Repository\LinkBuilder $linkBuilderRepo */
+        $linkBuilderRepo = $this->repository('SV\SearchImprovements:LinkBuilder');
+        $linkBuilderRepo->hookRouteBuilder();
+
+        $contentType = $params->get('content_type');
+        if ($contentType)
+        {
+            $this->assertValidSpecializedContentType($contentType);
+            $this->request()->set('content_type', $contentType);
+        }
+
+        $contentType = $this->filter('content_type', 'str');
+        if ($contentType !== '')
+        {
+            $this->assertValidSpecializedContentType($contentType);
+            $this->svShimContentType = $contentType;
+            $linkBuilderRepo->setContentType($contentType);
+        }
     }
 
-    /** @var string */
-    protected $svShimContentType = '';
+    public function postDispatch($action, ParameterBag $params, Reply\AbstractReply &$reply)
+    {
+        if ($reply instanceof ViewReply)
+        {
+            $phrase = $this->svShimContentType !== ''
+                ? $this->app()->getContentTypePhrase($this->svShimContentType , true)
+                : \XF::phraseDeferred('svSearchImprovements_default_index');
+
+            $reply->setParam('contentTypePhrase', $phrase);
+            $reply->setParam('contentType', $this->svShimContentType);
+        }
+
+        parent::postDispatch($action, $params, $reply);
+    }
 
     public function actionIndexes(ParameterBag $params): AbstractReply
     {
         $contentType = (string)$params->get('content_type');
         if (\strlen($contentType) !== 0)
         {
-            return $this->actionSpecializedView($params);
+            return $this->actionSpecialized($params);
         }
 
         $this->setSectionContext('svSearchImprovements_xfes_indexes');
@@ -104,71 +139,10 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         return $this->view('', 'svSearchImprovements_xfes_indexes', $viewParams);
     }
 
-    public function actionOptimize()
-    {
-        $contentType = (string)$this->filter('content_type', 'str');
-        if ($contentType !== '')
-        {
-            $repo = $this->getSpecializedSearchIndexRepo();
-            $handler = $repo->getHandler($contentType, false);
-            if ($handler === null)
-            {
-                throw $this->exception($this->notFound());
-            }
-        }
-
-        $this->svShimContentType = $contentType;
-        try
-        {
-            $reply = parent::actionOptimize();
-
-            if ($reply instanceof ViewReply)
-            {
-                $phrase = $this->svShimContentType !== ''
-                    ? $this->app()->getContentTypePhrase($this->svShimContentType , true)
-                    : \XF::phraseDeferred('svSearchImprovements_default_index');
-
-                $reply->setParam('contentTypePhrase', $phrase);
-                $reply->setParam('contentType', $this->svShimContentType);
-            }
-            else if ($reply instanceof RedirectReply &&
-                     $this->svShimContentType !== '' &&
-                     $reply->getUrl() === $this->buildLink('enhanced-search', null, ['reindex' => 1]))
-            {
-                $reply->setUrl($this->buildLink('enhanced-search/specialized', ['content_type' => $this->svShimContentType], ['reindex' => 1]));
-            }
-
-            return $reply;
-        }
-        finally
-        {
-            $this->svShimContentType = '';
-        }
-    }
-
+    /** @noinspection PhpUnusedParameterInspection */
     public function actionSpecialized(ParameterBag $params): AbstractReply
     {
-        $handler = $this->assertValidSpecializedContentType($params->get('content_type'));
-        $this->svShimContentType = $handler->getContentType();
-        try
-        {
-            $reply = $this->actionIndex();
-            if ($reply instanceof ViewReply)
-            {
-                $phrase = $this->svShimContentType !== ''
-                    ? $this->app()->getContentTypePhrase($this->svShimContentType , true)
-                    : \XF::phraseDeferred('svSearchImprovements_default_index');
-
-                $reply->setParam('contentTypePhrase', $phrase);
-                $reply->setParam('contentType', $this->svShimContentType);
-            }
-
-            return $reply;
-        }
-        finally
-        {
-            $this->svShimContentType = '';
-        }
+        return $this->actionIndex();
     }
 
     /**
@@ -240,6 +214,10 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             throw $this->exception($this->notFound());
         }
+
+        /** @var \SV\SearchImprovements\Repository\LinkBuilder $linkBuilderRepo */
+        $linkBuilderRepo = $this->repository('SV\SearchImprovements:LinkBuilder');
+        $linkBuilderRepo->setContentType($contentType);
 
         return $handler;
     }
