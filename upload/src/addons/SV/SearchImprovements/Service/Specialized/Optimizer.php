@@ -28,16 +28,19 @@ class Optimizer extends \XFES\Service\Optimizer
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
-
-            /** @var \XFES\Service\Configurer $xfConfigurer */
-            $xfConfigurer = $this->service('XFES:Configurer', null);
-            $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
-
             /** @var SpecializedAnalyzer $analyzer */
             $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
-            foreach($analyzer->getDefaultConfig() as $key => $value)
+            // seed config from the main index
+            if ($this->es->indexExists())
             {
-                $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
+                /** @var \XFES\Service\Configurer $xfConfigurer */
+                $xfConfigurer = $this->service('XFES:Configurer', null);
+                $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
+
+                foreach ($analyzer->getDefaultConfig() as $key => $value)
+                {
+                    $analyzerConfig[$key] = $xfAnalyzerConfig[$key] ?? $value;
+                }
             }
             $settings = $analyzer->getAnalyzerFromConfig($analyzerConfig);
         }
