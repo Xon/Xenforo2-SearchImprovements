@@ -24,25 +24,29 @@ Elasticsearch only features:
     - In order to search for any of these special characters, they will need to be escaped with \.
 - "Specialized index" support
     - Specialized search index allows generating single-purpose elastic search indexes while re-using as much XF search infrastructure as possible
-      Elasticsearch index is more akin to an SQL table than an entire database, so for very specific tasks a single purpose search index works better
-    - Implementation bits;
-        - A XenForo search handler must implement; `\SV\SearchImprovements\Search\Specialized\SpecializedData`
-            - This handler really shouldn't be registered with `search_handler_class` content type field.
-        - The following content type fields must be implemented;
-          - `specialized_search_handler_class`
-          - `entity`
+      Elasticsearch index is more akin to an SQL table than an entire database, so for very specific tasks a single purpose search index works better.
+      A separate index also allows changing indexing properties and re-indexing just that one index without impacting the main search index
+    - Implementation of a specialized index notes;
+      At the core, a XenForo search handler is used to drive the functionality.
+        - The search handler should implement the interface `\SV\SearchImprovements\Search\Specialized\SpecializedData`
+        - Use the types `MetadataStructure::KEYWORD` or `MetadataStructure::STR` fields in `setupMetadataStructure`.
+          These types will be rewritten to add `.exact` & `.ngram` subfields. To skip this pass `['skip-rewrite' => true]` to the MetadataStructure::addField's 3rd argument.
+            - `MetadataStructure::KEYWORD` - shortish text which is semi-structured such as tags or usernames
+            - `MetadataStructure::STR` - Arbitrary text which uses phrases of text
+        - Register the search handler with the following content type fields
+            - `specialized_search_handler_class`
+            - `entity`
+        - This handler really shouldn't be registered with `search_handler_class` content type field.
         - Add the behavior `SV\SearchImprovements:SpecializedIndexable` to the entity.
-        - Add `MetadataStructure::KEYWORD` or `MetadataStructure::STR` fields in `setupMetadataStructure`. 
-           - These fields will be rewritten to add .exact & .ngram subfields. To skip this pass.
-           - `MetadataStructure::KEYWORD` - shortish text which is semi-structured such as tags or usernames
-           - `MetadataStructure::STR` - Arbitrary text which uses phrases of text
+
+## Specialized index implementation examples
 ```php
 public static function getStructure(Structure $structure)
 {
 ...
     $structure->behaviors['SV\SearchImprovements:SpecializedIndexable'] = [
-        'content_type' => 'sv_tag',
-        'checkForUpdates' => ['tag'],
+        'content_type' => 'myContentType',
+        'checkForUpdates' => ['myField','description'],
     ];
 ...
 }
@@ -50,29 +54,20 @@ public static function getStructure(Structure $structure)
 public function setupMetadataStructure(MetadataStructure $structure)
 {
     // this field will be rewritten for querying with getQueryForSpecializedSearch
-    $structure->addField('tag', MetadataStructure::KEYWORD);
+    $structure->addField('myField', MetadataStructure::KEYWORD);
     // skip rewriting
     $structure->addField('description', MetadataStructure::STR, ['skip-rewrite' => true]);
 }
 ```
 
-Usage example;
+## Specialized index usage example
 ```php
 /** @var SpecializedSearchIndex $repo */
 $repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
-$query = $repo->getQueryForSpecializedSearch('sv_tag');
-$query->matchQuery($q, ['tag'])
+$query = $repo->getQueryForSpecializedSearch('myContentType');
+$query->matchQuery($q, ['myField'])
       ->withNgram()
       ->withExact();
-$tags = $repo->executeSearch($query, $maxResults)->getResultsData();
-$results = [];
-foreach ($tags AS $tag)
-{
-    $results[] = [
-        'id' => $tag->tag,
-        'text' => $tag->tag,
-        'q' => $q
-    ];
-}
+$myEntities = $repo->executeSearch($query, $maxResults)->getResultsData();
   ```
   
