@@ -59,7 +59,7 @@ class RetryFailed extends XFCP_RetryFailed
         $indexFailedRepo = $this->repository('XFES:IndexFailed');
 
         $es = $this->es;
-        $this->es = $this->getSpecializedSearchIndexRepo()->getSearchSource($type);
+        $this->es = $this->getSpecializedSearchIndexRepo()->getIndexApi($type);
         $indexFailedRepo->svSpecializedContentTypes = $type;
         try
         {

@@ -20,7 +20,7 @@ class SpecializedSearchIndex extends Repository
     /** @var array<class-string,\XF\Search\Data\AbstractData>|null */
     protected $handlers = null;
 
-    protected function getIndexApi(string $contentType): Api
+    public function getIndexApi(string $contentType): Api
     {
         if (strlen($contentType) === 0)
         {
@@ -50,7 +50,6 @@ class SpecializedSearchIndex extends Repository
 
         return $api;
     }
-
 
     /**
      * A key-value listings of specialized search handlers
