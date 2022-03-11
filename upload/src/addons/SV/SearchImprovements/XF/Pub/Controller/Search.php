@@ -8,6 +8,7 @@ namespace SV\SearchImprovements\XF\Pub\Controller;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
+use function strlen;
 
 /**
  * Extends \XF\Pub\Controller\Search
@@ -19,7 +20,9 @@ class Search extends XFCP_Search
 
     public function preDispatch($action, ParameterBag $params)
     {
-        \XF::app()->search()->specializedIndexProxying = false;
+        /** @var \SV\SearchImprovements\XF\Search\SearchPatch $search */
+        $search = \XF::app()->search();
+        $search->specializedIndexProxying = false;
         parent::preDispatch($action, $params);
     }
 

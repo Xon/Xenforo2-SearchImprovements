@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\XFES\Service;
 
 use SV\SearchImprovements\Repository\SpecializedSearchIndex;
-use function microtime,count;
+use function microtime;
 
 /**
  * Extends \XFES\Service\RetryFailed

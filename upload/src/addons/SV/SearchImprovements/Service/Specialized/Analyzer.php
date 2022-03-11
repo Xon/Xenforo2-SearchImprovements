@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\Service\Specialized;
 
 use XFES\Service\Optimizer;
-use function array_values;
+use function array_values, array_merge, array_key_exists, is_array, array_replace;
 
 /**
  * Extends \XFES\Service\Analyzer
@@ -122,7 +122,7 @@ class Analyzer extends \XFES\Service\Analyzer
     {
         $defaultConfig = parent::getDefaultConfig();
 
-        if (!\array_key_exists('sv_ngram', $defaultConfig))
+        if (!array_key_exists('sv_ngram', $defaultConfig))
         {
             $defaultConfig['sv_ngram'] = $this->getNgramDefault();
         }
@@ -135,7 +135,7 @@ class Analyzer extends \XFES\Service\Analyzer
         $currentConfig = parent::getConfigFromAnalyzer($analysis);
 
         $ngramFilter = $analysis['filter']['sv_text_edge_ngram_filter'] ?? null;
-        if (\is_array($ngramFilter))
+        if (is_array($ngramFilter))
         {
             $currentConfig['sv_ngram'] = $this->getNgramFilter($ngramFilter);
         }
@@ -146,7 +146,7 @@ class Analyzer extends \XFES\Service\Analyzer
     public function getNgramFilter(array $ngramVars) : array
     {
         $defaultNgram = $this->getNgramDefault();
-        $ngramVars = \array_replace($defaultNgram, $ngramVars);
+        $ngramVars = array_replace($defaultNgram, $ngramVars);
 
         $sizeSanitizer = function ($size, int $default) {
             $finalSize = (int)$size;

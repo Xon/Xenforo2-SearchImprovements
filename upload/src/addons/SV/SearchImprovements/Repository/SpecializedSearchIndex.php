@@ -6,12 +6,12 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Search\Specialized\Source as SpecializedSource;
-use \SV\SearchImprovements\Search\Specialized\SpecializedData;
+use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\XFES\Elasticsearch\Api;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Data\AbstractData;
 use XF\Search\Search as XenForoSearch;
-use function strlen, strtolower, class_exists;
+use function strlen, strtolower, class_exists, is_array, count, max;
 
 class SpecializedSearchIndex extends Repository
 {

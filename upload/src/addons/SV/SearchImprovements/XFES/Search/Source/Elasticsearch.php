@@ -8,8 +8,7 @@ namespace SV\SearchImprovements\XFES\Search\Source;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
-
-use function count, floatval, is_array, array_merge;
+use function str_replace, count, floatval, is_array, array_merge, is_callable;
 
 /**
  * Class Elasticsearch
@@ -177,7 +176,7 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     public function weightByContentType(Query $query, array &$dsl)
     {
-        $forceContentWeighting = \is_callable([$query, 'isForceContentWeighting'])
+        $forceContentWeighting = is_callable([$query, 'isForceContentWeighting'])
             ? $query->isForceContentWeighting()
             : false;
         if (!$forceContentWeighting)

@@ -103,7 +103,7 @@ class Optimizer extends \XFES\Service\Optimizer
         }
 
         $apply = function (array &$properties) use ($textType, $keywordType) {
-            foreach ($properties as $column => &$mdColumn)
+            foreach ($properties as &$mdColumn)
             {
                 $skipRewrite = (bool)($mdColumn['skip-rewrite'] ?? false);
                 unset($mdColumn['skip-rewrite']);
