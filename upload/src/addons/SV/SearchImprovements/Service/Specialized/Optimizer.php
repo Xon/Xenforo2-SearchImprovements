@@ -31,7 +31,7 @@ class Optimizer extends \XFES\Service\Optimizer
             /** @var SpecializedAnalyzer $analyzer */
             $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
             // seed config from the main index
-            if ($this->es->indexExists())
+            if (!$this->es->indexExists())
             {
                 /** @var \XFES\Service\Configurer $xfConfigurer */
                 $xfConfigurer = $this->service('XFES:Configurer', null);
