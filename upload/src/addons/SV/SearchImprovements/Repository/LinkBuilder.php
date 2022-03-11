@@ -90,7 +90,11 @@ class LinkBuilder extends Repository
         \XF\Mvc\Router $router
     )
     {
-        if ($this->contentType !== '' && $this->contentType !== null &&
+        $action = \strtolower($action);
+
+        if (($action !== '' || !empty($params['reindex'])) &&
+            $action !== 'indexes' &&
+            $this->contentType !== '' && $this->contentType !== null &&
             empty($data['content_type']) && empty($params['content_type']))
         {
             $params['content_type'] = $this->contentType;
