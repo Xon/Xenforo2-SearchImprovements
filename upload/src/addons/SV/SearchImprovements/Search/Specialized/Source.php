@@ -89,51 +89,63 @@ class Source extends Elasticsearch
     /** @noinspection PhpUnusedParameterInspection */
     protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, int $maxResults, array &$filters, array &$filtersNot): array
     {
-
-
-        // generate actual search field list
-        $simpleFieldList = $query->textFields();
-        $fieldBoost = $query->fieldBoost();
-
         $withNgram = $query->isWithNgram();
         $ngramBoost = $query->ngramBoost();
-
         $withExact = $query->isWithExact();
         $exactBoost = $query->exactBoost();
-
-        $fields = [];
-        foreach ($simpleFieldList as $field)
-        {
-            $fields[] = $field . $fieldBoost;
-            if ($withNgram)
-            {
-                $fields[] = $field . '.ngram' . $ngramBoost;
-            }
-            if ($withExact)
-            {
-                $fields[] = $field . '.exact' . $exactBoost;
-            }
-        }
-
         $multiMatchType = $query->matchQueryType();
         $fuzziness = $query->fuzzyMatching();
-        // multi-match creates multiple match statements and bolts them together depending on the 'type' field
-        // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#
-        $queryDsl = [
-            'type'     => $multiMatchType,
-            'query'    => $query->text(),
-            'fields'   => $fields,
-            'operator' => 'or',
-            //'operator' => count($fields) === 1 ? 'and' : 'or',
-        ];
-        if (strlen($fuzziness) !== 0)
+
+        $dsl = [];
+        foreach($query->textMatches() as $textMatch)
         {
-            $queryDsl['fuzziness'] = $fuzziness;
-            $queryDsl['max_expansions'] = min($maxResults, 50);
+            list($text, $simpleFieldList, $fieldBoost) = $textMatch;
+            // generate actual search field list
+            $fields = [];
+            foreach ($simpleFieldList as $field)
+            {
+                $fields[] = $field . $fieldBoost;
+                if ($withNgram)
+                {
+                    $fields[] = $field . '.ngram' . $ngramBoost;
+                }
+                if ($withExact)
+                {
+                    $fields[] = $field . '.exact' . $exactBoost;
+                }
+            }
+
+            // multi-match creates multiple match statements and bolts them together depending on the 'type' field
+            // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#
+            $queryDsl = [
+                'type'     => $multiMatchType,
+                'query'    => $text,
+                'fields'   => $fields,
+                'operator' => 'or',
+                //'operator' => count($fields) === 1 ? 'and' : 'or',
+            ];
+            if (strlen($fuzziness) !== 0)
+            {
+                $queryDsl['fuzziness'] = $fuzziness;
+                $queryDsl['max_expansions'] = min($maxResults, 50);
+            }
+            $dsl[] = ['multi_match' => $queryDsl];
+        }
+
+        if (count($dsl) === 0)
+        {
+            return ['match_all' => (object)[]];
+        }
+        if (count($dsl) === 1)
+        {
+            return reset($dsl);
         }
 
         return [
-            'multi_match' => $queryDsl,
+            'bool' => [
+                'should' => $dsl,
+                'minimum_should_match' => 1,
+            ]
         ];
     }
 

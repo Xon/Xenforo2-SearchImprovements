@@ -9,16 +9,14 @@ use XF\Search\Query\SqlConstraint;
  */
 class Query extends \XF\Search\Query\Query
 {
-    /** @var string */
-    protected $text = '';
-    /** @var string[] */
-    protected $textFields = [];
+    /** @var array */
+    protected $textMatches = [];
     /** @var bool */
     protected $withNgram = false;
     /** @var bool */
     protected $withExact = false;
     /** @var string */
-    protected $fieldBoost = '^1.5';
+    protected $defaultFieldBoost = '^1.5';
     /** @var string */
     protected $exactBoost = '^2';
     /** @var string */
@@ -39,37 +37,35 @@ class Query extends \XF\Search\Query\Query
         $this->types = [];
     }
 
-    public function text(): string
-    {
-        return $this->text;
-    }
 
-    public function textFields(): array
+    public function textMatches(): array
     {
-        return $this->textFields;
+        return $this->textMatches;
     }
 
     /**
+     * Preform a text match to compute sort scoring
+     *
      * @param string      $text
      * @param array       $fields
      * @param string|null $boost
      * @return $this
      */
-    public function matchQuery(string $text, array $fields, string $boost = null): self
+    public function matchText(string $text, array $fields, string $boost = null): self
     {
-        $this->text = $text;
-        $this->textFields = $fields;
-        if ($boost !== null)
-        {
-            $this->fieldBoost = $boost;
-        }
+        $this->textMatches[] = [$text, $fields, $boost ?? $this->defaultFieldBoost];
 
         return $this;
     }
 
-    public function fieldBoost(): string
+    /**
+     * Use matchText instead
+     *
+     * @deprecated
+     */
+    public function matchQuery(string $text, array $fields, string $boost = null): self
     {
-        return $this->fieldBoost;
+        return $this->matchText($text, $fields, $boost);
     }
 
     public function withMatchQueryType(string $matchQueryType): self
