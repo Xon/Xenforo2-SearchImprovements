@@ -68,11 +68,9 @@ class Configurer extends \XFES\Service\Configurer
         $optimizer->optimize($analyzerDsl);
     }
 
-    /**
-     * @return \XF\Mvc\Entity\Repository|SpecializedSearchIndex
-     */
     protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }

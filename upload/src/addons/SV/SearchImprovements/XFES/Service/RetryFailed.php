@@ -72,11 +72,9 @@ class RetryFailed extends XFCP_RetryFailed
         }
     }
 
-    /**
-     * @return \XF\Mvc\Entity\Repository|SpecializedSearchIndex
-     */
     protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }
