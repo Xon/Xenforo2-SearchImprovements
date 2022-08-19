@@ -15,6 +15,12 @@ class Optimizer extends \XFES\Service\Optimizer
     /** @var bool  */
     protected $ngramStripeWhiteSpace = true;
 
+    protected function ngramStripWhiteSpace(bool $value = true): self
+    {
+        $this->ngramStripeWhiteSpace = $value;
+        return $this;
+    }
+
     public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
     {
         $this->singleType = $singleType;
@@ -96,7 +102,7 @@ class Optimizer extends \XFES\Service\Optimizer
         return $mapping;
     }
 
-    public function getExpectedMappingConfig()
+    public function getExpectedMappingConfig(): array
     {
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $this->app->search()->specializedTypeFilter = $this->singleType;
@@ -130,6 +136,8 @@ class Optimizer extends \XFES\Service\Optimizer
                 {
                     continue;
                 }
+                $stripeWhitespace = (bool)($mdColumn['stripe-whitespace-from-exact'] ?? false);
+                unset($mdColumn['stripe-whitespace-from-exact']);
 
                 if ($mdColumn['type'] === $keywordType || ($mdColumn['index'] ?? '') === 'not_analyzed')
                 {
@@ -137,7 +145,7 @@ class Optimizer extends \XFES\Service\Optimizer
                     unset($mdColumn['index']);
                     $mdColumn['fields']['exact'] = [
                         'type' => $textType,
-                        'analyzer' => 'sv_near_exact',
+                        'analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,
@@ -149,7 +157,7 @@ class Optimizer extends \XFES\Service\Optimizer
                 {
                     $mdColumn['fields']['exact'] = [
                         'type' => $textType,
-                        'analyzer' => 'sv_near_exact',
+                        'analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,

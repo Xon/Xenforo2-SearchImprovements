@@ -91,6 +91,14 @@ class Analyzer extends \XFES\Service\Analyzer
             'tokenizer' => 'standard',
             'filter'    => $simpleFilter,
         ];
+        $result['analysis']['analyzer']['sv_near_exact_no_whitespace'] = [
+            'type'      => 'custom',
+            'char_filter' => [
+                'sv_strip_white_space',
+            ],
+            'tokenizer' => 'standard',
+            'filter'    => $simpleFilter,
+        ];
         $result['analysis']['analyzer']['sv_keyword_ngram'] = [
             'type'      => 'custom',
             'tokenizer' => 'sv_keyword_ngram_tokenizer',
