@@ -108,6 +108,7 @@ class Optimizer extends \XFES\Service\Optimizer
         $this->app->search()->specializedTypeFilter = $this->singleType;
         try
         {
+            $typeHandler = $this->app->search()->getValidHandlers()[$this->singleType] ?? null;
             $expectedMapping = parent::getExpectedMappingConfig();
         }
         finally
@@ -127,8 +128,10 @@ class Optimizer extends \XFES\Service\Optimizer
             $keywordType = 'string';
         }
 
-        $apply = function (array &$properties) use ($textType, $keywordType) {
-            foreach ($properties as &$mdColumn)
+        $mdConfig = $typeHandler !== null ? $typeHandler->getMetadataStructure() : [];
+
+        $apply = function (array &$properties) use ($textType, $keywordType, $mdConfig) {
+            foreach ($properties as $key => &$mdColumn)
             {
                 $skipRewrite = (bool)($mdColumn['skip-rewrite'] ?? false);
                 unset($mdColumn['skip-rewrite']);
@@ -136,8 +139,14 @@ class Optimizer extends \XFES\Service\Optimizer
                 {
                     continue;
                 }
-                $stripeWhitespace = (bool)($mdColumn['stripe-whitespace-from-exact'] ?? false);
-                unset($mdColumn['stripe-whitespace-from-exact']);
+
+                $fullConfig = $mdConfig[$key] ?? [];
+                $skipRewrite = (bool)($fullConfig['skip-rewrite'] ?? false);
+                if ($skipRewrite)
+                {
+                    continue;
+                }
+                $stripeWhitespace = (bool)($fullConfig['stripe-whitespace-from-exact'] ?? false);
 
                 if ($mdColumn['type'] === $keywordType || ($mdColumn['index'] ?? '') === 'not_analyzed')
                 {
