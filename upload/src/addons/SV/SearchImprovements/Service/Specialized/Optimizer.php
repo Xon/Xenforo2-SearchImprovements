@@ -159,7 +159,7 @@ class Optimizer extends \XFES\Service\Optimizer
                     $mdColumn['fields']['ngram'] = [
                         'type' => $textType,
                         'analyzer' => $this->ngramStripeWhiteSpace ? 'sv_keyword_ngram_no_whitespace' : 'sv_keyword_ngram',
-                        'search_analyzer' => 'sv_near_exact',
+                        'search_analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                 }
                 else if ($mdColumn['type'] === $textType)
