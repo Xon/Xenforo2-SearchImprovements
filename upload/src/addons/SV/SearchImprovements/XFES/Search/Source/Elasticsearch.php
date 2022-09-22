@@ -8,7 +8,7 @@ namespace SV\SearchImprovements\XFES\Search\Source;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
-use function str_replace, count, floatval, is_array, array_merge, is_callable;
+use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge, is_callable;
 
 /**
  * Class Elasticsearch
@@ -87,10 +87,11 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        $validTypes = array_fill_keys($types, true);
         $skipContentTypes = [];
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
-            if (!$weight)
+            if (array_key_exists($contentType, $validTypes) && !$weight)
             {
                 $skipContentTypes[] = $contentType;
             }
@@ -201,11 +202,15 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        $validTypes = array_fill_keys($query->getTypes(), true);
         $functions = [];
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
-            $functions = array_merge($functions, $this->expandContentTypeWeighting($isSingleTypeIndex, $contentType, $weight));
+            if (array_key_exists($contentType, $validTypes))
+            {
+                $functions = array_merge($functions, $this->expandContentTypeWeighting($isSingleTypeIndex, $contentType, $weight));
+            }
         }
 
         if (!$functions)
