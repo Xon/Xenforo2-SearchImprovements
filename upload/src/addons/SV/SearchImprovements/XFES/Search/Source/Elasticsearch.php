@@ -87,7 +87,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $validTypes = array_fill_keys($types, true);
+        $validTypes = array_fill_keys($types ?? [], true);
         $skipContentTypes = [];
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
@@ -202,7 +202,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $validTypes = array_fill_keys($query->getTypes(), true);
+        $validTypes = array_fill_keys($query->getTypes() ?? [], true);
         $functions = [];
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
