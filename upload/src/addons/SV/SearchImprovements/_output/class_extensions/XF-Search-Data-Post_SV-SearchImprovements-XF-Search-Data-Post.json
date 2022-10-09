@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Search\\Data\\Post",
+    "to_class": "SV\\SearchImprovements\\XF\\Search\\Data\\Post",
+    "execute_order": 1,
+    "active": true
+}

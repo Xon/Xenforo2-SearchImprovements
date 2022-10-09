@@ -46,6 +46,11 @@ namespace SV\SearchImprovements\XF\Pub\Controller
 	class XFCP_Search extends \XF\Pub\Controller\Search {}
 }
 
+namespace SV\SearchImprovements\XF\Search\Data
+{
+	class XFCP_Post extends \XF\Search\Data\Post {}
+}
+
 namespace SV\SearchImprovements\XF\Search\Query
 {
 	class XFCP_KeywordQuery extends \XF\Search\Query\KeywordQuery {}
