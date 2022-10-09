@@ -45,7 +45,6 @@ class SpecializedSearchIndex extends Repository
         $config['index'] = $config['index'] . '_' . $contentType;
 
         /** @var Api $api */
-        /** @noinspection PhpUnnecessaryLocalVariableInspection */
         $api = \XFES\Listener::getElasticsearchApi($config);
 
         return $api;
@@ -67,7 +66,6 @@ class SpecializedSearchIndex extends Repository
 
         $class = \XF::extendClass(SpecializedSource::class);
         /** @var SpecializedSource $source */
-        /** @noinspection PhpUnnecessaryLocalVariableInspection */
         $source = new $class($es);
 
         return $source;

@@ -2,8 +2,6 @@
 
 namespace SV\SearchImprovements\Repository;
 
-use XF\Entity\ReportComment;
-use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 
 /**

@@ -1,8 +1,9 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XFES\Service;
-
-
 
 /**
  * Extends \XFES\Service\Optimizer

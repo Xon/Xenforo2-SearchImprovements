@@ -154,7 +154,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         if ($this->svShimContentType !== '')
         {
             /** @var SpecializedConfigurer $service */
-            /** @noinspection PhpUnnecessaryLocalVariableInspection */
             $service = $this->service(SpecializedConfigurer::class, $this->svShimContentType, $config);
 
             return $service;
@@ -173,7 +172,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             $es = $es ?: $this->getSpecializedSearchIndexRepo()->getIndexApi($this->svShimContentType);
             /** @var SpecializedOptimizer $service */
-            /** @noinspection PhpUnnecessaryLocalVariableInspection */
             $service = $this->service(SpecializedOptimizer::class, $this->svShimContentType, $es);
 
             return $service;
@@ -192,7 +190,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             $es = $es ?: $this->getSpecializedSearchIndexRepo()->getIndexApi($this->svShimContentType);
             /** @var SpecializedAnalyzer $service */
-            /** @noinspection PhpUnnecessaryLocalVariableInspection */
             $service = $this->service(SpecializedAnalyzer::class, $this->svShimContentType, $es);
 
             return $service;
