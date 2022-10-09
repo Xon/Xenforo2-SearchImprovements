@@ -24,9 +24,9 @@ class Query extends \XF\Search\Query\Query
     protected $ngramBoost = '';
     /**  @var string */
     protected $fuzziness = '';
-    //protected $fuzziness = 'AUTO:0,5';
+    //protected $fuzziness = 'AUTO:0,2';
     /** @var string */
-    protected $matchQueryType = 'most_fields'; //'best_fields';
+    protected $matchQueryType = 'best_fields';//'most_fields'
 
 
     public function __construct(\XF\Search\Search $search, \XF\Search\Data\AbstractData $handler)
