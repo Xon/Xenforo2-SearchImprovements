@@ -2,9 +2,10 @@
 
 namespace SV\SearchImprovements\XF\Search\Query;
 
-use XF\Search\Query\MetadataConstraint;
+use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\SqlConstraint;
 use XF\Search\Query\TableReference;
+use XFES\Search\Source\Elasticsearch;
 
 /**
  * Class RangeMetadataConstraint
@@ -67,7 +68,7 @@ class RangeMetadataConstraint extends AbstractExtendedMetadataConstraint
     }
 
     /**
-     * @return null|SqlConstraint
+     * @return null|SqlConstraint|SqlConstraint[]
      */
     public function asSqlConstraint()
     {
@@ -97,20 +98,21 @@ class RangeMetadataConstraint extends AbstractExtendedMetadataConstraint
     }
 
     /**
-     * @param MetadataConstraint $metadata
-     * @param array              $filters
-     * @param array              $filtersNot
+     * @param Elasticsearch|MetadataSearchEnhancements $source
+     * @param array         $filters
+     * @param array         $filtersNot
      */
-    public function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
+    public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        $values = $metadata->getValues();
+        $key = $this->getKey();
+        $values = $this->getValues();
 
-        switch ($metadata->getMatchType())
+        switch ($this->getMatchType())
         {
             case self::MATCH_LESSER:
                 $filters[] = [
                     'range' => [
-                        $metadata->getKey() => [
+                        $key => [
                             "lte" => $values[0],
                         ]
                     ]
@@ -120,7 +122,7 @@ class RangeMetadataConstraint extends AbstractExtendedMetadataConstraint
             case self::MATCH_GREATER:
                 $filters[] = [
                     'range' => [
-                        $metadata->getKey() => [
+                        $key => [
                             "gte" => $values[0],
                         ]
                     ]
@@ -130,7 +132,7 @@ class RangeMetadataConstraint extends AbstractExtendedMetadataConstraint
             case self::MATCH_BETWEEN:
                 $filters[] = [
                     'range' => [
-                        $metadata->getKey() => [
+                        $key => [
                             "lte" => $values[0],
                             "gte" => $values[1],
                         ]

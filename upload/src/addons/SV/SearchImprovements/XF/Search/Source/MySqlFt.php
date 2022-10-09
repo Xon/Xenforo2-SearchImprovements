@@ -3,9 +3,9 @@
 namespace SV\SearchImprovements\XF\Search\Source;
 
 use SV\SearchImprovements\XF\Search\Query\AbstractExtendedMetadataConstraint;
-use SV\SearchImprovements\XF\Search\Query\NestedMetadataConstraint;
-use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
 use XF\Search\Query\KeywordQuery;
+use XF\Search\Query\SqlConstraint;
+use function is_array;
 
 class MySqlFt extends XFCP_MySqlFt
 {
@@ -27,7 +27,15 @@ class MySqlFt extends XFCP_MySqlFt
             {
                 unset($constraints[$key]);
                 $sqlConstraint = $constraint->asSqlConstraint();
-                if ($sqlConstraint !== null)
+                if (is_array($sqlConstraint))
+                {
+                    $sqlConstraints = $sqlConstraint;
+                    foreach ($sqlConstraints as $sqlConstraint)
+                    {
+                        $query->withSql($sqlConstraint);
+                    }
+                }
+                else if ($sqlConstraint instanceof SqlConstraint)
                 {
                     $query->withSql($sqlConstraint);
                 }

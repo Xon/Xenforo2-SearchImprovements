@@ -16,12 +16,17 @@ trait MetadataSearchEnhancements
     {
         if ($metadata instanceof AbstractExtendedMetadataConstraint)
         {
-            $metadata->applyMetadataConstraint($filters, $filtersNot);
+            $metadata->applyMetadataConstraint($this, $filters, $filtersNot);
 
             return;
         }
 
         /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::applyMetadataConstraint($metadata, $filters, $filtersNot);
+    }
+
+    public function svApplyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
+    {
+        $this->applyMetadataConstraint($metadata, $filters, $filtersNot);
     }
 }
