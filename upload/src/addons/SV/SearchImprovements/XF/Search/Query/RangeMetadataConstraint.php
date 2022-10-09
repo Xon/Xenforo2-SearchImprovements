@@ -11,7 +11,7 @@ use XF\Search\Query\TableReference;
  *
  * @package SV\WordCountSearch\XF\Search\Query
  */
-class RangeMetadataConstraint extends MetadataConstraint
+class RangeMetadataConstraint extends AbstractExtendedMetadataConstraint
 {
     const MATCH_LESSER  = -42;
     const MATCH_GREATER = -41;
@@ -94,5 +94,50 @@ class RangeMetadataConstraint extends MetadataConstraint
         }
 
         return $sqlConstraint;
+    }
+
+    /**
+     * @param MetadataConstraint $metadata
+     * @param array              $filters
+     * @param array              $filtersNot
+     */
+    public function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
+    {
+        $values = $metadata->getValues();
+
+        switch ($metadata->getMatchType())
+        {
+            case self::MATCH_LESSER:
+                $filters[] = [
+                    'range' => [
+                        $metadata->getKey() => [
+                            "lte" => $values[0],
+                        ]
+                    ]
+                ];
+
+                return;
+            case self::MATCH_GREATER:
+                $filters[] = [
+                    'range' => [
+                        $metadata->getKey() => [
+                            "gte" => $values[0],
+                        ]
+                    ]
+                ];
+
+                return;
+            case self::MATCH_BETWEEN:
+                $filters[] = [
+                    'range' => [
+                        $metadata->getKey() => [
+                            "lte" => $values[0],
+                            "gte" => $values[1],
+                        ]
+                    ]
+                ];
+
+                return;
+        }
     }
 }

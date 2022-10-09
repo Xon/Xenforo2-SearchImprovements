@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\Search;
 
-use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
+use SV\SearchImprovements\XF\Search\Query\AbstractExtendedMetadataConstraint;
 use XF\Search\Query\MetadataConstraint;
 
 trait MetadataSearchEnhancements
@@ -14,44 +14,11 @@ trait MetadataSearchEnhancements
      */
     protected function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
     {
-        if ($metadata instanceof RangeMetadataConstraint)
+        if ($metadata instanceof AbstractExtendedMetadataConstraint)
         {
-            $values = $metadata->getValues();
+            $metadata->applyMetadataConstraint($filters, $filtersNot);
 
-            switch ($metadata->getMatchType())
-            {
-                case RangeMetadataConstraint::MATCH_LESSER:
-                    $filters[] = [
-                        'range' => [
-                            $metadata->getKey() => [
-                                "lte" => $values[0],
-                            ]
-                        ]
-                    ];
-
-                    return;
-                case RangeMetadataConstraint::MATCH_GREATER:
-                    $filters[] = [
-                        'range' => [
-                            $metadata->getKey() => [
-                                "gte" => $values[0],
-                            ]
-                        ]
-                    ];
-
-                    return;
-                case RangeMetadataConstraint::MATCH_BETWEEN:
-                    $filters[] = [
-                        'range' => [
-                            $metadata->getKey() => [
-                                "lte" => $values[0],
-                                "gte" => $values[1],
-                            ]
-                        ]
-                    ];
-
-                    return;
-            }
+            return;
         }
 
         /** @noinspection PhpMultipleClassDeclarationsInspection */

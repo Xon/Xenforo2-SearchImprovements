@@ -2,6 +2,8 @@
 
 namespace SV\SearchImprovements\XF\Search\Source;
 
+use SV\SearchImprovements\XF\Search\Query\AbstractExtendedMetadataConstraint;
+use SV\SearchImprovements\XF\Search\Query\NestedMetadataConstraint;
 use SV\SearchImprovements\XF\Search\Query\RangeMetadataConstraint;
 use XF\Search\Query\KeywordQuery;
 
@@ -21,12 +23,12 @@ class MySqlFt extends XFCP_MySqlFt
         $constraints = $query->getMetadataConstraints();
         foreach ($constraints as $key => $constraint)
         {
-            if ($constraint instanceof RangeMetadataConstraint)
+            if ($constraint instanceof AbstractExtendedMetadataConstraint)
             {
+                unset($constraints[$key]);
                 $sqlConstraint = $constraint->asSqlConstraint();
-                if ($sqlConstraint)
+                if ($sqlConstraint !== null)
                 {
-                    unset($constraints[$key]);
                     $query->withSql($sqlConstraint);
                 }
             }
