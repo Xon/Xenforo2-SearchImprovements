@@ -130,7 +130,6 @@ class Source extends Elasticsearch
                 $queryDsl['max_expansions'] = min($maxResults, 50);
             }
             $dsl[] = ['multi_match' => $queryDsl];
-            //$dsl[] = ['multi_match' => $queryDsl];
         }
 
         if (count($dsl) === 0)
