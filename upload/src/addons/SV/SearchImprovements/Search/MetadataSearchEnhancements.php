@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\Search;
 
-use SV\SearchImprovements\XF\Search\Query\AbstractExtendedMetadataConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use XF\Search\Query\MetadataConstraint;
 
 trait MetadataSearchEnhancements
@@ -14,7 +14,7 @@ trait MetadataSearchEnhancements
      */
     protected function applyMetadataConstraint(MetadataConstraint $metadata, array &$filters, array &$filtersNot)
     {
-        if ($metadata instanceof AbstractExtendedMetadataConstraint)
+        if ($metadata instanceof AbstractConstraint)
         {
             $metadata->applyMetadataConstraint($this, $filters, $filtersNot);
 

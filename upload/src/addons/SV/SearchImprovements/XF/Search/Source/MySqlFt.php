@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Search\Source;
 
-use SV\SearchImprovements\XF\Search\Query\AbstractExtendedMetadataConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractExtendedMetadataConstraint;
 use XF\Search\Query\KeywordQuery;
 use XF\Search\Query\SqlConstraint;
 use function is_array;
