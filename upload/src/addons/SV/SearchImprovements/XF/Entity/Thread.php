@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection PhpMissingReturnTypeInspection
+ */
 
 namespace SV\SearchImprovements\XF\Entity;
 
@@ -21,6 +24,7 @@ class Thread extends XFCP_Thread
         {
             if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
             {
+                $structure->options['svReindexThreadForCollaborators'] = false;
                 $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'user_id';
                 if (\XF::isAddOnActive('SV/ViewStickyThreads'))
                 {

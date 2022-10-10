@@ -1,0 +1,6 @@
+{
+    "from_class": "SV\\CollaborativeThreads\\Service\\Collaboration\\Manager",
+    "to_class": "SV\\SearchImprovements\\SV\\CollaborativeThreads\\Service\\Collaboration\\Manager",
+    "execute_order": 1,
+    "active": true
+}

@@ -12,7 +12,7 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
-use function count;
+use function array_column, array_filter, array_map, array_unique, count;
 
 class Post extends XFCP_Post
 {
@@ -22,11 +22,27 @@ class Post extends XFCP_Post
 
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['discussion_user'] = $entity->Thread->user_id ?? 0;
-            $isSticky = $entity->Thread->sticky ?? false;
-            if (\XF::isAddOnActive('SV/ViewStickyThreads') && $isSticky)
+            $thread = $entity->Thread;
+            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
             {
-                $metaData['sticky'] = $isSticky;
+                if ($thread->sticky ?? false)
+                {
+                    $metaData['sticky'] = true;
+                }
+            }
+            if (($thread->sv_collaborator_count ?? 0) > 0)
+            {
+                $userIds = array_column($thread->getRelationFinder('CollaborativeUsers')->fetchColumns('user_id'), 'user_id');
+            }
+            else
+            {
+                $userIds = [];
+            }
+            $userIds[] = $thread->user_id;
+            $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
+            if (count($userIds) !== 0)
+            {
+                $metaData['discussion_user'] = $userIds;
             }
         }
 

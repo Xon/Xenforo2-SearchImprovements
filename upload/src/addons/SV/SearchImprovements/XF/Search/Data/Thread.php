@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\XF\Search\Data;
 
 use XF\Search\MetadataStructure;
+use function array_column, array_filter, array_map, array_unique;
 
 class Thread extends XFCP_Thread
 {
@@ -15,11 +16,27 @@ class Thread extends XFCP_Thread
 
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['discussion_user'] = $entity->user_id ?? 0;
-            $isSticky = $entity->sticky ?? false;
-            if (\XF::isAddOnActive('SV/ViewStickyThreads') && $isSticky)
+            $thread = $entity;
+            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
             {
-                $metaData['sticky'] = $isSticky;
+                if ($thread->sticky ?? false)
+                {
+                    $metaData['sticky'] = true;
+                }
+            }
+            if (($thread->sv_collaborator_count ?? 0) > 0)
+            {
+                $userIds = array_column($thread->getRelationFinder('CollaborativeUsers')->fetchColumns('user_id'), 'user_id');
+            }
+            else
+            {
+                $userIds = [];
+            }
+            $userIds[] = $thread->user_id;
+            $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
+            if (count($userIds) !== 0)
+            {
+                $metaData['discussion_user'] = $userIds;
             }
         }
 

@@ -15,6 +15,11 @@ namespace SV\SearchImprovements\NF\Tickets\Search\Data
 	class XFCP_Ticket extends \NF\Tickets\Search\Data\Ticket {}
 }
 
+namespace SV\SearchImprovements\SV\CollaborativeThreads\Service\Collaboration
+{
+	class XFCP_Manager extends \SV\CollaborativeThreads\Service\Collaboration\Manager {}
+}
+
 namespace SV\SearchImprovements\XFES\Admin\Controller
 {
 	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}
@@ -49,6 +54,7 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 namespace SV\SearchImprovements\XF\Entity
 {
 	class XFCP_Thread extends \XF\Entity\Thread {}
+	class XFCP_ThreadCollab extends \XF\Entity\Thread {}
 	class XFCP_User extends \XF\Entity\User {}
 	class XFCP_UserOption extends \XF\Entity\UserOption {}
 }
