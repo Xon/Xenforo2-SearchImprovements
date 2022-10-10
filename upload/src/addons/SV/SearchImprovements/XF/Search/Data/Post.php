@@ -6,59 +6,45 @@
 namespace SV\SearchImprovements\XF\Search\Data;
 
 use SV\SearchImprovements\PermissionCache;
+use SV\SearchImprovements\Search\DiscussionUserTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
-use function array_column, array_filter, array_map, array_unique, count;
+use function count;
 
 class Post extends XFCP_Post
 {
+    use DiscussionUserTrait;
+
     protected function getMetaData(\XF\Entity\Post $entity)
     {
         $metaData = parent::getMetaData($entity);
 
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
-        {
-            $thread = $entity->Thread;
-            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
-            {
-                if ($thread->sticky ?? false)
-                {
-                    $metaData['sticky'] = true;
-                }
-            }
-            if (($thread->sv_collaborator_count ?? 0) > 0)
-            {
-                $userIds = array_column($thread->getRelationFinder('CollaborativeUsers')->fetchColumns('user_id'), 'user_id');
-            }
-            else
-            {
-                $userIds = [];
-            }
-            $userIds[] = $thread->user_id;
-            $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
-            if (count($userIds) !== 0)
-            {
-                $metaData['discussion_user'] = $userIds;
-            }
-        }
+        $this->populateDiscussionUserMetaData($entity->Thread, $metaData);
 
         return $metaData;
     }
 
-    public function setupMetadataStructure(MetadataStructure $structure)
+    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData)
     {
-        parent::setupMetadataStructure($structure);
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        /** @var \XF\Entity\Thread $entity */
+        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
         {
-            $structure->addField('discussion_user', MetadataStructure::INT);
-            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+            if ($entity->sticky ?? false)
             {
-                $structure->addField('sticky', MetadataStructure::BOOL);
+                $metaData['sticky'] = true;
             }
+        }
+    }
+
+    protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure)
+    {
+        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        {
+            $structure->addField('sticky', MetadataStructure::BOOL);
         }
     }
 

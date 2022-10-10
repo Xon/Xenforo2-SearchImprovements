@@ -3,30 +3,23 @@
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use SV\SearchImprovements\PermissionCache;
+use SV\SearchImprovements\Search\DiscussionUserTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
-use function array_column, array_filter, array_map, array_unique, count;
+use function count;
 
 class Message extends XFCP_Message
 {
+    use DiscussionUserTrait;
+
     protected function getMetaData(\NF\Tickets\Entity\Message $entity): array
     {
         $metaData = parent::getMetaData($entity);
 
-        $ticket = $entity->Ticket;
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
-        {
-            $userIds = array_column($ticket->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
-            $userIds[] = $ticket->user_id;
-            $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
-            if (count($userIds) !== 0)
-            {
-                $metaData['discussion_user'] = $userIds;
-            }
-        }
+        $this->populateDiscussionUserMetaData($entity->Ticket, $metaData);
 
         return $metaData;
     }
@@ -34,9 +27,11 @@ class Message extends XFCP_Message
     public function setupMetadataStructure(MetadataStructure $structure): void
     {
         parent::setupMetadataStructure($structure);
+
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
+            $this->setupDiscussionUserMetadataStructure($structure);
         }
     }
 
