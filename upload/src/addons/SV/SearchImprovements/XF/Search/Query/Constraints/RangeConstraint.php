@@ -41,10 +41,10 @@ class RangeConstraint extends AbstractConstraint
             self::MATCH_LESSER => self::MATCH_LESSER,
 
             'GREATER' => self::MATCH_GREATER,
-            self::MATCH_LESSER => self::MATCH_GREATER,
+            self::MATCH_GREATER => self::MATCH_GREATER,
 
             'BETWEEN' => self::MATCH_BETWEEN,
-            self::MATCH_LESSER => self::MATCH_BETWEEN,
+            self::MATCH_BETWEEN => self::MATCH_BETWEEN,
         ];
     }
 
