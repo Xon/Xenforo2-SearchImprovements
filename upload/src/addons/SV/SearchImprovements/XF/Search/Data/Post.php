@@ -14,9 +14,6 @@ use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
 use function count;
 
-/**
- * Extends \XF\Search\Data\Post
- */
 class Post extends XFCP_Post
 {
     protected function getMetaData(\XF\Entity\Post $entity)
@@ -57,12 +54,6 @@ class Post extends XFCP_Post
             return $constraints;
         }
 
-        // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType as it knows how to compose multiple types together
-        if (!$isOnlyType)
-        {
-            return $constraints;
-        }
-
         // These are only meaningful with ElasticSearch+XenForo Enhanced Search
         if (!\XF::isAddOnActive('XFES'))
         {
@@ -92,7 +83,9 @@ class Post extends XFCP_Post
 
         if (count($nonViewableNodeIds) !== 0 || count($viewableStickiesNodeIds) !== 0)
         {
+            // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
             $constraints[] = new OrConstraint(
+                $isOnlyType ? null : new NotConstraint(new ExistsConstraint('node')),
                 new MetadataConstraint('discussion_user', \XF::visitor()->user_id),
                 count($viewableStickiesNodeIds) === 0
                     ? null
