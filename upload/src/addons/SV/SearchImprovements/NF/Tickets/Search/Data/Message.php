@@ -21,7 +21,11 @@ class Message extends XFCP_Message
         {
             $userIds = array_column($ticket->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
             $userIds[] = $ticket->user_id;
-            $metaData['discussion_user'] = array_unique(array_filter(array_map('\intval', $userIds)));
+            $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
+            if (count($userIds) !== 0)
+            {
+                $metaData['discussion_user'] = $userIds;
+            }
         }
 
         return $metaData;
