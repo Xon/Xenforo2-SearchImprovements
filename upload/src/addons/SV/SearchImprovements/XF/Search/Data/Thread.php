@@ -15,8 +15,8 @@ class Thread extends XFCP_Thread
 
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['discussion_user'] = $entity->Thread->user_id ?? 0;
-            $isSticky = $entity->Thread->sticky ?? false;
+            $metaData['discussion_user'] = $entity->user_id ?? 0;
+            $isSticky = $entity->sticky ?? false;
             if (\XF::isAddOnActive('SV/ViewStickyThreads') && $isSticky)
             {
                 $metaData['sticky'] = $isSticky;
