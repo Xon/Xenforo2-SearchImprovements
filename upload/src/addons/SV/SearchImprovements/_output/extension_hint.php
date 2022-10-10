@@ -3,6 +3,12 @@
 // ################## THIS IS A GENERATED FILE ##################
 // DO NOT EDIT DIRECTLY. EDIT THE CLASS EXTENSIONS IN THE CONTROL PANEL.
 
+namespace SV\SearchImprovements\NF\Tickets\Search\Data
+{
+	class XFCP_Message extends \NF\Tickets\Search\Data\Message {}
+	class XFCP_Ticket extends \NF\Tickets\Search\Data\Ticket {}
+}
+
 namespace SV\SearchImprovements\XFES\Admin\Controller
 {
 	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}

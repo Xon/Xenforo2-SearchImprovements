@@ -4,11 +4,12 @@ namespace SV\SearchImprovements;
 
 abstract class PermissionCache extends \XF\PermissionCache
 {
-    public static function getNodePerms(): array
+    public static function getPerms(string $contentType, $permissionGroup): array
     {
         $visitor = \XF::visitor();
-        $visitor->cacheNodePermissions();
+        $permissionCombinationId = $visitor->permission_combination_id;
+        \XF::permissionCache()->cacheAllContentPerms($permissionCombinationId, $contentType);
         $permissionCache = $visitor->PermissionSet->getPermissionCache();
-        return $permissionCache->contentPerms[$visitor->permission_combination_id]['node'] ?? [];
+        return $permissionCache->contentPerms[$permissionCombinationId][$permissionGroup] ?? [];
     }
 }

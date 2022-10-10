@@ -1,1 +1,1 @@
-Push "View threads by others" check into XFES
+Push "View X by others" check into XFES
