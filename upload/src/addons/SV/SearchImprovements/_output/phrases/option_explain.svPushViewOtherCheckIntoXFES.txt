@@ -1,9 +1,9 @@
-The "View threads by others" permission requires additional metadata to be stored into XFES <br/>
+The "View threads by others" permission requires additional metadata to be stored into XFES <p>
 Supports:
 <ul>
 <li>XenForo Threads: "View threads by others"</li>
 <li><a href="https://xenforo.com/community/resources/tickets.4549/">NixFifty's Tickets</a>: "View tickets by others"</li>
-</ul
-
-Supports <a href="https://xenforo.com/community/resources/view-sticky-threads.5962/">View Sticky Threads</a> add-on<br/>
+<li><a href="https://xenforo.com/community/resources/view-sticky-threads.5962/">View Sticky Threads</a> add-on</i>
+<li><a href="https://xenforo.com/community/resources/collaborative-threads.6600/">Collaborative Threads</a> add-on</i>
+</ul></p>
 For best results, use <a href="https://xenforo.com/community/resources/elasticsearch-essentials.7103/">ElasticSearch Essentials</a> add-on
