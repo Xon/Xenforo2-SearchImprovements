@@ -1,0 +1,6 @@
+{
+    "from_class": "NF\\Tickets\\Entity\\TicketParticipant",
+    "to_class": "SV\\SearchImprovements\\NF\\Tickets\\Entity\\TicketParticipant",
+    "execute_order": 1,
+    "active": true
+}

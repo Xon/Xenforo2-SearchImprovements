@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use XF\Search\MetadataStructure;
+use function array_column, array_filter, array_map, array_unique, count;
 
 class Ticket extends XFCP_Ticket
 {
@@ -12,7 +13,9 @@ class Ticket extends XFCP_Ticket
 
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['discussion_user'] = $ticket->user_id;
+            $userIds = array_column($ticket->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
+            $userIds[] = $ticket->user_id;
+            $metaData['discussion_user'] = array_unique(array_filter(array_map('\intval', $userIds)));
         }
 
         return $metaData;

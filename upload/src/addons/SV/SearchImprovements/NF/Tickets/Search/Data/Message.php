@@ -3,13 +3,12 @@
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use SV\SearchImprovements\PermissionCache;
-use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
-use function count;
+use function array_column, array_filter, array_map, array_unique, count;
 
 class Message extends XFCP_Message
 {
@@ -20,7 +19,9 @@ class Message extends XFCP_Message
         $ticket = $entity->Ticket;
         if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['discussion_user'] = $ticket->user_id;
+            $userIds = array_column($ticket->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
+            $userIds[] = $ticket->user_id;
+            $metaData['discussion_user'] = array_unique(array_filter(array_map('\intval', $userIds)));
         }
 
         return $metaData;
@@ -68,9 +69,10 @@ class Message extends XFCP_Message
         if (count($nonViewableNodeIds) !== 0)
         {
             // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
+            $userId = \XF::visitor()->user_id;
             $constraints[] = new OrConstraint(
                 $isOnlyType ? null : new NotConstraint(new ExistsConstraint('ticketcat')),
-                new MetadataConstraint('discussion_user', \XF::visitor()->user_id),
+                $userId === 0 ? null : new MetadataConstraint('discussion_user', $userId),
                 new NotConstraint(new MetadataConstraint('ticketcat', $nonViewableNodeIds))
             );
         }
