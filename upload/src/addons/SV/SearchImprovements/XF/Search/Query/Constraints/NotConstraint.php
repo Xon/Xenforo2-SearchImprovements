@@ -11,7 +11,7 @@ class NotConstraint extends AbstractConstraint
 {
     const MATCH_SV_NOT = 'svNOT';
 
-    public function __construct(MetadataConstraint $constraint)
+    public function __construct(?MetadataConstraint $constraint)
     {
         parent::__construct('', $constraint, self::MATCH_SV_NOT);
     }
@@ -36,7 +36,7 @@ class NotConstraint extends AbstractConstraint
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        /** @var MetadataConstraint[] $constraints */
+        /** @var array<MetadataConstraint|null> $constraints */
         $constraints = $this->getValues();
 
         $childFilters = $childNotFilters = [];

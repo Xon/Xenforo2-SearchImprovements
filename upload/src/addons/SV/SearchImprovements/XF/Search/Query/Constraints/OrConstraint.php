@@ -11,7 +11,7 @@ class OrConstraint extends AbstractConstraint
 {
     const MATCH_SV_OR = 'svOR';
 
-    public function __construct(MetadataConstraint ...$constraints)
+    public function __construct(?MetadataConstraint ...$constraints)
     {
         parent::__construct('', $constraints, self::MATCH_SV_OR);
     }
@@ -36,7 +36,7 @@ class OrConstraint extends AbstractConstraint
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        /** @var MetadataConstraint[] $constraints */
+        /** @var array<MetadataConstraint|null> $constraints */
         $constraints = $this->getValues();
 
         $childFilters = $childNotFilters = [];

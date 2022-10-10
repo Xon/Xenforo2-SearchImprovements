@@ -12,7 +12,7 @@ class AndConstraint extends AbstractConstraint
 {
     const MATCH_AND = 'svAND';
 
-    public function __construct(MetadataConstraint ...$constraints)
+    public function __construct(?MetadataConstraint ...$constraints)
     {
         parent::__construct('', $constraints, self::MATCH_AND);
     }
@@ -40,7 +40,7 @@ class AndConstraint extends AbstractConstraint
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        /** @var MetadataConstraint[] $constraints */
+        /** @var array<MetadataConstraint|null> $constraints */
         $constraints = $this->getValues();
 
         $childFilters = $childNotFilters = [];
