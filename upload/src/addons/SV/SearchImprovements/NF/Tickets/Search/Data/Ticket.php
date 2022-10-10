@@ -3,7 +3,6 @@
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use XF\Search\MetadataStructure;
-use function array_unique;
 
 class Ticket extends XFCP_Ticket
 {

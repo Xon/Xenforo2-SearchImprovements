@@ -9,7 +9,6 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
-use function array_unique;
 use function count;
 
 class Message extends XFCP_Message
