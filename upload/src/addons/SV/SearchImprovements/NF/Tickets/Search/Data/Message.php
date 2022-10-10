@@ -52,7 +52,7 @@ class Message extends XFCP_Message
         // Node permissions are flat data, but the visibility status encodes hierarchical view data
         $nodePerms = PermissionCache::getPerms('ticket', 'nf_tickets_category');
 
-        $nonViewableNodeIds = $viewableStickiesNodeIds = [];
+        $nonViewableNodeIds = [];
         foreach($nodePerms as $nodeId => $perm)
         {
             if (count($perm) > 1)
