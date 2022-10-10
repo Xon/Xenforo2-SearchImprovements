@@ -81,13 +81,10 @@ class Post extends XFCP_Post
                 // view check is done in parent::getTypePermissionConstraints
                 if (!empty($perm['view']) && empty($perm['viewOthers']))
                 {
+                    $nonViewableNodeIds[] = $nodeId;
                     if ($viewStickies && !empty($perm['viewStickies']))
                     {
                         $viewableStickiesNodeIds[] = $nodeId;
-                    }
-                    else
-                    {
-                        $nonViewableNodeIds[] = $nodeId;
                     }
                 }
             }
