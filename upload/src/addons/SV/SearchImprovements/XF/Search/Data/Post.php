@@ -23,11 +23,14 @@ class Post extends XFCP_Post
     {
         $metaData = parent::getMetaData($entity);
 
-        $metaData['discussion_user'] = $entity->Thread->user_id ?? 0;
-        $isSticky = $entity->Thread->sticky ?? false;
-        if (\XF::isAddOnActive('SV/ViewStickyThreads') && $isSticky)
+        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $metaData['sticky'] = $isSticky;
+            $metaData['discussion_user'] = $entity->Thread->user_id ?? 0;
+            $isSticky = $entity->Thread->sticky ?? false;
+            if (\XF::isAddOnActive('SV/ViewStickyThreads') && $isSticky)
+            {
+                $metaData['sticky'] = $isSticky;
+            }
         }
 
         return $metaData;
@@ -36,16 +39,24 @@ class Post extends XFCP_Post
     public function setupMetadataStructure(MetadataStructure $structure)
     {
         parent::setupMetadataStructure($structure);
-        $structure->addField('discussion_user', MetadataStructure::INT);
-        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
         {
-            $structure->addField('sticky', MetadataStructure::BOOL);
+            $structure->addField('discussion_user', MetadataStructure::INT);
+            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+            {
+                $structure->addField('sticky', MetadataStructure::BOOL);
+            }
         }
     }
 
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType)
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
+        if (!(\XF::options()->svPushViewOtherCheckIntoXFES ?? false))
+        {
+            return $constraints;
+        }
+
         // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType as it knows how to compose multiple types together
         if (!$isOnlyType)
         {

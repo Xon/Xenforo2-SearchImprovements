@@ -1,0 +1,3 @@
+The "View threads by others" permission requires additional metadata to be stored into XFES <br/>
+Supports <a href="https://xenforo.com/community/resources/view-sticky-threads.5962/">View Sticky Threads</a> add-on<br/>
+For best results, use <a href="https://xenforo.com/community/resources/elasticsearch-essentials.7103/">ElasticSearch Essentials</a> add-on
