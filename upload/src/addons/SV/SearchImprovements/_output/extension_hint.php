@@ -50,6 +50,7 @@ namespace SV\SearchImprovements\XF\Pub\Controller
 namespace SV\SearchImprovements\XF\Search\Data
 {
 	class XFCP_Post extends \XF\Search\Data\Post {}
+	class XFCP_Thread extends \XF\Search\Data\Thread {}
 }
 
 namespace SV\SearchImprovements\XF\Search\Query
