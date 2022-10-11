@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Search;
 
 use SV\SearchImprovements\Globals;
 use XF\Search\MetadataStructure;
+use function array_values;
 
 trait DiscussionUserTrait
 {
@@ -31,7 +32,7 @@ trait DiscussionUserTrait
 
             if (count($userIds) !== 0)
             {
-                $metaData['discussion_user'] = $userIds;
+                $metaData['discussion_user'] = array_values($userIds);
             }
         }
     }
