@@ -7,7 +7,7 @@ namespace SV\SearchImprovements\NF\Tickets\Entity;
 
 use SV\SearchImprovements\Globals;
 use XF\Mvc\Entity\Structure;
-use function array_column,array_filter,array_map,array_unique;
+use function array_column,array_filter,array_map;
 
 /**
  * Extends \NF\Tickets\Entity\Ticket
@@ -16,7 +16,6 @@ class Ticket extends XFCP_Ticket
 {
     /**
      * @return array<int>
-     * @noinspection PhpUnnecessaryLocalVariableInspection
      */
     protected function getDiscussionUserIds(): array
     {
@@ -27,7 +26,6 @@ class Ticket extends XFCP_Ticket
         {
             $userIds[] = $userId;
         }
-        $userIds = array_unique($userIds);
 
         return $userIds;
     }

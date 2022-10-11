@@ -17,7 +17,6 @@ class Thread extends XFCP_Thread
 {
     /**
      * @return array<int>
-     * @noinspection PhpUnnecessaryLocalVariableInspection
      */
     protected function getDiscussionUserIds(): array
     {
@@ -36,7 +35,6 @@ class Thread extends XFCP_Thread
         {
             $userIds[] = $userId;
         }
-        $userIds = array_unique($userIds);
 
         return $userIds;
     }
