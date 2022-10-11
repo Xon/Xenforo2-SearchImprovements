@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
+use SV\SearchImprovements\Globals;
 use XF\Mvc\Entity\Structure;
 use function array_column,array_filter,array_map,array_unique;
 
@@ -34,7 +35,7 @@ class Ticket extends XFCP_Ticket
     {
         $structure = parent::getStructure($structure);
 
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        if (Globals::isPushingViewOtherChecksIntoSearch())
         {
             if (isset($structure->behaviors['XF:IndexableContainer']))
             {

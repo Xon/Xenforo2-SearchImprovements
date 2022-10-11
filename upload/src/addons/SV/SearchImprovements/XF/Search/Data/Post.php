@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\XF\Search\Data;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\PermissionCache;
 use SV\SearchImprovements\Search\DiscussionUserTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
@@ -51,7 +52,7 @@ class Post extends XFCP_Post
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType)
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
-        if (!(\XF::options()->svPushViewOtherCheckIntoXFES ?? false))
+        if (!Globals::isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
         }

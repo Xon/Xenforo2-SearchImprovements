@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\DiscussionUserTrait;
 use XF\Search\MetadataStructure;
 
@@ -22,7 +23,7 @@ class Ticket extends XFCP_Ticket
     {
         parent::setupMetadataStructure($structure);
 
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        if (Globals::isPushingViewOtherChecksIntoSearch())
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
             $this->setupDiscussionUserMetadataStructure($structure);

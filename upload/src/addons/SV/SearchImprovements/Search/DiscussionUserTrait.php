@@ -2,13 +2,14 @@
 
 namespace SV\SearchImprovements\Search;
 
+use SV\SearchImprovements\Globals;
 use XF\Search\MetadataStructure;
 
 trait DiscussionUserTrait
 {
     protected function populateDiscussionUserMetaData(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        if (Globals::isPushingViewOtherChecksIntoSearch())
         {
             $this->setupDiscussionUserMetadata($entity, $metaData);
 
@@ -44,7 +45,7 @@ trait DiscussionUserTrait
         /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::setupMetadataStructure($structure);
 
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        if (Globals::isPushingViewOtherChecksIntoSearch())
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
             $this->setupDiscussionUserMetadataStructure($structure);

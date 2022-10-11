@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\PermissionCache;
 use SV\SearchImprovements\Search\DiscussionUserTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
@@ -28,7 +29,7 @@ class Message extends XFCP_Message
     {
         parent::setupMetadataStructure($structure);
 
-        if (\XF::options()->svPushViewOtherCheckIntoXFES ?? false)
+        if (Globals::isPushingViewOtherChecksIntoSearch())
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
             $this->setupDiscussionUserMetadataStructure($structure);
@@ -38,13 +39,7 @@ class Message extends XFCP_Message
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType): array
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
-        if (!(\XF::options()->svPushViewOtherCheckIntoXFES ?? false))
-        {
-            return $constraints;
-        }
-
-        // These are only meaningful with ElasticSearch+XenForo Enhanced Search
-        if (!\XF::isAddOnActive('XFES'))
+        if (!Globals::isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
         }

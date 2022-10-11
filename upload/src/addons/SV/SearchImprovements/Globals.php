@@ -14,5 +14,10 @@ class Globals
 {
     public static $shimSearchForSpecialization = true;
 
+    public static function isPushingViewOtherChecksIntoSearch(): bool
+    {
+        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && \XF::isAddOnActive('XFES');
+    }
+
     private function __construct() { }
 }
