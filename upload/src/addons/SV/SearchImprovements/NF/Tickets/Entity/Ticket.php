@@ -21,8 +21,13 @@ class Ticket extends XFCP_Ticket
     protected function getDiscussionUserIds(): array
     {
         $userIds = array_column($this->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
-        $userIds[] = $this->user_id;
-        $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
+        $userIds = array_filter(array_map('\intval', $userIds));
+        $userId = $this->user_id;
+        if ($userId !== 0)
+        {
+            $userIds[] = $userId;
+        }
+        $userIds = array_unique($userIds);
 
         return $userIds;
     }

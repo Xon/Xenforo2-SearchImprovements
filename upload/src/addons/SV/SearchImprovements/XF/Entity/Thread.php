@@ -25,13 +25,18 @@ class Thread extends XFCP_Thread
         if (($this->sv_collaborator_count ?? 0) > 0)
         {
             $userIds = array_column($this->getRelationFinder('CollaborativeUsers')->fetchColumns('user_id'), 'user_id');
+            $userIds = array_filter(array_map('\intval', $userIds));
         }
         else
         {
             $userIds = [];
         }
-        $userIds[] = $this->user_id;
-        $userIds = array_unique(array_filter(array_map('\intval', $userIds)));
+        $userId = $this->user_id;
+        if ($userId !== 0)
+        {
+            $userIds[] = $userId;
+        }
+        $userIds = array_unique($userIds);
 
         return $userIds;
     }

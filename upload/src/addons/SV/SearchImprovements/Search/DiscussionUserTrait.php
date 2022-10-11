@@ -20,8 +20,9 @@ trait DiscussionUserTrait
             }
             else if (isset($entity->user_id))
             {
+                $userId = (int)$entity->user_id;
                 /** @var int[] $userIds */
-                $userIds = [$entity->user_id];
+                $userIds = $userId !== 0 ? [$userId] : [];
             }
             else
             {
