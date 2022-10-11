@@ -1,1 +1,1 @@
-The allows you to change the default order for search results. This affects quick searches and the default value selected on the advanced search form.
+Allows you to change the default order for search results. This affects quick searches and the default value selected on the advanced search form.
