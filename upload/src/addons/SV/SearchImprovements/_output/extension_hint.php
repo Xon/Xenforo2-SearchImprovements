@@ -53,6 +53,7 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 
 namespace SV\SearchImprovements\XF\Entity
 {
+	class XFCP_Search extends \XF\Entity\Search {}
 	class XFCP_Thread extends \XF\Entity\Thread {}
 	class XFCP_ThreadCollab extends \XF\Entity\Thread {}
 	class XFCP_User extends \XF\Entity\User {}

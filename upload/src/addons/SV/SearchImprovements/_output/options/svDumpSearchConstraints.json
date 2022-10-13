@@ -1,0 +1,14 @@
+{
+    "edit_format": "onoff",
+    "edit_format_params": "",
+    "data_type": "boolean",
+    "sub_options": [],
+    "validation_class": "",
+    "validation_method": "",
+    "advanced": true,
+    "default_value": "0",
+    "relations": {
+        "debug": 90020,
+        "svSearchImprovements": 90020
+    }
+}

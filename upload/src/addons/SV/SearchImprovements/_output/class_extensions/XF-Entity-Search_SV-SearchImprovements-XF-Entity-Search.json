@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\Search",
+    "to_class": "SV\\SearchImprovements\\XF\\Entity\\Search",
+    "execute_order": 1,
+    "active": true
+}

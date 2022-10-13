@@ -1,0 +1,19 @@
+<xf:if is="$search && $search.hasOption('svSearchImprovements')">
+	<xf:set var="$dumpConstraints" value="{{ $xf.options.svDumpSearchConstraints && $search.sv_unstructured_query }}" />
+	<xf:if is="$search.sv_structured_query || $dumpConstraints">
+		<xf:description meta="false">
+			<ul class="listInline listInline--bullet">
+				<xf:foreach loop="$search.sv_structured_query" key="$key" value="$phrase">
+					<li class="search--term-{$key|for_attr}">{$phrase|raw}</li>
+				</xf:foreach>
+			</ul>
+			<xf:if is="$dumpConstraints">
+				<ul class="listInline listInline--bullet">
+					<xf:foreach loop="$search.sv_unstructured_query" key="$key" value="$raw">
+						<li class="search--term-{$key|for_attr}">{$key}:{{ dump($raw) }}</li>
+					</xf:foreach>
+				</ul>
+			</xf:if>
+		</xf:description>
+	</xf:if>
+</xf:if>
