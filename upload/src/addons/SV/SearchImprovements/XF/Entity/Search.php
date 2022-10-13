@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
+use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
 use function arsort;
 use function in_array;
@@ -25,6 +26,17 @@ class Search extends XFCP_Search
     ];
     protected $svIgnoreConstraint = [
     ];
+
+    public function __construct(Manager $em, Structure $structure, array $values = [], array $relations = [])
+    {
+        parent::__construct($em, $structure, $values, $relations);
+        $this->setupConstraintFields();
+    }
+
+    protected function setupConstraintFields(): void
+    {
+
+    }
 
     protected function getContainerContentType(): ?string
     {
