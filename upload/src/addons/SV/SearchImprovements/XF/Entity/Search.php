@@ -8,7 +8,7 @@ use function arsort;
 use function in_array;
 use function is_array;
 use function is_string;
-use function ksort;
+use function preg_match;
 
 /**
  * @property-read array<string,\XF\Phrase> $sv_structured_query
@@ -105,6 +105,16 @@ class Search extends XFCP_Search
      * @param array|string|int $value
      * @return \XF\Phrase|null
      */
+    protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
+    {
+        return null;
+    }
+
+    /**
+     * @param string           $key
+     * @param array|string|int $value
+     * @return \XF\Phrase|null
+     */
     protected function getSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
     {
         if (in_array($key, $this->svIgnoreConstraint, true))
@@ -112,9 +122,15 @@ class Search extends XFCP_Search
             return null;
         }
 
+        $phrase = $this->getSpecializedSearchConstraintPhrase($key, $value);
+        if ($phrase !== null)
+        {
+            return $phrase;
+        }
+
         $phraseKey = 'svSearchConstraint.' . $key;
-        $phrase = \XF::language()->getPhraseText($phraseKey);
-        if (!is_string($phrase))
+        $phraseText = \XF::language()->getPhraseText($phraseKey);
+        if (!is_string($phraseText))
         {
             return null;
         }
