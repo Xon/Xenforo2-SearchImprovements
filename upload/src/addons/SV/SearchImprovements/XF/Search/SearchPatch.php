@@ -9,6 +9,7 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Repository\SpecializedSearchIndex;
 use SV\SearchImprovements\Search\AbstractDataSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
+use XF\Mvc\Entity\Entity;
 use XF\Search\Data\AbstractData;
 use XF\Search\Source\AbstractSource;
 use function is_array, in_array, class_exists;
@@ -42,7 +43,12 @@ class SearchPatch extends XFCP_SearchPatch
         parent::__construct($source, $types);
     }
 
-    public function isValidContentType($type): bool
+    /**
+     * @param string $type
+     * @return bool
+     * @throws \Exception
+     */
+    public function isValidContentType($type)
     {
         if ($this->specializedTypeFilter !== null)
         {
@@ -66,6 +72,11 @@ class SearchPatch extends XFCP_SearchPatch
         return $isValid;
     }
 
+    /**
+     * @param string $type
+     * @return SpecializedData|AbstractData|null
+     * @throws \Exception
+     */
     public function handler($type)
     {
         if (isset($this->handlers[$type]))
@@ -85,6 +96,13 @@ class SearchPatch extends XFCP_SearchPatch
         return parent::handler($type);
     }
 
+    /**
+     * @param string $contentType
+     * @param Entity|null $entity
+     * @param bool $deleteIfNeeded
+     * @return bool
+     * @throws \Exception
+     */
     public function index($contentType, $entity, $deleteIfNeeded = true)
     {
         if ($this->specializedIndexProxying)
@@ -101,6 +119,12 @@ class SearchPatch extends XFCP_SearchPatch
         return parent::index($contentType, $entity, $deleteIfNeeded);
     }
 
+    /**
+     * @param string $contentType
+     * @param bool $del
+     * @return void
+     * @throws \Exception
+     */
     public function delete($contentType, $del)
     {
         if ($this->specializedIndexProxying)
@@ -119,6 +143,9 @@ class SearchPatch extends XFCP_SearchPatch
         parent::delete($contentType, $del);
     }
 
+    /**
+     * @return void
+     */
     public function enableBulkIndexing()
     {
         if ($this->specializedIndexProxying)
@@ -134,6 +161,9 @@ class SearchPatch extends XFCP_SearchPatch
         parent::enableBulkIndexing();
     }
 
+    /**
+     * @return void
+     */
     public function disableBulkIndexing()
     {
         if ($this->specializedIndexProxying)
@@ -148,6 +178,12 @@ class SearchPatch extends XFCP_SearchPatch
         parent::disableBulkIndexing();
     }
 
+    /**
+     * @param int $oldUserId
+     * @param int $newUserId
+     * @return void
+     * @throws \Exception
+     */
     public function reassignContent($oldUserId, $newUserId)
     {
         if ($this->specializedIndexProxying)
@@ -166,6 +202,11 @@ class SearchPatch extends XFCP_SearchPatch
         parent::reassignContent($oldUserId, $newUserId);
     }
 
+    /**
+     * @param string|null $type
+     * @return bool|null
+     * @throws \Exception
+     */
     public function truncate($type = null)
     {
         if ($this->specializedIndexProxying)
