@@ -25,6 +25,7 @@ class Search extends XFCP_Search
         'recipients', // SV/ConversationImprovements
     ];
     protected $svIgnoreConstraint = [
+        'child_nodes',
     ];
 
     public function __construct(Manager $em, Structure $structure, array $values = [], array $relations = [])
@@ -107,6 +108,26 @@ class Search extends XFCP_Search
      */
     protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
     {
+        if ($this->search_type === 'post' && preg_match('/^nodes_(\d+)$/i', $key, $m))
+        {
+            $id = (int)$value;
+            if ($id !== 0)
+            {
+                /** @var \XF\Repository\Node $nodeRepo */
+                $nodeRepo = $this->repository('XF:Node');
+                $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
+                /** @var \XF\Entity\Node|null $node */
+                $node = $nodes[$id] ?? null;
+                if ($node !== null)
+                {
+                    return \XF::phrase('svSearchConstraint.nodes', [
+                        // todo link to node ($node->getContentUrl()), use template?
+                        'node' => $node->title,
+                    ]);
+                }
+            }
+        }
+
         return null;
     }
 
