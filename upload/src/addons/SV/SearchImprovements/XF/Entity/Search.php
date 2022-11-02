@@ -4,6 +4,8 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
+use XF\Phrase;
+use function array_map;
 use function arsort;
 use function in_array;
 use function is_array;
@@ -108,11 +110,27 @@ class Search extends XFCP_Search
      */
     protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
     {
-        if ($this->search_type === 'post' && preg_match('/^nodes_(\d+)$/i', $key, $m))
+        return null;
+    }
+
+    /**
+     * @param array            $query
+     * @param string           $key
+     * @param array|string|int $value
+     * @return bool
+     */
+    protected function expandStructuredSearchConstraint(array &$query, string $key, $value): bool
+    {
+        if ($this->search_type === 'post' && $key === 'nodes' && is_array($value))
         {
-            $id = (int)$value;
-            if ($id !== 0)
+            foreach ($value as $id)
             {
+                $id = (int)$id;
+                if ($id === 0)
+                {
+                    continue;
+                }
+
                 /** @var \XF\Repository\Node $nodeRepo */
                 $nodeRepo = $this->repository('XF:Node');
                 $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
@@ -120,15 +138,17 @@ class Search extends XFCP_Search
                 $node = $nodes[$id] ?? null;
                 if ($node !== null)
                 {
-                    return \XF::phrase('svSearchConstraint.nodes', [
+                    $query[$key . '_' . $id] = \XF::phrase('svSearchConstraint.nodes', [
                         // todo link to node ($node->getContentUrl()), use template?
                         'node' => $node->title,
                     ]);
                 }
             }
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -180,6 +200,11 @@ class Search extends XFCP_Search
         foreach ($constraints as $key => $value)
         {
             $key = $prefix . $key;
+            if ($this->expandStructuredSearchConstraint($query, $key, $value))
+            {
+                continue;
+            }
+
             if (is_array($value))
             {
                 // decompose this into multiple constraints
@@ -224,7 +249,15 @@ class Search extends XFCP_Search
     {
         $query = [];
         $this->extractStructuredSearchConstraint($query, $this->search_constraints , '');
-        //
+        foreach ($query as &$queryPhrase)
+        {
+            if ($queryPhrase instanceof \XF\Phrase)
+            {
+                $queryPhrase = $queryPhrase->render('raw');
+            }
+        }
+        unset($queryPhrase);
+
         arsort($query);
         // add sort-by clause
         $phrase = $this->getSearchOrderPhrase($this->search_order);
