@@ -11,6 +11,7 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
 use function count;
+use function is_array;
 
 class Message extends XFCP_Message
 {
@@ -50,7 +51,7 @@ class Message extends XFCP_Message
         $nonViewableNodeIds = [];
         foreach($nodePerms as $nodeId => $perm)
         {
-            if (count($perm) > 1)
+            if (is_array($perm) && count($perm) > 1)
             {
                 // view check is done in parent::getTypePermissionConstraints
                 if (!empty($perm['view']) && empty($perm['viewOthers']))
