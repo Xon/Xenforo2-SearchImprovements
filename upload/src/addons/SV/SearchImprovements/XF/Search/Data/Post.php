@@ -80,7 +80,7 @@ class Post extends XFCP_Post
                 if (!empty($perm['view']) && empty($perm['viewOthers']))
                 {
                     $nonViewableNodeIds[] = $nodeId;
-                    if ($viewStickies && !empty($perm['viewStickies']))
+                    if ($viewStickies && !empty($perm['viewStickies']) && !empty($perm['viewContent']))
                     {
                         $viewableStickiesNodeIds[] = $nodeId;
                     }
