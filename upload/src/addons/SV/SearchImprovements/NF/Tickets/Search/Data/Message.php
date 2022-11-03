@@ -49,8 +49,11 @@ class Message extends XFCP_Message
         $nodePerms = PermissionCache::getPerms('ticket', 'nf_tickets_category');
 
         $nonViewableNodeIds = [];
-        foreach($nodePerms as $nodeId => $perm)
+        foreach ($nodePerms as $nodeId => $perm)
         {
+            // The permission cache may not be an array, which implies the view/viewXXX will all be false and the parent's view check should have failed.
+            // For categories, XF only persists the 'view' attribute into the permission cache, and it will not have threads.
+            // If this is a non-category node, there will be a number of permissions.
             if (is_array($perm) && count($perm) > 1)
             {
                 // view check is done in parent::getTypePermissionConstraints

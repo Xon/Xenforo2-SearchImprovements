@@ -69,8 +69,11 @@ class Post extends XFCP_Post
 
         $nonViewableNodeIds = $viewableStickiesNodeIds = [];
         $viewStickies = \XF::isAddOnActive('SV/ViewStickyThreads');
-        foreach($nodePerms as $nodeId => $perm)
+        foreach ($nodePerms as $nodeId => $perm)
         {
+            // The permission cache may not be an array, which implies the view/viewXXX will all be false and the parent's view check should have failed.
+            // For categories, XF only persists the 'view' attribute into the permission cache, and it will not have threads.
+            // If this is a non-category node, there will be a number of permissions.
             if (is_array($perm) && count($perm) > 1)
             {
                 // view check is done in parent::getTypePermissionConstraints
@@ -94,11 +97,11 @@ class Post extends XFCP_Post
                 count($viewableStickiesNodeIds) === 0
                     ? null
                     : new AndConstraint(
-                        new ExistsConstraint('sticky'),
-                        new MetadataConstraint('node', $viewableStickiesNodeIds)
+                    new ExistsConstraint('sticky'),
+                    new MetadataConstraint('node', $viewableStickiesNodeIds)
                 ),
                 count($nonViewableNodeIds) === 0
-                    ?  null
+                    ? null
                     : new NotConstraint(new MetadataConstraint('node', $nonViewableNodeIds))
             );
         }
