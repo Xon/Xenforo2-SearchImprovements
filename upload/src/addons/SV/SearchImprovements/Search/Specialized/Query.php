@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\Search\Specialized;
 
 use XF\Search\Query\SqlConstraint;
-use function utf8_trim, strlen;
+use function trim, strlen;
 
 /**
  * @property $handler SpecializedData|\XF\Search\Data\AbstractData|null
@@ -54,7 +54,7 @@ class Query extends \XF\Search\Query\Query
      */
     public function matchText(string $text, array $fields, string $boost = null): self
     {
-        $text = utf8_trim($text);
+        $text = trim($text);
         if (strlen($text) !== 0)
         {
             $this->textMatches[] = [$text, $fields, $boost ?? $this->defaultFieldBoost];
