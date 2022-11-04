@@ -74,8 +74,8 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $types = $query->getTypes();
-        if (is_array($types) && count($types) === 1)
+        $types = $query->getTypes() ?? [];
+        if (!is_array($types) || count($types) === 1)
         {
             return;
         }
@@ -87,7 +87,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $validTypes = array_fill_keys($types ?? [], true);
+        $validTypes = array_fill_keys($types, true);
         $skipContentTypes = [];
         foreach ($contentTypeWeighting as $contentType => $weight)
         {
@@ -177,6 +177,12 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     public function weightByContentType(Query $query, array &$dsl)
     {
+        $types = $query->getTypes() ?? [];
+        if (!is_array($types))
+        {
+            return;
+        }
+
         $forceContentWeighting = is_callable([$query, 'isForceContentWeighting'])
             ? $query->isForceContentWeighting()
             : false;
@@ -188,8 +194,7 @@ class Elasticsearch extends XFCP_Elasticsearch
                 return;
             }
 
-            $types = $query->getTypes();
-            if (is_array($types) && count($types) === 1)
+            if (count($types) === 1)
             {
                 return;
             }
@@ -202,7 +207,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $validTypes = array_fill_keys($query->getTypes() ?? [], true);
+        $validTypes = array_fill_keys($types, true);
         $functions = [];
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
