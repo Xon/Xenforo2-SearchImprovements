@@ -65,11 +65,37 @@ class Elasticsearch extends XFCP_Elasticsearch
         return $dsl;
     }
 
+    /** @var array<string>|null */
+    protected $svValidSearchTypes  = null;
+    /**
+     * @return array<string>
+     */
+    protected function svGetValidSearchTypes(): array
+    {
+        if ($this->svValidSearchTypes === null)
+        {
+            $types = [];
+            $app = \XF::app();
+            $search = $app->search();
+            foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
+            {
+                if ($search->isValidContentType($contentType) && \class_exists($handlerClass))
+                {
+                    $types[] = $contentType;
+                }
+            }
+
+            $this->svValidSearchTypes = $types;
+        }
+
+        return $this->svValidSearchTypes;
+    }
+
     protected function applyDslFilters(Query $query, array &$filters, array &$filtersNot)
     {
         parent::applyDslFilters($query, $filters, $filtersNot);
 
-        if ($query->getHandlerType())
+        if ($query->getHandlerType() !== null)
         {
             return;
         }
@@ -87,6 +113,10 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        if (count($types) === 0)
+        {
+            $types = $this->svGetValidSearchTypes();
+        }
         $validTypes = array_fill_keys($types, true);
         $skipContentTypes = [];
         foreach ($contentTypeWeighting as $contentType => $weight)
@@ -189,7 +219,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         if (!$forceContentWeighting)
         {
             // skip specific type handler searches
-            if ($query->getHandlerType())
+            if ($query->getHandlerType() !== null)
             {
                 return;
             }
@@ -207,6 +237,10 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        if (count($types) === 0)
+        {
+            $types = $this->svGetValidSearchTypes();
+        }
         $validTypes = array_fill_keys($types, true);
         $functions = [];
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
@@ -218,7 +252,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             }
         }
 
-        if (!$functions)
+        if (count($functions) === 0)
         {
             return;
         }
