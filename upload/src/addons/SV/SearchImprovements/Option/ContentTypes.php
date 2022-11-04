@@ -18,10 +18,11 @@ class ContentTypes extends AbstractOption
         $choices = [];
 
         $app = \XF::app();
+        $search = $app->search();
 
         foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
         {
-            if (class_exists($handlerClass))
+            if ($search->isValidContentType($contentType) && \class_exists($handlerClass))
             {
                 $choices[] = [
                     'phraseName'  => \XF::phrase($app->getContentTypePhraseName($contentType)),
