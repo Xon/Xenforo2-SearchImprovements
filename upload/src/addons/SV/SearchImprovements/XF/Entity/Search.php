@@ -30,9 +30,13 @@ class Search extends XFCP_Search
         'child_nodes',
     ];
 
+    /** @var \XF\InputFilterer */
+    protected $inputFilterer;
+
     public function __construct(Manager $em, Structure $structure, array $values = [], array $relations = [])
     {
         parent::__construct($em, $structure, $values, $relations);
+        $this->inputFilterer = \XF::app()->inputFilterer();
         $this->setupConstraintFields();
     }
 
@@ -60,22 +64,22 @@ class Search extends XFCP_Search
         return $handler->getGroupByType();
     }
 
+    /** @noinspection PhpMissingReturnTypeInspection */
     protected function formatConstraintValue(string $key, $value)
     {
-        $lang = \XF::language();
         if (in_array($key, $this->svDateConstraint, true))
         {
             // yyyy-mm-dd
-            $date = @strtotime($value);
+            $date = $this->inputFilterer->filter($value, 'datetime');
             if ($date)
             {
-                $value = $lang->date($date);
+                return \XF::language()->date($date);
             }
         }
 
         if (in_array($key, $this->svUserConstraint, true))
         {
-            $usernames = (array)$value;
+            $usernames = (array)$this->inputFilterer->filter($value, 'array-string');
 
             $templater = \XF::app()->templater();
             /** @var \XF\Repository\User $userRepo */
@@ -98,9 +102,11 @@ class Search extends XFCP_Search
                 ]));
             }
             $value = implode(',', $formattedUsernames);
+
+            return $value;
         }
 
-        return $value;
+        return (string)$this->inputFilterer->filter($value, 'string');
     }
 
     /**
