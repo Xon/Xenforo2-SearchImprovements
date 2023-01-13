@@ -1,16 +1,16 @@
 <?php
+/**
+ * @noinspection PhpRedundantMethodOverrideInspection
+ */
 
 namespace SV\SearchImprovements\XF\Entity;
 
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
-use XF\Phrase;
-use function array_map;
 use function arsort;
 use function in_array;
 use function is_array;
 use function is_string;
-use function preg_match;
 
 /**
  * @property-read array<string,\XF\Phrase> $sv_structured_query
@@ -306,6 +306,9 @@ class Search extends XFCP_Search
     public static function getStructure(Structure $structure)
     {
         $structure = parent::getStructure($structure);
+
+        $structure->columns['search_results']['required'] = false;
+        $structure->columns['search_results']['default'] = [];
 
         $structure->getters['sv_structured_query'] = ['getter' => 'getSvStructuredQuery', 'cache' => true];
         $structure->getters['sv_unstructured_query'] = ['getter' => 'getSvUnstructuredQuery', 'cache' => true];
