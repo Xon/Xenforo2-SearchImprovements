@@ -1,0 +1,9 @@
+{
+    "template": "search_results",
+    "description": "Add \"no search results found\" block",
+    "execution_order": 2,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#([\\t ]*<div class=\"block-container\">.*?\\$results.*<\\/xf:if>.*?<\\/div>)(.*?<div class=\"block-outer)#si",
+    "replace": "<xf:if is=\"$search.result_count\">\n$1\n<xf:else />\n\t<div class=\"blockMessage\">{{ phrase('no_results_found') }}</div>\n</xf:if>\n$2"
+}

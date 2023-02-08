@@ -5,9 +5,12 @@
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
+use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\View as ViewReply;
+use function assert;
 use function strlen;
 
 /**
@@ -112,5 +115,50 @@ class Search extends XFCP_Search
         }
 
         return $query;
+    }
+
+    public function actionResults(ParameterBag $params)
+    {
+        $reply = parent::actionResults($params);
+
+        if ($reply instanceof MessageReply)
+        {
+            /** @var \XF\Entity\Search $search */
+            $search = $this->em()->find('XF:Search', $params->get('search_id'));
+            $phrase = $reply->getMessage();
+            if ($search !== null && $phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
+            {
+                assert($search instanceof SearchEntity);
+
+                $perPage = $this->options()->searchResultsPerPage;
+                $this->assertValidPage(1, $perPage, 1, 'search', $search);
+
+                $resultOptions = [
+                    'search' => $search,
+                    'term'   => $search->search_query,
+                ];
+
+                $searcher = $this->app()->search();
+                $resultSet = $searcher->getResultSet($search->search_results);
+                $resultsWrapped = $searcher->wrapResultsForRender($resultSet, $resultOptions);
+
+                $viewParams = [
+                    'search'  => $search,
+                    'results' => $resultsWrapped,
+
+                    'page'    => 1,
+                    'perPage' => $perPage,
+
+                    'modTypes'      => [],
+                    'activeModType' => '',
+
+                    'getOlderResultsDate' => null,
+                ];
+
+                $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
+            }
+        }
+
+        return $reply;
     }
 }
