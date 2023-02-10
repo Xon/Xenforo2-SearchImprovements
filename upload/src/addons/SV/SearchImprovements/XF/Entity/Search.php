@@ -8,8 +8,10 @@ namespace SV\SearchImprovements\XF\Entity;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
 use function arsort;
+use function assert;
 use function in_array;
 use function is_array;
+use function is_numeric;
 use function is_string;
 
 /**
@@ -116,6 +118,19 @@ class Search extends XFCP_Search
      */
     protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
     {
+        if ($key === 'thread' && is_numeric($value))
+        {
+            $thread = $this->app()->find('XF:Thread', (int)$value);
+            if ($thread !== null)
+            {
+                assert($thread instanceof \XF\Entity\Thread);
+                return \XF::phrase('svSearchConstraint.thread', [
+                    'url' => $this->app()->router('public')->buildLink('threads', $thread),
+                    'title' => $thread->title,
+                ]);
+            }
+        }
+
         return null;
     }
 
