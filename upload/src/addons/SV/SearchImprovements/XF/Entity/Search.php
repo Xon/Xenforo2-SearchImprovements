@@ -81,7 +81,7 @@ class Search extends XFCP_Search
 
         if (in_array($key, $this->svUserConstraint, true))
         {
-            $usernames = (array)$this->inputFilterer->filter($value, 'array-string');
+            $usernames = (array)$this->inputFilterer->filter((array)$value, 'array-string');
 
             $templater = \XF::app()->templater();
             /** @var \XF\Repository\User $userRepo */
