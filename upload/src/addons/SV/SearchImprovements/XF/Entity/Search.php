@@ -7,6 +7,8 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
+use function array_diff;
+use function array_merge;
 use function arsort;
 use function assert;
 use function in_array;
@@ -269,7 +271,10 @@ class Search extends XFCP_Search
     protected function getSvStructuredQuery(): array
     {
         $query = [];
-        $this->extractStructuredSearchConstraint($query, $this->search_constraints , '');
+        $searchConstraint = $this->search_constraints;
+        $typeFilter = $searchConstraint['content'] ?? $searchConstraint['type'] ?? null;
+        unset($searchConstraint['content'], $searchConstraint['type']);
+        $this->extractStructuredSearchConstraint($query, $searchConstraint, '');
         foreach ($query as &$queryPhrase)
         {
             if ($queryPhrase instanceof \XF\Phrase)
@@ -280,6 +285,46 @@ class Search extends XFCP_Search
         unset($queryPhrase);
 
         arsort($query);
+        // add content-type
+        if ($this->search_type !== '' && !$this->search_grouping)
+        {
+            try
+            {
+                $handler = \XF::app()->search()->handler($this->search_type);
+            }
+            catch (\Throwable $e)
+            {
+                $handler = null;
+            }
+
+            if ($handler !== null)
+            {
+                $types = [];
+                $groupType = $handler->getGroupByType();
+                $rawTypes = $handler->getSearchableContentTypes();
+                if ($typeFilter !== null)
+                {
+                    $rawTypes = (array)$typeFilter;
+                }
+                else if ($groupType !== null && in_array($groupType, $rawTypes, true))
+                {
+                    // impose a consistent order which is the groupable-type and then other types
+                    $rawTypes = array_merge([$groupType], array_diff($rawTypes, [$groupType]));
+                }
+
+                foreach ($rawTypes as $type)
+                {
+                    $types[$type] = \XF::app()->getContentTypePhrase($type, true);
+                }
+
+                if (count($types) !== 0)
+                {
+                    $query['svSearchOrder.' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
+                        'contentTypes' => implode(', ', $types),
+                    ])->render('raw');
+                }
+            }
+        }
         // add sort-by clause
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase !== null)
@@ -292,7 +337,7 @@ class Search extends XFCP_Search
         {
             $contentType = $this->getContainerContentType() ?? $this->search_type;
             $value = \XF::app()->getContentTypePhrase($contentType, true);
-            $query['svSearchClauses.group_by'] = \XF::phrase('svSearchClauses.order_by', [
+            $query['svSearchClauses.group_by'] = \XF::phrase('svSearchClauses.group_by', [
                 'value' => $value
             ])->render('raw');
         }
@@ -303,7 +348,9 @@ class Search extends XFCP_Search
     protected function getSvUnstructuredQuery(): array
     {
         $query = [];
-        $this->extractUnstructuredSearchConstraint($query, $this->search_constraints, '');
+        $searchConstraint = $this->search_constraints;
+        unset($searchConstraint['content'], $searchConstraint['type']);
+        $this->extractUnstructuredSearchConstraint($query, $searchConstraint, '');
         arsort($query);
         // add sort-by clause
         $phrase = $this->getSearchOrderPhrase($this->search_order);
