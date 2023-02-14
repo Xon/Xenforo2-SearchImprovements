@@ -53,13 +53,8 @@ class Post extends XFCP_Post
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType)
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
-        if (!Globals::isPushingViewOtherChecksIntoSearch())
-        {
-            return $constraints;
-        }
-
         // These are only meaningful with ElasticSearch+XenForo Enhanced Search
-        if (!\XF::isAddOnActive('XFES'))
+        if (!Globals::isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
         }
