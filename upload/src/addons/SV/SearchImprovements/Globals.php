@@ -14,9 +14,14 @@ class Globals
 {
     public static $shimSearchForSpecialization = true;
 
+    public static function isUsingElasticSearch(): bool
+    {
+        return \XF::isAddOnActive('XFES') && (\XF::options()->xfesEnabled ?? false);
+    }
+
     public static function isPushingViewOtherChecksIntoSearch(): bool
     {
-        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && \XF::isAddOnActive('XFES');
+        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && static::isUsingElasticSearch();
     }
 
     private function __construct() { }

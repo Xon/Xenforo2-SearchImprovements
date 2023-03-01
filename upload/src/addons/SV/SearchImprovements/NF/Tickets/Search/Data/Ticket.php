@@ -2,19 +2,19 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
-use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\Search\DiscussionUserTrait;
+use SV\SearchImprovements\Search\DiscussionTrait;
 use XF\Search\MetadataStructure;
 
 class Ticket extends XFCP_Ticket
 {
-    use DiscussionUserTrait;
+    protected static $svDiscussionEntity = \NF\Tickets\Entity\Ticket::class;
+    use DiscussionTrait;
 
     protected function getMetaData(\NF\Tickets\Entity\Ticket $ticket): array
     {
         $metaData = parent::getMetaData($ticket);
 
-        $this->populateDiscussionUserMetaData($ticket, $metaData);
+        $this->populateDiscussionMetaData($ticket, $metaData);
 
         return $metaData;
     }
@@ -23,10 +23,6 @@ class Ticket extends XFCP_Ticket
     {
         parent::setupMetadataStructure($structure);
 
-        if (Globals::isPushingViewOtherChecksIntoSearch())
-        {
-            $structure->addField('discussion_user', MetadataStructure::INT);
-            $this->setupDiscussionUserMetadataStructure($structure);
-        }
+        $this->setupDiscussionMetadataStructure($structure);
     }
 }

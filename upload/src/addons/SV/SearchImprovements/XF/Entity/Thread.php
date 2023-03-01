@@ -6,25 +6,25 @@
 namespace SV\SearchImprovements\XF\Entity;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
+use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use XF\Mvc\Entity\Structure;
-use function array_column,array_filter,array_map;
+use function array_column;
 
 /**
  * Extends \XF\Entity\Thread
- * @property-read int[] $discussion_user_ids
  */
-class Thread extends XFCP_Thread
+class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchableReplyCount
 {
     /**
      * @return array<int>
      */
-    protected function getDiscussionUserIds(): array
+    public function getDiscussionUserIds(): array
     {
         /** @var \SV\CollaborativeThreads\XF\Entity\Thread $this */
         if (($this->sv_collaborator_count ?? 0) > 0)
         {
             $userIds = array_column($this->getRelationFinder('CollaborativeUsers')->fetchColumns('user_id'), 'user_id');
-            $userIds = array_filter(array_map('\intval', $userIds));
         }
         else
         {
@@ -37,6 +37,11 @@ class Thread extends XFCP_Thread
         }
 
         return $userIds;
+    }
+
+    public function getReplyCountForSearch(): int
+    {
+        return $this->reply_count;
     }
 
     /**
@@ -58,7 +63,6 @@ class Thread extends XFCP_Thread
                     $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'sticky';
                 }
             }
-            $structure->getters['discussion_user_ids'] = ['getter' => 'getDiscussionUserIds', 'cache' => true];
         }
     
         return $structure;

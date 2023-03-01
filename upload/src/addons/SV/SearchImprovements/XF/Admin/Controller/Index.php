@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Admin\Controller;
 
+use SV\SearchImprovements\Globals;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 
@@ -17,7 +18,7 @@ class Index extends XFCP_Index
     {
         $reply = parent::actionIndex();
 
-        if ($reply instanceof ViewReply && \XF::isAddOnActive('XFES'))
+        if ($reply instanceof ViewReply && Globals::isUsingElasticSearch())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             /** @var \XFES\Service\Configurer $configurer */

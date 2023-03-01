@@ -7,7 +7,7 @@ namespace SV\SearchImprovements\XF\Search\Data;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\PermissionCache;
-use SV\SearchImprovements\Search\DiscussionUserTrait;
+use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
@@ -19,18 +19,19 @@ use function is_array;
 
 class Post extends XFCP_Post
 {
-    use DiscussionUserTrait;
+    protected static $svDiscussionEntity = \XF\Entity\Thread::class;
+    use DiscussionTrait;
 
     protected function getMetaData(\XF\Entity\Post $entity)
     {
         $metaData = parent::getMetaData($entity);
 
-        $this->populateDiscussionUserMetaData($entity->Thread, $metaData);
+        $this->populateDiscussionMetaData($entity->Thread, $metaData);
 
         return $metaData;
     }
 
-    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData)
+    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
         /** @var \XF\Entity\Thread $entity */
         if (\XF::isAddOnActive('SV/ViewStickyThreads'))
@@ -42,7 +43,14 @@ class Post extends XFCP_Post
         }
     }
 
-    protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure)
+    public function setupMetadataStructure(MetadataStructure $structure)
+    {
+        parent::setupMetadataStructure($structure);
+
+        $this->setupDiscussionMetadataStructure($structure);
+    }
+
+    protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure): void
     {
         if (\XF::isAddOnActive('SV/ViewStickyThreads'))
         {

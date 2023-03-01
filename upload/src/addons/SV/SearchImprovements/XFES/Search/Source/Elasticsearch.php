@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\XFES\Search\Source;
 
+use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
@@ -89,6 +90,21 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
 
         return $this->svValidSearchTypes;
+    }
+
+    /**
+     * @param Query $query
+     * @return array<string|int,string|array<string,string>>
+     */
+    protected function getSearchSortDsl(Query $query)
+    {
+        $order = $query->getOrder();
+        if ($order instanceof SearchOrder)
+        {
+            return $order->fields;
+        }
+
+        return parent::getSearchSortDsl($query);
     }
 
     protected function applyDslFilters(Query $query, array &$filters, array &$filtersNot)

@@ -6,21 +6,22 @@
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
+use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use XF\Mvc\Entity\Structure;
-use function array_column,array_filter,array_map;
+use function array_column;
 
 /**
  * Extends \NF\Tickets\Entity\Ticket
  */
-class Ticket extends XFCP_Ticket
+class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchableReplyCount
 {
     /**
      * @return array<int>
      */
-    protected function getDiscussionUserIds(): array
+    public function getDiscussionUserIds(): array
     {
         $userIds = array_column($this->getRelationFinder('Participants')->fetchColumns('user_id'), 'user_id');
-        $userIds = array_filter(array_map('\intval', $userIds));
         $userId = $this->user_id;
         if ($userId !== 0)
         {
@@ -28,6 +29,11 @@ class Ticket extends XFCP_Ticket
         }
 
         return $userIds;
+    }
+
+    public function getReplyCountForSearch(): int
+    {
+        return $this->reply_count;
     }
 
     /**
@@ -44,7 +50,6 @@ class Ticket extends XFCP_Ticket
             {
                 $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'user_id';
             }
-            $structure->getters['discussion_user_ids'] = ['getter' => 'getDiscussionUserIds', 'cache' => true];
         }
 
         return $structure;

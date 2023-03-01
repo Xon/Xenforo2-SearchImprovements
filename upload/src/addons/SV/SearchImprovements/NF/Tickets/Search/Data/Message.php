@@ -4,7 +4,7 @@ namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\PermissionCache;
-use SV\SearchImprovements\Search\DiscussionUserTrait;
+use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
@@ -15,13 +15,14 @@ use function is_array;
 
 class Message extends XFCP_Message
 {
-    use DiscussionUserTrait;
+    protected static $svDiscussionEntity = \NF\Tickets\Entity\Ticket::class;
+    use DiscussionTrait;
 
     protected function getMetaData(\NF\Tickets\Entity\Message $entity): array
     {
         $metaData = parent::getMetaData($entity);
 
-        $this->populateDiscussionUserMetaData($entity->Ticket, $metaData);
+        $this->populateDiscussionMetaData($entity->Ticket, $metaData);
 
         return $metaData;
     }
@@ -30,11 +31,7 @@ class Message extends XFCP_Message
     {
         parent::setupMetadataStructure($structure);
 
-        if (Globals::isPushingViewOtherChecksIntoSearch())
-        {
-            $structure->addField('discussion_user', MetadataStructure::INT);
-            $this->setupDiscussionUserMetadataStructure($structure);
-        }
+        $this->setupDiscussionMetadataStructure($structure);
     }
 
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType): array
