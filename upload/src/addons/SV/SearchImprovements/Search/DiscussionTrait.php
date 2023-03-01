@@ -106,7 +106,11 @@ trait DiscussionTrait
     {
         if ($order === 'replies' && Globals::isUsingElasticSearch())
         {
-            return new SearchOrder(['replies', 'date']);
+            $class = $this->getSvDiscussionEntityClass();
+            if (is_subclass_of($class, ISearchableReplyCount::class))
+            {
+                return new SearchOrder(['replies', 'date']);
+            }
         }
 
         return parent::getTypeOrder($order);
