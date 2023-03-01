@@ -21,6 +21,12 @@ namespace SV\SearchImprovements\SV\CollaborativeThreads\Service\Collaboration
 	class XFCP_Manager extends \SV\CollaborativeThreads\Service\Collaboration\Manager {}
 }
 
+namespace SV\SearchImprovements\SV\ConversationImprovements\Search\Data
+{
+	class XFCP_Conversation extends \SV\ConversationImprovements\Search\Data\Conversation {}
+	class XFCP_ConversationMessage extends \SV\ConversationImprovements\Search\Data\ConversationMessage {}
+}
+
 namespace SV\SearchImprovements\XFES\Admin\Controller
 {
 	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}
@@ -54,6 +60,7 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 
 namespace SV\SearchImprovements\XF\Entity
 {
+	class XFCP_ConversationMaster extends \XF\Entity\ConversationMaster {}
 	class XFCP_Search extends \XF\Entity\Search {}
 	class XFCP_Thread extends \XF\Entity\Thread {}
 	class XFCP_ThreadCollab extends \XF\Entity\Thread {}

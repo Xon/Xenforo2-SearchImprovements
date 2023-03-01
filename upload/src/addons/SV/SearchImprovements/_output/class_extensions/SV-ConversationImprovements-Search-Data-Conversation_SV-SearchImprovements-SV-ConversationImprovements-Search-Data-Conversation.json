@@ -1,0 +1,6 @@
+{
+    "from_class": "SV\\ConversationImprovements\\Search\\Data\\Conversation",
+    "to_class": "SV\\SearchImprovements\\SV\\ConversationImprovements\\Search\\Data\\Conversation",
+    "execute_order": 1,
+    "active": true
+}
