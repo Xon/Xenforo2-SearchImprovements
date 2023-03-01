@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Search\Source;
 
-use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractExtendedMetadataConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use XF\Search\Query\KeywordQuery;
 use XF\Search\Query\SqlConstraint;
 use function is_array;
@@ -23,7 +23,7 @@ class MySqlFt extends XFCP_MySqlFt
         $constraints = $query->getMetadataConstraints();
         foreach ($constraints as $key => $constraint)
         {
-            if ($constraint instanceof AbstractExtendedMetadataConstraint)
+            if ($constraint instanceof AbstractConstraint)
             {
                 unset($constraints[$key]);
                 $sqlConstraint = $constraint->asSqlConstraint();
