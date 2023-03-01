@@ -51,6 +51,10 @@ class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchab
                 $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'user_id';
             }
         }
+        if (Globals::isUsingElasticSearch())
+        {
+            $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'reply_count';
+        }
 
         return $structure;
     }

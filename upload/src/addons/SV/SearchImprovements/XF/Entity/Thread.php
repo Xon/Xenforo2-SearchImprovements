@@ -64,6 +64,10 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchab
                 }
             }
         }
+        if (Globals::isUsingElasticSearch())
+        {
+            $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'reply_count';
+        }
     
         return $structure;
     }

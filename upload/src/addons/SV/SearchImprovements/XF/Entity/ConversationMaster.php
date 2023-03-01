@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
@@ -14,5 +15,21 @@ class ConversationMaster extends XFCP_ConversationMaster implements ISearchableR
     public function getReplyCountForSearch(): int
     {
         return $this->reply_count;
+    }
+
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
+    public static function getStructure(Structure $structure)
+    {
+        $structure = parent::getStructure($structure);
+
+        if (Globals::isUsingElasticSearch())
+        {
+            $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'reply_count';
+        }
+
+        return $structure;
     }
 }
