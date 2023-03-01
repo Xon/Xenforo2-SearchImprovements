@@ -1,12 +1,6 @@
 <?php
-/**
- * @noinspection PhpRedundantMethodOverrideInspection
- */
 
 namespace SV\SearchImprovements\NF\Tickets\Entity;
-
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Structure;
 
 /**
  * Extends \NF\Tickets\Entity\TicketParticipant

@@ -12,11 +12,12 @@ class Api extends XFCP_Api
     /** @var array|null s */
     protected $dslForError;
 
-    public function getClusterInfo()
+    public function getClusterInfo(): ?array
     {
         return $this->request('get', "/_cluster/health")->getBody();
     }
 
+    /** @noinspection PhpMissingReturnTypeInspection */
     public function search(array $dsl)
     {
         if (\XF::options()->esLogDSL ?? false)
@@ -41,6 +42,7 @@ class Api extends XFCP_Api
     /**
      * @param array $body
      * @return string|null
+     * @noinspection PhpMissingReturnTypeInspection
      */
     protected function getErrorMessage(array $body)
     {

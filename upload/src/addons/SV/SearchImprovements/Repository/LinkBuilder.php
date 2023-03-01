@@ -39,7 +39,6 @@ class LinkBuilder extends Repository
         // patch routing on the fly, this way upgrades to XF don't break this
         $router = \XF::app()->router('admin');
         $routes = $router->getRoutes();
-        $hasFromClosure = \is_callable('\Closure::fromCallable');
         // must be an array, and not a closure :(
         $callable = [$this, 'injectContentTypeIntoLink'];
         foreach (['enhanced-search'] as $routeLabel)
@@ -55,9 +54,8 @@ class LinkBuilder extends Repository
                 if (!empty($route['build_callback']))
                 {
                     $previousCallback = $route['build_callback'];
-                    if ($hasFromClosure && \is_array($previousCallback))
+                    if (\is_array($previousCallback))
                     {
-                        /** @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection */
                         $previousCallback = \Closure::fromCallable($previousCallback);
                     }
                     $this->previousCallbacks[$subSection] = $previousCallback;
@@ -86,7 +84,7 @@ class LinkBuilder extends Repository
         &$data,
         array &$params,
         \XF\Mvc\Router $router
-    )
+    ): ?\XF\Mvc\RouteBuiltLink
     {
         $action = \strtolower($action);
 

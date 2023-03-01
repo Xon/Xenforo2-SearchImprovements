@@ -1,7 +1,4 @@
 <?php
-/**
- * @noinspection PhpRedundantMethodOverrideInspection
- */
 
 namespace SV\SearchImprovements\XF\Entity;
 
@@ -105,6 +102,7 @@ class Search extends XFCP_Search
                     ],
                 ]));
             }
+            /** @noinspection PhpUnnecessaryLocalVariableInspection */
             $value = implode(',', $formattedUsernames);
 
             return $value;

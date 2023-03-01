@@ -27,7 +27,7 @@ class MetadataStructureEx extends MetadataStructure
      * @param string $name
      * @return array|null
      */
-    public function getField(string $name)
+    public function getField(string $name): ?array
     {
         return $this->fields[$name] ?? null;
     }
@@ -37,7 +37,7 @@ class MetadataStructureEx extends MetadataStructure
      * @param array  $config
      * @return void
      */
-    public function updateField(string $name, array $config = [])
+    public function updateField(string $name, array $config = []): void
     {
         $this->fields[$name] = $config;
     }

@@ -25,7 +25,7 @@ class Setup extends AbstractSetup
     /**
      * Creates add-on tables.
      */
-    public function installStep1()
+    public function installStep1(): void
     {
         $sm = $this->schemaManager();
 
@@ -39,7 +39,7 @@ class Setup extends AbstractSetup
     /**
      * Alters core tables.
      */
-    public function installStep2()
+    public function installStep2(): void
     {
         $sm = $this->schemaManager();
 
@@ -52,17 +52,17 @@ class Setup extends AbstractSetup
         }
     }
 
-    public function installStep3()
+    public function installStep3(): void
     {
         $this->applyDefaultPermissions();
     }
 
-    public function upgrade2000001Step1()
+    public function upgrade2000001Step1(): void
     {
         $this->installStep1();
     }
 
-    public function upgrade2000001Step2()
+    public function upgrade2000001Step2(): void
     {
         $this->installStep2();
     }
@@ -70,7 +70,7 @@ class Setup extends AbstractSetup
     /**
      * Drops add-on tables.
      */
-    public function uninstallStep1()
+    public function uninstallStep1(): void
     {
         $sm = $this->schemaManager();
 
@@ -83,7 +83,7 @@ class Setup extends AbstractSetup
     /**
      * Drops columns from core tables.
      */
-    public function uninstallStep2()
+    public function uninstallStep2(): void
     {
         $sm = $this->schemaManager();
 
@@ -96,10 +96,9 @@ class Setup extends AbstractSetup
         }
     }
 
-    protected function applyDefaultPermissions(int $previousVersion = null): bool
+    protected function applyDefaultPermissions(int $previousVersion = 0): bool
     {
         $applied = false;
-        $previousVersion = (int)$previousVersion;
 
         if (!$previousVersion || $previousVersion < 1010300)
         {
@@ -121,7 +120,7 @@ class Setup extends AbstractSetup
     protected function getAlterTables(): array
     {
         return [
-            'xf_user_option' => function (Alter $table) {
+            'xf_user_option' => function (Alter $table): void {
                 $this->addOrChangeColumn($table, 'sv_default_search_order', 'varchar', 50)->setDefault('');
             },
         ];
@@ -130,7 +129,7 @@ class Setup extends AbstractSetup
     protected function getRemoveAlterTables(): array
     {
         return [
-            'xf_user_option' => function (Alter $table) {
+            'xf_user_option' => function (Alter $table): void {
                 $table->dropColumns(['sv_default_search_order']);
             },
         ];

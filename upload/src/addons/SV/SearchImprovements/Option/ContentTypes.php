@@ -4,7 +4,7 @@ namespace SV\SearchImprovements\Option;
 
 use XF\Option\AbstractOption;
 
-use function count, floatval, class_exists;
+use function count, floatval;
 
 /**
  * Class ContentTypes

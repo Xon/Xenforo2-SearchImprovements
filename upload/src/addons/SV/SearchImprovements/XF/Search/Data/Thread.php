@@ -7,7 +7,6 @@ namespace SV\SearchImprovements\XF\Search\Data;
 
 use SV\SearchImprovements\Search\DiscussionUserTrait;
 use XF\Search\MetadataStructure;
-use function array_column, array_filter, array_map, array_unique;
 
 class Thread extends XFCP_Thread
 {

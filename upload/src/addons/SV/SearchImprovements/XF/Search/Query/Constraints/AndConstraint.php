@@ -27,7 +27,7 @@ class AndConstraint extends AbstractConstraint
     /**
      * @return null|SqlConstraint
      */
-    public function asSqlConstraint()
+    public function asSqlConstraint(): ?SqlConstraint
     {
         // TODO: Implement asSqlConstraint() method.
         return null;

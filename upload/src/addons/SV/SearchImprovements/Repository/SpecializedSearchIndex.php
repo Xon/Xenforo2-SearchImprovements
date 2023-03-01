@@ -77,7 +77,7 @@ class SpecializedSearchIndex extends Repository
      * @return XenForoSearch|null
      * @throws \Exception
      */
-    public function search(string $contentType, bool $throw = true)
+    public function search(string $contentType, bool $throw = true): ?XenForoSearch
     {
         /** @var XenForoSearch|null $search */
         $search = $this->search[$contentType] ?? null;
@@ -132,7 +132,7 @@ class SpecializedSearchIndex extends Repository
      * @return AbstractData|SpecializedData|null
      * @throws \Exception
      */
-    public function getHandler(string $contentType, bool $throw = true)
+    public function getHandler(string $contentType, bool $throw = true): ?AbstractData
     {
         if (!(\XF::options()->xfesEnabled ?? false))
         {

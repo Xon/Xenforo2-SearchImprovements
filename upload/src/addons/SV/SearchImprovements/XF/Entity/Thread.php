@@ -7,7 +7,7 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use SV\SearchImprovements\Globals;
 use XF\Mvc\Entity\Structure;
-use function array_column,array_filter,array_map,array_unique;
+use function array_column,array_filter,array_map;
 
 /**
  * Extends \XF\Entity\Thread
