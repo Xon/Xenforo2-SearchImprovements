@@ -52,21 +52,18 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchab
     {
         $structure = parent::getStructure($structure);
 
-        if (Globals::isPushingViewOtherChecksIntoSearch())
+        if (Globals::isPushingViewOtherChecksIntoSearch() && isset($structure->behaviors['XF:IndexableContainer']))
         {
-            if (isset($structure->behaviors['XF:IndexableContainer']))
+            $structure->options['svReindexThreadForCollaborators'] = false;
+            Globals::addContainerIndexableField($structure, 'user_id');
+            if (\XF::isAddOnActive('SV/ViewStickyThreads'))
             {
-                $structure->options['svReindexThreadForCollaborators'] = false;
-                $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'user_id';
-                if (\XF::isAddOnActive('SV/ViewStickyThreads'))
-                {
-                    $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'sticky';
-                }
+                Globals::addContainerIndexableField($structure, 'sticky');
             }
         }
         if (Globals::isUsingElasticSearch())
         {
-            $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'reply_count';
+            Globals::addContainerIndexableField($structure, 'reply_count');
         }
     
         return $structure;

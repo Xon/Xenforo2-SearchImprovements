@@ -27,7 +27,7 @@ class ConversationMaster extends XFCP_ConversationMaster implements ISearchableR
 
         if (Globals::isUsingElasticSearch())
         {
-            $structure->behaviors['XF:IndexableContainer']['checkForUpdates'][] = 'reply_count';
+            Globals::addContainerIndexableField($structure, 'reply_count');
         }
 
         return $structure;
