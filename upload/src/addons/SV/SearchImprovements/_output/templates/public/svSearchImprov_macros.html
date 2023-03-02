@@ -1,0 +1,31 @@
+<xf:macro name="replies" arg-input="{{ [] }}">
+	<xf:macro name="range" 
+			  arg-label="{{ phrase('svSearchImprov_reply_count') }}"
+			  arg-fieldPrefix="c[replies]"
+			  arg-lowerBoundValue="{$input.c.replies.lower}"
+			  arg-upperBoundValue="{$input.c.replies.upper}"
+			  />
+</xf:macro>
+
+<xf:macro name="range"
+		  arg-label="!"
+		  arg-fieldPrefix="!"
+		  arg-lowerBoundValue="!"
+		  arg-upperBoundValue="!"
+		  >
+	<xf:formrow label="{$label}">
+		<div class="inputGroup">
+			<xf:numberbox name="{$fieldPrefix}[lower]" 
+						  size="5" min="0" step="1" required=""
+						  class="input--number" 
+						  value="{{ $lowerBoundValue ?: '' }}" 
+						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
+			<span class="inputGroup-text">-</span>
+			<xf:numberbox name="{$fieldPrefix}[upper]" 
+						  class="input--number" 
+						  size="5" min="0" step="1" required=""
+						  value="{{ $upperBoundValue ?: '' }}" 
+						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
+		</div>
+	</xf:formrow>
+</xf:macro>

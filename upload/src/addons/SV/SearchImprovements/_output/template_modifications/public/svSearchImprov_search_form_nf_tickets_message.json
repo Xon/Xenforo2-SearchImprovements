@@ -1,0 +1,9 @@
+{
+    "template": "search_form_nf_tickets_message",
+    "description": "Add range-search for reply count",
+    "execution_order": 1,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:if is=\"$input.c.ticket\">",
+    "replace": "<xf:macro template=\"svSearchImprov_macros\" name=\"replies\" arg-input=\"{$input}\" />\n$0"
+}
