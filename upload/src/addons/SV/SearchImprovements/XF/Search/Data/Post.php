@@ -62,7 +62,8 @@ class Post extends XFCP_Post
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
         // These are only meaningful with ElasticSearch+XenForo Enhanced Search
-        if (!Globals::isPushingViewOtherChecksIntoSearch())
+        $repo = Globals::repo();
+        if (!$repo->isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
         }

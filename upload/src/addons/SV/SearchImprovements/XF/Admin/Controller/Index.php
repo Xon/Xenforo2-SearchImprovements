@@ -18,7 +18,7 @@ class Index extends XFCP_Index
     {
         $reply = parent::actionIndex();
 
-        if ($reply instanceof ViewReply && Globals::isUsingElasticSearch())
+        if ($reply instanceof ViewReply && Globals::repo()->isUsingElasticSearch())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             /** @var \XFES\Service\Configurer $configurer */

@@ -37,7 +37,8 @@ class Message extends XFCP_Message
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType): array
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
-        if (!Globals::isPushingViewOtherChecksIntoSearch())
+        $repo = Globals::repo();
+        if (!$repo->isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
         }

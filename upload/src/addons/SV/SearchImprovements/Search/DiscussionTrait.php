@@ -43,12 +43,13 @@ trait DiscussionTrait
 
     protected function populateDiscussionMetaData(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
-        if (!Globals::isUsingElasticSearch())
+        $repo = Globals::repo();
+        if (!$repo->isUsingElasticSearch())
         {
             return;
         }
 
-        if (Globals::isPushingViewOtherChecksIntoSearch() && ($entity instanceof ISearchableDiscussionUser))
+        if ($repo->isPushingViewOtherChecksIntoSearch() && ($entity instanceof ISearchableDiscussionUser))
         {
             $this->setupDiscussionUserMetadata($entity, $metaData);
 
@@ -79,14 +80,15 @@ trait DiscussionTrait
 
     public function setupDiscussionMetadataStructure(MetadataStructure $structure): void
     {
-        if (!Globals::isUsingElasticSearch())
+        $repo = Globals::repo();
+        if (!$repo->isUsingElasticSearch())
         {
             return;
         }
 
         $class = $this->getSvDiscussionEntityClass();
 
-        if (is_subclass_of($class, ISearchableDiscussionUser::class) && Globals::isPushingViewOtherChecksIntoSearch())
+        if (is_subclass_of($class, ISearchableDiscussionUser::class) && $repo->isPushingViewOtherChecksIntoSearch())
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
             $this->setupDiscussionUserMetadataStructure($structure);
@@ -104,7 +106,7 @@ trait DiscussionTrait
      */
     public function getTypeOrder($order)
     {
-        if ($order === 'replies' && Globals::isUsingElasticSearch())
+        if ($order === 'replies' && Globals::repo()->isUsingElasticSearch())
         {
             $class = $this->getSvDiscussionEntityClass();
             if (is_subclass_of($class, ISearchableReplyCount::class))

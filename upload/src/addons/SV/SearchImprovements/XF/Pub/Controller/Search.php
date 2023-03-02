@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
+use SV\SearchImprovements\Globals;
 use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
@@ -52,6 +53,7 @@ class Search extends XFCP_Search
                 }
             }
             $reply->setParam('input', $input);
+            $reply->setParam('isUsingElasticSearch', Globals::repo()->isUsingElasticSearch());
         }
 
         return $reply;
