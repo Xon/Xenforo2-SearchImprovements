@@ -12,6 +12,7 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
 use function count;
@@ -111,5 +112,21 @@ class Post extends XFCP_Post
         }
 
         return $constraints;
+    }
+
+    public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
+    {
+        $repo = Globals::repo();
+        if ($repo->applyRepliesConstraint($query, $request,
+            function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['upper']);
+            }, function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['lower']);
+            }, [$this->getThreadQueryTableReference()]))
+        {
+            $request->set('c.min_reply_count', 0);
+        }
+
+        parent::applyTypeConstraintsFromInput($query, $request, $urlConstraints);
     }
 }

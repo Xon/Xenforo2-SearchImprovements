@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\SV\ConversationImprovements\Search\Data;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use XF\Search\MetadataStructure;
 
@@ -28,5 +29,21 @@ class ConversationMessage extends XFCP_ConversationMessage
         parent::setupMetadataStructure($structure);
 
         $this->setupDiscussionMetadataStructure($structure);
+    }
+
+    public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
+    {
+        $repo = Globals::repo();
+        if ($repo->applyRepliesConstraint($query, $request,
+            function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['upper']);
+            }, function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['lower']);
+            }, [$this->getConversationQueryTableReference()]))
+        {
+            $request->set('c.min_reply_count', 0);
+        }
+
+        parent::applyTypeConstraintsFromInput($query, $request, $urlConstraints);
     }
 }

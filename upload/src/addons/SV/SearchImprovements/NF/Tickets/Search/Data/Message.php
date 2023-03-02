@@ -75,4 +75,30 @@ class Message extends XFCP_Message
 
         return $constraints;
     }
+
+    public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
+    {
+        $repo = Globals::repo();
+        if ($repo->applyRepliesConstraint($query, $request,
+            function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['upper']);
+            }, function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['lower']);
+            }, [$this->getTicketQueryTableReference()]))
+        {
+            $request->set('c.min_reply_count', 0);
+        }
+
+        parent::applyTypeConstraintsFromInput($query, $request, $urlConstraints);
+    }
+
+    /** @noinspection PhpMissingReturnTypeInspection */
+    protected function getTicketQueryTableReference()
+    {
+        return new \XF\Search\Query\TableReference(
+            'ticket',
+            'xf_nf_tickets_ticket',
+            'ticket.ticket_id = search_index.discussion_id'
+        );
+    }
 }
