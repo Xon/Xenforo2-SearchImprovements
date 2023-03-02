@@ -7,14 +7,13 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
-use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use XF\Mvc\Entity\Structure;
 use function array_column;
 
 /**
  * Extends \XF\Entity\Thread
  */
-class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchableReplyCount
+class Thread extends XFCP_Thread implements ISearchableDiscussionUser
 {
     /**
      * @return array<int>
@@ -39,11 +38,6 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchab
         return $userIds;
     }
 
-    public function getReplyCountForSearch(): int
-    {
-        return $this->reply_count;
-    }
-
     /**
      * @param Structure $structure
      * @return Structure
@@ -61,10 +55,6 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser, ISearchab
             {
                 $repo->addContainerIndexableField($structure, 'sticky');
             }
-        }
-        if ($repo->isUsingElasticSearch())
-        {
-            $repo->addContainerIndexableField($structure, 'reply_count');
         }
     
         return $structure;
