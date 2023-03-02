@@ -68,6 +68,11 @@ class Search extends XFCP_Search
     /** @noinspection PhpMissingReturnTypeInspection */
     protected function formatConstraintValue(string $key, $value)
     {
+        if ($value instanceof \XF\Phrase)
+        {
+            return $value->render('raw');
+        }
+
         if (in_array($key, $this->svDateConstraint, true))
         {
             // yyyy-mm-dd
@@ -271,6 +276,12 @@ class Search extends XFCP_Search
         $query = [];
         $searchConstraint = $this->search_constraints;
         $typeFilter = $searchConstraint['content'] ?? $searchConstraint['type'] ?? null;
+        $containerOnly = \XF::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraint['container_only'] ?? false);
+        $addContentTypeTerm = $this->search_type !== '' && !$this->search_grouping;
+        if ($containerOnly && $typeFilter !== null || $addContentTypeTerm && $containerOnly)
+        {
+            unset($searchConstraint['container_only']);
+        }
         unset($searchConstraint['content'], $searchConstraint['type']);
         $this->extractStructuredSearchConstraint($query, $searchConstraint, '');
         foreach ($query as &$queryPhrase)
@@ -284,7 +295,7 @@ class Search extends XFCP_Search
 
         arsort($query);
         // add content-type
-        if ($this->search_type !== '' && !$this->search_grouping)
+        if ($addContentTypeTerm)
         {
             try
             {
@@ -306,8 +317,15 @@ class Search extends XFCP_Search
                 }
                 else if ($groupType !== null && in_array($groupType, $rawTypes, true))
                 {
-                    // impose a consistent order which is the groupable-type and then other types
-                    $rawTypes = array_merge([$groupType], array_diff($rawTypes, [$groupType]));
+                    if ($containerOnly)
+                    {
+                        $rawTypes = [$groupType];
+                    }
+                    else
+                    {
+                        // impose a consistent order which is the groupable-type and then other types
+                        $rawTypes = array_merge([$groupType], array_diff($rawTypes, [$groupType]));
+                    }
                 }
 
                 foreach ($rawTypes as $type)
