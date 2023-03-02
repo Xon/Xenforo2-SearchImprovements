@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\Search;
 
+use SV\SearchImprovements\EntityGetterCache;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
@@ -69,7 +70,10 @@ trait DiscussionTrait
 
         if ($entity instanceof ISearchableReplyCount)
         {
-            $metaData['replies'] = $entity->getReplyCountForSearch();
+
+            $metaData['replies'] = EntityGetterCache::getCachedValue($entity, '_svGetReplyCountForSearch', function () use ($entity) {
+                return $entity->getReplyCountForSearch();
+            });
         }
     }
 
