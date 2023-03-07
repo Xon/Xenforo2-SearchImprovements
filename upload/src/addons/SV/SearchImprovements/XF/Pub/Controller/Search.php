@@ -128,6 +128,7 @@ class Search extends XFCP_Search
             /** @var \XF\Entity\Search $search */
             $search = $this->em()->find('XF:Search', $params->get('search_id'));
             $phrase = $reply->getMessage();
+            /*
             if ($search !== null && $phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
             {
                 assert($search instanceof SearchEntity);
@@ -159,6 +160,7 @@ class Search extends XFCP_Search
 
                 $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
             }
+            */
         }
 
         return $reply;
