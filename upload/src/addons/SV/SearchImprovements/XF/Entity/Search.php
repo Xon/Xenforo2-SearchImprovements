@@ -129,10 +129,13 @@ class Search extends XFCP_Search
             if ($thread !== null)
             {
                 assert($thread instanceof \XF\Entity\Thread);
-                return \XF::phrase('svSearchConstraint.thread', [
-                    'url' => $this->app()->router('public')->buildLink('threads', $thread),
-                    'title' => $thread->title,
-                ]);
+                if ($thread->canView())
+                {
+                    return \XF::phrase('svSearchConstraint.thread', [
+                        'url'   => $this->app()->router('public')->buildLink('threads', $thread),
+                        'title' => $thread->title,
+                    ]);
+                }
             }
         }
 
