@@ -147,7 +147,7 @@ class Search extends XFCP_Search
                 ];
 
                 $searcher = $this->app()->search();
-                $resultSet = $searcher->getResultSet($emptySearch->search_results);
+                $resultSet = $searcher->getResultSet($emptySearch->search_results)->limitToViewableResults();
                 $resultsWrapped = $searcher->wrapResultsForRender($resultSet, $resultOptions);
 
                 $viewParams = [
