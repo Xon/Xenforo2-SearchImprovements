@@ -51,7 +51,7 @@ class SearchPatch extends XFCP_SearchPatch
             $storedArgs = $this->convertSearchToQueryInput($search);
             // Use non-exact compare as it is recursively insensitive to element order
             if ($searchData != $storedArgs) {
-                return $this->notFound();
+                return $this->message(\XF::phrase('no_results_found'));
             }
         }
 
