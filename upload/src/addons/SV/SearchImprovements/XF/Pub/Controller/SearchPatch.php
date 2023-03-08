@@ -28,7 +28,7 @@ class SearchPatch extends XFCP_SearchPatch
         if ($search === null || $search->user_id !== $visitorId) {
             if ($visitorId === 0) {
                 // prevent sharing of search links from members to guests
-                return $this->notFound();
+                return $this->message(\XF::phrase('no_results_found'));
             }
 
             $searchData = $this->convertShortSearchInputNames();
