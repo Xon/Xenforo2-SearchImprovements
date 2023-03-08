@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Pub\\Controller\\Search",
+    "to_class": "SV\\SearchImprovements\\XF\\Pub\\Controller\\SearchPatch",
+    "execute_order": 1,
+    "active": true
+}
