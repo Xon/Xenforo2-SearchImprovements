@@ -137,11 +137,13 @@ class Search extends XFCP_Search
             $thread = $this->app()->find('XF:Thread', (int)$value);
             if (($thread instanceof \XF\Entity\Thread) && $thread->canView())
             {
-                return \XF::phrase('svSearchConstraint.thread', [
+                return \XF::phrase('svSearchConstraint.thread_with_title', [
                     'url'   => $this->app()->router('public')->buildLink('threads', $thread),
                     'title' => $thread->title,
                 ]);
             }
+
+            return \XF::phrase('svSearchConstraint.thread_no_title');
         }
 
         return null;
