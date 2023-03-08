@@ -125,32 +125,37 @@ class Search extends XFCP_Search
 
         if ($reply instanceof MessageReply)
         {
-            /** @var \XF\Entity\Search $search */
-            $search = $this->em()->find('XF:Search', $params->get('search_id'));
             $phrase = $reply->getMessage();
-            /*
-            if ($search !== null && $phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
+            if ($phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
             {
-                assert($search instanceof SearchEntity);
+                $emptySearch = $this->em()->create('XF:Search');
+                assert($emptySearch instanceof SearchEntity);
 
-                $perPage = $this->options()->searchResultsPerPage;
-                $this->assertValidPage(1, $perPage, 1, 'search', $search);
+                // extract from the URL public known information for the search result page
+                $searchId = (int)$params->get('search_id');
+                $emptySearch->setTrusted('search_id', $searchId);
+                $searchData = $this->convertShortSearchInputNames();
+                $query = $this->prepareSearchQuery($searchData, $constraints);
+                // Construct a known good empty-search
+                $emptySearch->setupFromQuery($query, $constraints);
+                $emptySearch->search_results = [];
+                $emptySearch->setReadOnly(true);
 
                 $resultOptions = [
-                    'search' => $search,
-                    'term'   => $search->search_query,
+                    'search' => $emptySearch,
+                    'term'   => $emptySearch->search_query,
                 ];
 
                 $searcher = $this->app()->search();
-                $resultSet = $searcher->getResultSet($search->search_results);
+                $resultSet = $searcher->getResultSet($emptySearch->search_results);
                 $resultsWrapped = $searcher->wrapResultsForRender($resultSet, $resultOptions);
 
                 $viewParams = [
-                    'search'  => $search,
+                    'search'  => $emptySearch,
                     'results' => $resultsWrapped,
 
                     'page'    => 1,
-                    'perPage' => $perPage,
+                    'perPage' => $this->options()->searchResultsPerPage,
 
                     'modTypes'      => [],
                     'activeModType' => '',
@@ -160,7 +165,6 @@ class Search extends XFCP_Search
 
                 $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
             }
-            */
         }
 
         return $reply;
