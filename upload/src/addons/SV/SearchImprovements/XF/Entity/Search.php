@@ -95,8 +95,17 @@ class Search extends XFCP_Search
             $formattedUsernames = [];
             foreach ($users as $user)
             {
+                assert($user instanceof \XF\Entity\User);
+                $username = $user->username;
+                if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit', 'email_bounce'], true))
+                {
+                    $user = null;
+                }
+
                 $formattedUsernames[] = new \XF\PreEscaped($templater->func('username_link', [
-                    $user, false
+                    $user, false, [
+                        'username' => $username
+                    ]
                 ]));
             }
             foreach ($notFound as $username)
