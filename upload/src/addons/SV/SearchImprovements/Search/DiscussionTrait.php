@@ -63,6 +63,7 @@ trait DiscussionTrait
                     return $i !== 0;
                 });
                 // array_values ensures the value is encoded as a json array, and not a json hash if the php array is not a list
+                /** @noinspection PhpUnnecessaryLocalVariableInspection */
                 $userIds = array_values(array_unique($userIds));
 
                 return $userIds;
