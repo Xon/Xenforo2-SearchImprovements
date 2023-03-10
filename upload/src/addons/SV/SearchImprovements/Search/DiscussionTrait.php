@@ -54,26 +54,35 @@ trait DiscussionTrait
         {
             $this->setupDiscussionUserMetadata($entity, $metaData);
 
-            $userIds = $entity->getDiscussionUserIds();
+            $userIds= EntityGetterCache::getCachedValue($entity, '_svDiscussionUserIdForSearch', function () use ($entity): array {
+                $userIds = $entity->getDiscussionUserIds();
 
-            // ensure consistent behavior that it is an array of ints, and no zero user ids are sent to XFES
-            /** @var int[] $userIds */
-            $userIds = array_filter(array_map('\intval', $userIds), function (int $i) {
-                return $i !== 0;
+                // ensure consistent behavior that it is an array of ints, and no zero user ids are sent to XFES
+                /** @var int[] $userIds */
+                $userIds = array_filter(array_map('\intval', $userIds), function (int $i) {
+                    return $i !== 0;
+                });
+                // array_values ensures the value is encoded as a json array, and not a json hash if the php array is not a list
+                $userIds = array_values(array_unique($userIds));
+
+                return $userIds;
             });
+            assert(is_array($userIds));
+
             if (count($userIds) !== 0)
             {
-                // array_values ensures the value is encoded as a json array, and not a json hash if the php array is not a list
-                $metaData['discussion_user'] = array_values(array_unique($userIds));
+
+                $metaData['discussion_user'] = $userIds;
             }
         }
 
         if ($entity instanceof ISearchableReplyCount)
         {
-
-            $metaData['replies'] = EntityGetterCache::getCachedValue($entity, '_svGetReplyCountForSearch', function () use ($entity) {
+            $replyCount = EntityGetterCache::getCachedValue($entity, '_svGetReplyCountForSearch', function () use ($entity): int {
                 return $entity->getReplyCountForSearch();
             });
+            assert(is_int($replyCount));
+            $metaData['replies'] = $replyCount;
         }
     }
 
