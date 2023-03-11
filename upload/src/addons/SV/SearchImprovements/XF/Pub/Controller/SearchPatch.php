@@ -49,17 +49,10 @@ class SearchPatch extends XFCP_SearchPatch
         {
             // Determine if the search query (broadly) matches the stored query
             $searchData = $this->convertShortSearchInputNames();
-            // most of the time arguments are in the URL, but member searches and a few other redirects do not include it like a normal search
-            $emptySearchData = array_filter($searchData, function ($e) {
-                // avoid falsy, which may include terms we don't want to skip
-                return $e !== null && $e !== 0 && $e !== '' && $e !== [];
-            });
-            if (count($emptySearchData) !== 0) {
-                $storedArgs = $this->convertSearchToQueryInput($search);
-                // Use non-exact compare as it is recursively insensitive to element order
-                if ($searchData != $storedArgs) {
-                    return $this->message(\XF::phrase('no_results_found'));
-                }
+            $storedArgs = $this->convertSearchToQueryInput($search);
+            // Use non-exact compare as it is recursively insensitive to element order
+            if ($searchData != $storedArgs) {
+                return $this->message(\XF::phrase('no_results_found'));
             }
         }
 

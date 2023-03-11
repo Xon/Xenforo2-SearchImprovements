@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\Repository;
 
 use XF\Mvc\Entity\Repository;
+use XF\Mvc\Router;
 
 /**
  * Class LinkBuilder
@@ -17,19 +18,24 @@ class LinkBuilder extends Repository
     protected $init = false;
 
     /**
-     * @var array
+     * @var array<callable>
      */
     protected $previousCallbacks = [];
 
     /** @var string|null */
     protected $contentType;
 
-    public function setContentType(string $contentType)
+    public function setContentType(string $contentType): void
     {
         $this->contentType = $contentType;
     }
 
-    public function hookRouteBuilder()
+    public function hookSearchQueryBuilder(): void
+    {
+        $this->injectLinkBuilderCallback(\XF::app()->router('public'), ['search'], [$this, 'fixQueryString']);
+    }
+
+    public function hookRouteBuilder(): void
     {
         if ($this->init)
         {
@@ -37,11 +43,19 @@ class LinkBuilder extends Repository
         }
         $this->init = true;
         // patch routing on the fly, this way upgrades to XF don't break this
-        $router = \XF::app()->router('admin');
+        $this->injectLinkBuilderCallback(\XF::app()->router('admin'), ['enhanced-search'], [$this, 'injectContentTypeIntoLink']);
+    }
+
+    /**
+     * @param Router                     $router
+     * @param string[]                   $sections
+     * @param array{0: string, 1:string} $callable
+     * @return void
+     */
+    protected function injectLinkBuilderCallback(\XF\Mvc\Router $router, array $sections, array $callable): void
+    {
         $routes = $router->getRoutes();
-        // must be an array, and not a closure :(
-        $callable = [$this, 'injectContentTypeIntoLink'];
-        foreach (['enhanced-search'] as $routeLabel)
+        foreach ($sections as $routeLabel)
         {
             if (empty($routes[$routeLabel]))
             {
@@ -97,10 +111,9 @@ class LinkBuilder extends Repository
         }
 
         // chain callbacks
-        if (isset($route['subSection'], $this->previousCallbacks[$route['subSection']]))
+        $callable = $this->previousCallbacks[$route['subSection']] ?? null;
+        if ($callable !== null)
         {
-            $callable = $this->previousCallbacks[$route['subSection']];
-
             return \call_user_func_array(
                 $callable,
                 [&$prefix, &$route, &$action, &$data, &$params, $router]
@@ -108,5 +121,55 @@ class LinkBuilder extends Repository
         }
 
         return null;
+    }
+
+    /**
+     * @param string         $prefix
+     * @param array          $route
+     * @param string         $action
+     * @param mixed          $data
+     * @param array          $params
+     * @param \XF\Mvc\Router $router
+     * @return \XF\Mvc\RouteBuiltLink|null
+     */
+    public function fixQueryString(
+        string &$prefix,
+        array &$route,
+        string &$action,
+               &$data,
+        array &$params,
+        \XF\Mvc\Router $router
+    ): ?\XF\Mvc\RouteBuiltLink
+    {
+        if ($data instanceof \XF\Entity\Search)
+        {
+            $params['q'] = $data->search_query;
+            $params['t'] = $data->search_type;
+            $params['c'] = $data->search_constraints;
+            $params['o'] = $data->search_order;
+            if ($data->search_grouping)
+            {
+                $params['g'] = 1;
+            }
+
+            $params = array_filter($params, function ($e) {
+                // avoid falsy, which may include terms we don't want to skip
+                return $e !== null && $e !== 0 && $e !== '' && $e !== [];
+            });
+
+            return null;
+        }
+
+        // chain callbacks
+        $callable = $this->previousCallbacks[$route['subSection']] ?? null;
+        if ($callable !== null)
+        {
+            return \call_user_func_array(
+                $callable,
+                [&$prefix, &$route, &$action, &$data, &$params, $router]
+            );
+        }
+
+        return null; // default processing otherwise
     }
 }
