@@ -12,7 +12,7 @@
     "require": {
         "XF": [2020070, "XenForo 2.2.0+"],
         "php": ["7.2.0", "PHP 7.2.0+"],
-        "SV/StandardLib": [1020000,"Standard Library by Xon v1.2.0+"]
+        "SV/StandardLib": [1160000,"Standard Library by Xon v1.16.0+"]
     },
     "require-soft": {
         "NF/Tickets": [2000000, "NixFifty's Tickets v2.0.0+", false]

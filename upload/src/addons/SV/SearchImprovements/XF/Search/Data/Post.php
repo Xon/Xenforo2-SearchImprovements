@@ -6,12 +6,12 @@
 namespace SV\SearchImprovements\XF\Search\Data;
 
 use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\PermissionCache;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
+use SV\StandardLib\Helper;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
 use function count;
@@ -69,7 +69,7 @@ class Post extends XFCP_Post
         }
 
         // Node permissions are flat data, but the visibility status encodes hierarchical view data
-        $nodePerms = PermissionCache::getPerms('node', 'node');
+        $nodePerms = Helper::perms()->getContentPermissions('node', 'node');
 
         $nonViewableNodeIds = $viewableStickiesNodeIds = [];
         $viewStickies = \XF::isAddOnActive('SV/ViewStickyThreads');

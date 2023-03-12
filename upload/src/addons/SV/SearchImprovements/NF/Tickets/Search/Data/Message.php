@@ -3,11 +3,11 @@
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
 use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\PermissionCache;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
+use SV\StandardLib\Helper;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
 use function count;
@@ -44,7 +44,7 @@ class Message extends XFCP_Message
         }
 
         // Node permissions are flat data, but the visibility status encodes hierarchical view data
-        $nodePerms = PermissionCache::getPerms('ticket', 'nf_tickets_category');
+        $nodePerms = Helper::perms()->getContentPermissions('ticket', 'nf_tickets_category');
 
         $nonViewableNodeIds = [];
         foreach ($nodePerms as $nodeId => $perm)
