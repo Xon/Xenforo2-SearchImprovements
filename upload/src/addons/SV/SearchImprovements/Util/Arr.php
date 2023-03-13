@@ -19,7 +19,7 @@ abstract class Arr
 
     public static function existsByPath(array $array, string $key): bool
     {
-        $subParts = $key === '' ? [''] : explode('.', $key);
+        $subParts = explode('.', $key);
         assert(is_array($subParts));
         if (array_key_exists($key, $array))
         {
@@ -56,7 +56,7 @@ abstract class Arr
      */
     public static function getByPath(array $array, string $key, $default = null)
     {
-        $subParts = $key === '' ? [''] : explode('.', $key);
+        $subParts = explode('.', $key);
         assert(is_array($subParts));
         if (array_key_exists($key, $array))
         {
@@ -93,7 +93,7 @@ abstract class Arr
      */
     public static function setByPath(array &$array, string $key, $value): bool
     {
-        $subParts = $key === '' ? [''] : explode('.', $key);
+        $subParts = explode('.', $key);
         assert(is_array($subParts));
         if (array_key_exists($key, $array))
         {
@@ -131,7 +131,7 @@ abstract class Arr
      */
     public static function unsetByPath(array &$array, string $key): bool
     {
-        $subParts = $key === '' ? [''] : explode('.', $key);
+        $subParts = explode('.', $key);
         assert(is_array($subParts));
         if (array_key_exists($key, $array))
         {
