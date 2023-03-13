@@ -7,6 +7,7 @@ namespace SV\SearchImprovements\XFES\Search\Source;
 
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
+use SV\SearchImprovements\XF\Search\Query\KeywordQuery;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
 use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge, is_callable;
@@ -229,9 +230,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $forceContentWeighting = is_callable([$query, 'isForceContentWeighting'])
-            ? $query->isForceContentWeighting()
-            : false;
+        $forceContentWeighting = ($query instanceof KeywordQuery) ? $query->isForceContentWeighting() : false;
         if (!$forceContentWeighting)
         {
             // skip specific type handler searches
