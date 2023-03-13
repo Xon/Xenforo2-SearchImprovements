@@ -3,18 +3,16 @@
 namespace SV\SearchImprovements\Repository;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Util\Arr;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
-use XF\Http\Request;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
 use function array_key_exists;
-use function assert;
 use function count;
 use function gettype;
 use function implode;
 use function is_array;
-use function is_int;
 use function is_string;
 use function preg_split;
 
@@ -56,21 +54,26 @@ class Search extends Repository
         $container['checkForUpdates'][] = $field;
     }
 
+
+
     /**
      * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
      *
      * @param Query                 $query
+     * @param array                 $constraints
+     * @param array                 $urlConstraints
      * @param string                $searchField
-     * @param int                   $lowerConstraint
-     * @param int                   $upperConstraint
-     * @param callable(): void      $unsetUpperUrlConstraint
-     * @param callable(): void      $unsetLowerUrlConstraint
+     * @param string                $lowerConstraintField
+     * @param string                $upperConstraintField
      * @param array<TableReference> $tableRef
      * @param string|null           $sqlTable
      * @return bool
      */
-    public function applyRangeConstraint(\XF\Search\Query\Query $query, string $searchField, int $lowerConstraint, int $upperConstraint, callable $unsetUpperUrlConstraint, callable $unsetLowerUrlConstraint, array $tableRef, ?string $sqlTable = null): bool
+    public function applyRangeConstraint(\XF\Search\Query\Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null): bool
     {
+        $lowerConstraint = (int)Arr::getByPath($constraints, $lowerConstraintField);
+        $upperConstraint = (int)Arr::getByPath($constraints, $upperConstraintField);
+
         $repo = Globals::repo();
         $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
@@ -83,18 +86,18 @@ class Search extends Repository
         }
         else if ($lowerConstraint !== 0)
         {
-            $unsetUpperUrlConstraint();
+            Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
             $query->withMetadata(new RangeConstraint($searchField, $lowerConstraint, RangeConstraint::MATCH_GREATER, $tableRef, $source));
         }
         else if ($upperConstraint !== 0)
         {
-            $unsetLowerUrlConstraint();
+            Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
             $query->withMetadata(new RangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $tableRef, $source));
         }
         else
         {
-            $unsetUpperUrlConstraint();
-            $unsetLowerUrlConstraint();
+            Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
+            Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
 
             return false;
         }
@@ -105,18 +108,19 @@ class Search extends Repository
     /**
      * * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
      *
-     * @param Query                  $query
-     * @param string                 $searchField
-     * @param string                 $constraint
-     * @param callable(): void       $unsetUrlConstraint
-     * @param callable(string): void|null $updateUrlConstraint
+     * @param Query  $query
+     * @param array  $constraints
+     * @param array  $urlConstraints
+     * @param string $constraintField
+     * @param string $searchField
      * @return bool
      */
-    public function applyUserConstraint(\XF\Search\Query\Query $query, string $searchField, string $constraint, callable $unsetUrlConstraint, ?callable $updateUrlConstraint): bool
+    public function applyUserConstraint(Query $query, array $constraints, array &$urlConstraints, string $constraintField, string $searchField): bool
     {
-        if ($constraint !== '')
+        $constraint = (string)Arr::getByPath($constraints, $constraintField);
+        if ($constraint === '')
         {
-            $unsetUrlConstraint();
+            Arr::unsetUrlConstraint($urlConstraints, $constraintField);
 
             return false;
         }
@@ -124,7 +128,7 @@ class Search extends Repository
         $users = preg_split('/,\s*/', $constraint, -1, PREG_SPLIT_NO_EMPTY);
         if (count($users) === 0)
         {
-            $unsetUrlConstraint();
+            Arr::unsetUrlConstraint($urlConstraints, $constraintField);
 
             return false;
         }
@@ -140,10 +144,7 @@ class Search extends Repository
         }
 
         $query->withMetadata($searchField, $matchedUsers->keys());
-        if ($updateUrlConstraint !== null)
-        {
-            $updateUrlConstraint(implode(', ', $users));
-        }
+        Arr::setUrlConstraint($urlConstraints, $constraintField, implode(', ', $users));
 
         return true;
     }

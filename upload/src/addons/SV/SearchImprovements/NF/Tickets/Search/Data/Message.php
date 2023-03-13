@@ -84,14 +84,9 @@ class Message extends XFCP_Message
         ]);
 
         $repo = Globals::repo();
-        if ($repo->applyRangeConstraint($query,
-            'replies',
-            $constraints['c.replies.lower'], $constraints['c.replies.upper'],
-            function () use (&$urlConstraints) {
-                unset($urlConstraints['replies']['lower']);
-            }, function () use (&$urlConstraints) {
-                unset($urlConstraints['replies']['upper']);
-            }, [$this->getTicketQueryTableReference()]))
+        if ($repo->applyRangeConstraint($query, $constraints, $urlConstraints,
+            'c.replies.lower', 'c.replies.upper','replies',
+            [$this->getTicketQueryTableReference()]))
         {
             $request->set('c.min_reply_count', 0);
         }
