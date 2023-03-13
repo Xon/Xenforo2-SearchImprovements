@@ -9,9 +9,14 @@ use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
 use function array_key_exists;
+use function assert;
+use function count;
 use function gettype;
+use function implode;
 use function is_array;
+use function is_int;
 use function is_string;
+use function preg_split;
 
 class Search extends Repository
 {
@@ -52,36 +57,20 @@ class Search extends Repository
     }
 
     /**
+     * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
+     *
      * @param Query                 $query
-     * @param Request               $request
-     * @param callable              $unsetUpper
-     * @param callable              $unsetLower
+     * @param string                $searchField
+     * @param int                   $lowerConstraint
+     * @param int                   $upperConstraint
+     * @param callable(): void      $unsetUpperUrlConstraint
+     * @param callable(): void      $unsetLowerUrlConstraint
      * @param array<TableReference> $tableRef
      * @param string|null           $sqlTable
      * @return bool
      */
-    public function applyRepliesConstraint(\XF\Search\Query\Query $query, \XF\Http\Request $request, callable $unsetUpper, callable $unsetLower, array $tableRef, ?string $sqlTable = null): bool
+    public function applyRangeConstraint(\XF\Search\Query\Query $query, string $searchField, int $lowerConstraint, int $upperConstraint, callable $unsetUpperUrlConstraint, callable $unsetLowerUrlConstraint, array $tableRef, ?string $sqlTable = null): bool
     {
-        return $this->applyRangeConstraint($query, $request, 'replies', 'c.replies.lower', 'c.replies.upper', $unsetUpper, $unsetLower, $tableRef, $sqlTable);
-    }
-
-    /**
-     * @param \XF\Search\Query\Query $query
-     * @param \XF\Http\Request       $request
-     * @param string                 $field
-     * @param string                 $lowerConstraint
-     * @param string                 $upperConstraint
-     * @param callable               $unsetUpper
-     * @param callable               $unsetLower
-     * @param array<TableReference>  $tableRef
-     * @param string|null            $sqlTable
-     * @return bool
-     */
-    public function applyRangeConstraint(\XF\Search\Query\Query $query, \XF\Http\Request $request, string $field, string $lowerConstraint, string $upperConstraint, callable $unsetUpper, callable $unsetLower, array $tableRef, ?string $sqlTable = null): bool
-    {
-        $lowerConstraint = $request->filter($lowerConstraint, 'uint');
-        $upperConstraint = $request->filter($upperConstraint, 'uint');
-
         $repo = Globals::repo();
         $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
@@ -90,24 +79,70 @@ class Search extends Repository
         }
         if ($lowerConstraint !== 0 && $upperConstraint !== 0)
         {
-            $query->withMetadata(new RangeConstraint($field, [$upperConstraint, $lowerConstraint], RangeConstraint::MATCH_BETWEEN, $tableRef, $source));
+            $query->withMetadata(new RangeConstraint($searchField, [$upperConstraint, $lowerConstraint], RangeConstraint::MATCH_BETWEEN, $tableRef, $source));
         }
         else if ($lowerConstraint !== 0)
         {
-            $unsetUpper();
-            $query->withMetadata(new RangeConstraint($field, $lowerConstraint, RangeConstraint::MATCH_GREATER, $tableRef, $source));
+            $unsetUpperUrlConstraint();
+            $query->withMetadata(new RangeConstraint($searchField, $lowerConstraint, RangeConstraint::MATCH_GREATER, $tableRef, $source));
         }
         else if ($upperConstraint !== 0)
         {
-            $unsetLower();
-            $query->withMetadata(new RangeConstraint($field, $upperConstraint, RangeConstraint::MATCH_LESSER, $tableRef, $source));
+            $unsetLowerUrlConstraint();
+            $query->withMetadata(new RangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $tableRef, $source));
         }
         else
         {
-            $unsetUpper();
-            $unsetLower();
+            $unsetUpperUrlConstraint();
+            $unsetLowerUrlConstraint();
 
             return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
+     *
+     * @param Query                  $query
+     * @param string                 $searchField
+     * @param string                 $constraint
+     * @param callable(): void       $unsetUrlConstraint
+     * @param callable(string): void|null $updateUrlConstraint
+     * @return bool
+     */
+    public function applyUserConstraint(\XF\Search\Query\Query $query, string $searchField, string $constraint, callable $unsetUrlConstraint, ?callable $updateUrlConstraint): bool
+    {
+        if ($constraint !== '')
+        {
+            $unsetUrlConstraint();
+
+            return false;
+        }
+
+        $users = preg_split('/,\s*/', $constraint, -1, PREG_SPLIT_NO_EMPTY);
+        if (count($users) === 0)
+        {
+            $unsetUrlConstraint();
+
+            return false;
+        }
+
+        /** @var \XF\Repository\User $userRepo */
+        $userRepo = \XF::repository('XF:User');
+        $matchedUsers = $userRepo->getUsersByNames($users, $notFound);
+        if (count($notFound) !== 0)
+        {
+            $query->error('users', \XF::phrase('following_members_not_found_x', ['members' => \implode(', ', $notFound)]));
+
+            return false;
+        }
+
+        $query->withMetadata($searchField, $matchedUsers->keys());
+        if ($updateUrlConstraint !== null)
+        {
+            $updateUrlConstraint(implode(', ', $users));
         }
 
         return true;

@@ -78,12 +78,19 @@ class Message extends XFCP_Message
 
     public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
     {
+        $constraints = $request->filter([
+            'c.replies.lower' => 'uint',
+            'c.replies.upper' => 'uint',
+        ]);
+
         $repo = Globals::repo();
-        if ($repo->applyRepliesConstraint($query, $request,
+        if ($repo->applyRangeConstraint($query,
+            'replies',
+            $constraints['c.replies.lower'], $constraints['c.replies.upper'],
             function () use (&$urlConstraints) {
-                unset($urlConstraints['replies']['upper']);
-            }, function () use (&$urlConstraints) {
                 unset($urlConstraints['replies']['lower']);
+            }, function () use (&$urlConstraints) {
+                unset($urlConstraints['replies']['upper']);
             }, [$this->getTicketQueryTableReference()]))
         {
             $request->set('c.min_reply_count', 0);
