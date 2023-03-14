@@ -31,6 +31,7 @@ class Search extends XFCP_Search
     ];
     protected $svIgnoreConstraint = [
         'child_nodes',
+        'nodes',
     ];
 
     /** @var \XF\InputFilterer */
@@ -264,6 +265,11 @@ class Search extends XFCP_Search
         foreach ($constraints as $key => $value)
         {
             $key = $prefix . $key;
+            if (in_array($key, $this->svIgnoreConstraint, true))
+            {
+                continue;
+            }
+
             if (is_array($value))
             {
                 // decompose this into multiple constraints
@@ -271,10 +277,6 @@ class Search extends XFCP_Search
                 continue;
             }
 
-            if (in_array($key, $this->svIgnoreConstraint, true))
-            {
-                continue;
-            }
             $phrase = $this->getSearchConstraintPhrase($key, $value);
             if ($phrase === null)
             {
