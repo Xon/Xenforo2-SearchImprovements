@@ -26,6 +26,8 @@ class Search extends XFCP_Search
         'users',
         'profile_users',
         'recipients', // SV/ConversationImprovements
+        'assigned',
+        'assigner',
     ];
     protected $svIgnoreConstraint = [
         'child_nodes',
