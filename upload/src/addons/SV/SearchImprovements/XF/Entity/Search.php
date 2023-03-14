@@ -160,7 +160,7 @@ class Search extends XFCP_Search
      */
     protected function expandStructuredSearchConstraint(array &$query, string $key, $value): bool
     {
-        if ($this->search_type === 'post' && $key === 'nodes' && is_array($value))
+        if (is_array($value) && $key === 'nodes')
         {
             foreach ($value as $id)
             {
@@ -178,8 +178,8 @@ class Search extends XFCP_Search
                 if ($node !== null)
                 {
                     $query[$key . '_' . $id] = \XF::phrase('svSearchConstraint.nodes', [
-                        // todo link to node ($node->getContentUrl()), use template?
-                        'node' => $node->title,
+                        'href' => $node->getContentUrl(),
+                        'node' => $node->getContentTitle(),
                     ]);
                 }
             }
