@@ -161,6 +161,7 @@ class Search extends XFCP_Search
                     'activeModType' => '',
 
                     'getOlderResultsDate' => null,
+                    'isExpiredSearch' => $reply->getPageParams()['isExpiredSearch'] ?? false,
                 ];
 
                 $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
