@@ -178,7 +178,7 @@ class Search extends XFCP_Search
                 if ($node !== null)
                 {
                     $query[$key . '_' . $id] = \XF::phrase('svSearchConstraint.nodes', [
-                        'href' => $node->getContentUrl(),
+                        'url' => $node->getContentUrl(),
                         'node' => $node->getContentTitle(),
                     ]);
                 }
