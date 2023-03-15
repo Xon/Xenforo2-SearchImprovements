@@ -6,7 +6,9 @@ use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\MetadataConstraint;
 use XF\Search\Query\SqlConstraint;
 use XFES\Search\Source\Elasticsearch;
+use function array_filter;
 use function count;
+use function reset;
 
 class AndConstraint extends AbstractConstraint
 {
@@ -41,16 +43,24 @@ class AndConstraint extends AbstractConstraint
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
         /** @var array<MetadataConstraint|null> $constraints */
-        $constraints = $this->getValues();
+        $constraints = array_filter($this->getValues(), function ($v): bool {
+            return $v !== null;
+        });
+        if (count($constraints) === 0)
+        {
+            return;
+        }
+        else if (count($constraints) === 1)
+        {
+            $constraint = reset($constraints);
+            $source->svApplyMetadataConstraint($constraint, $filters, $filtersNot);
+
+            return;
+        }
 
         $childFilters = $childNotFilters = [];
         foreach ($constraints as $constraint)
         {
-            if ($constraint === null)
-            {
-                continue;
-            }
-
             $source->svApplyMetadataConstraint($constraint, $childFilters, $childNotFilters);
         }
 
