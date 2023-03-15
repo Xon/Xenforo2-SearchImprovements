@@ -1,1 +1,1 @@
-This search link has expired. Try searching again for fresh results.
+This search page has expired. Start a <a href="{url}">new search</a> for fresh results.
