@@ -2,12 +2,14 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
+use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
 use function array_diff;
 use function array_merge;
 use function arsort;
 use function assert;
+use function count;
 use function in_array;
 use function is_array;
 use function is_numeric;
@@ -48,21 +50,9 @@ class Search extends XFCP_Search
 
     protected function getContainerContentType(): ?string
     {
-        if (!$this->search_type)
-        {
-            return null;
-        }
-
-        try
-        {
-            $handler = \XF::app()->search()->handler($this->search_type);
-        }
-        catch (\Throwable $e)
-        {
-            return null;
-        }
-
-        return $handler->getGroupByType();
+        $searchRepo = $this->repository('XF:Search');
+        assert($searchRepo instanceof SearchRepo);
+        return $searchRepo->getContainerTypeForContentType($this->search_type);
     }
 
     /** @noinspection PhpMissingReturnTypeInspection */
@@ -388,6 +378,48 @@ class Search extends XFCP_Search
         }
 
         return $query;
+    }
+
+    public function getContentHandler(): ?\XF\Search\Data\AbstractData
+    {
+        if ($this->search_type === '')
+        {
+            return null;
+        }
+
+        try
+        {
+            $handler = \XF::app()->search()->handler($this->search_type);
+        }
+        catch (\Throwable $e)
+        {
+            return null;
+        }
+
+        return $handler;
+    }
+
+    public function setupFromQuery(\XF\Search\Query\KeywordQuery $query, array $constraints = [])
+    {
+        parent::setupFromQuery($query, $constraints);
+
+        // smooth over differences between member search & normal search
+        // XF does falsy check on getGroupByType result :(
+        $handler = $this->getContentHandler();
+        if ($handler !== null && !$handler->getGroupByType())
+        {
+            $searchRepo = $this->repository('XF:Search');
+            assert($searchRepo instanceof SearchRepo);
+
+            $firstChildType = $searchRepo->getChildContentTypeForContainerType($this->search_type);
+            if ($firstChildType !== null)
+            {
+                $constraints = $this->search_constraints;
+                $constraints['content']  = $this->search_type;
+                $this->search_constraints = $constraints;
+                $this->search_type = $firstChildType;
+            }
+        }
     }
 
     /** @noinspection PhpMissingReturnTypeInspection */
