@@ -9,9 +9,9 @@ use XFES\Search\Source\Elasticsearch;
 
 class RangeConstraint extends AbstractConstraint
 {
-    const MATCH_LESSER  = -42;
-    const MATCH_GREATER = -41;
-    const MATCH_BETWEEN = -40;
+    const MATCH_LESSER  = -42; // $a <= foo
+    const MATCH_GREATER = -41; // $b >= foo
+    const MATCH_BETWEEN = -40; // $b <= foo <= $a
 
     /** @var TableReference[] */
     protected $tableReferences;
