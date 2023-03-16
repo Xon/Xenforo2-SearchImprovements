@@ -149,6 +149,11 @@ class Search extends XFCP_Search
             return \XF::phrase('svSearchConstraint.thread_no_title');
         }
 
+        if ($key === 'replies_upper' && $value === '0')
+        {
+            return \XF::phrase('svSearchConstraint.replies_none');
+        }
+
         return null;
     }
 
