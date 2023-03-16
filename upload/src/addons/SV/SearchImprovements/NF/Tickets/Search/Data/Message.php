@@ -80,7 +80,7 @@ class Message extends XFCP_Message
     {
         $constraints = $request->filter([
             'c.replies.lower' => 'uint',
-            'c.replies.upper' => 'uint',
+            'c.replies.upper' => '?uint',
         ]);
 
         $repo = Globals::repo();

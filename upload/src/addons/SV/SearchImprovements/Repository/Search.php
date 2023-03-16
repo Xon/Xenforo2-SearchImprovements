@@ -72,7 +72,15 @@ class Search extends Repository
     public function applyRangeConstraint(\XF\Search\Query\Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null): bool
     {
         $lowerConstraint = (int)Arr::getByPath($constraints, $lowerConstraintField);
-        $upperConstraint = (int)Arr::getByPath($constraints, $upperConstraintField);
+        $upperConstraint = Arr::getByPath($constraints, $upperConstraintField);
+        if ($upperConstraint !== null)
+        {
+            $upperConstraint = (int)$upperConstraint;
+        }
+        if ($upperConstraint === 0)
+        {
+            $lowerConstraint = 0;
+        }
 
         $repo = Globals::repo();
         $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
@@ -80,7 +88,7 @@ class Search extends Repository
         {
             $source = $tableRef[0]->getAlias();
         }
-        if ($lowerConstraint !== 0 && $upperConstraint !== 0)
+        if ($lowerConstraint !== 0 && $upperConstraint !== null)
         {
             $query->withMetadata(new RangeConstraint($searchField, [$upperConstraint, $lowerConstraint], RangeConstraint::MATCH_BETWEEN, $tableRef, $source));
         }
@@ -89,7 +97,7 @@ class Search extends Repository
             Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
             $query->withMetadata(new RangeConstraint($searchField, $lowerConstraint, RangeConstraint::MATCH_GREATER, $tableRef, $source));
         }
-        else if ($upperConstraint !== 0)
+        else if ($upperConstraint !== null)
         {
             Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
             $query->withMetadata(new RangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $tableRef, $source));
