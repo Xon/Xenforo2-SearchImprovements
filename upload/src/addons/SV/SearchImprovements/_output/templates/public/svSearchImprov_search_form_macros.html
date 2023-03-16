@@ -1,0 +1,18 @@
+<xf:macro name="search_only_container" 
+		  arg-input="{{ [] }}" 
+		  arg-containerType=""
+		  arg-wrap="{{ true }}"
+		  >
+
+	<xf:if is="$containerType">
+		<li>
+			<xf:checkbox standalone="true">
+				<xf:option name="c[content]" value="{$containerType}"
+						   selected="{{ $input.c.content === $containerType }}"
+						   label="{{ phrase('svSearchImprov_search_only_x', { 
+								  'containerType': $xf.app.getContentTypePhrase($containerType, true)|to_lower									 
+								  }) }}" />
+			</xf:checkbox>
+		</li>
+	</xf:if>
+</xf:macro>

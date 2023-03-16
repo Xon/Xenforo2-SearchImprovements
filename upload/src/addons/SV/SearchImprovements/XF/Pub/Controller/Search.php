@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
@@ -54,6 +55,15 @@ class Search extends XFCP_Search
             }
             $reply->setParam('input', $input);
             $reply->setParam('isUsingElasticSearch', Globals::repo()->isUsingElasticSearch());
+
+            // get the container type for this type
+            $contentType = (string)$reply->getParam('type');
+            if ($contentType !== '')
+            {
+                $searchRepo = $this->repository('XF:Search');
+                assert($searchRepo instanceof SearchRepo);
+                $reply->setParam('containerType', $searchRepo->getContainerTypeForContentType($contentType));
+            }
         }
 
         return $reply;
