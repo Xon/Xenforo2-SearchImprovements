@@ -89,7 +89,7 @@ class LinkBuilder extends Repository
      * @param mixed          $data
      * @param array          $params
      * @param \XF\Mvc\Router $router
-     * @return \XF\Mvc\RouteBuiltLink|null
+     * @return \XF\Mvc\RouteBuiltLink|string|null
      */
     public function injectContentTypeIntoLink(
         string &$prefix,
@@ -98,7 +98,7 @@ class LinkBuilder extends Repository
         &$data,
         array &$params,
         \XF\Mvc\Router $router
-    ): ?\XF\Mvc\RouteBuiltLink
+    )
     {
         $action = \strtolower($action);
 
@@ -130,7 +130,7 @@ class LinkBuilder extends Repository
      * @param mixed          $data
      * @param array          $params
      * @param \XF\Mvc\Router $router
-     * @return \XF\Mvc\RouteBuiltLink|null
+     * @return \XF\Mvc\RouteBuiltLink|string|null
      */
     public function fixQueryString(
         string &$prefix,
@@ -139,7 +139,7 @@ class LinkBuilder extends Repository
                &$data,
         array &$params,
         \XF\Mvc\Router $router
-    ): ?\XF\Mvc\RouteBuiltLink
+    )
     {
         if ($data instanceof \XF\Entity\Search)
         {
