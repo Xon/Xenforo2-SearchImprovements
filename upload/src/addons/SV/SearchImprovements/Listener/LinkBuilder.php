@@ -73,11 +73,6 @@ abstract class LinkBuilder
                 $params['g'] = 1;
             }
 
-            $params = array_filter($params, function ($e) {
-                // avoid falsy, which may include terms we don't want to skip
-                return $e !== null && $e !== 0 && $e !== '' && $e !== [];
-            });
-
             // stop default build_callback usage, and use default XF processing
             $suppressDefaultCallback = true;
             return null;
