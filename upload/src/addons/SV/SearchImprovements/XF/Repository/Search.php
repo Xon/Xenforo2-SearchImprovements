@@ -73,11 +73,6 @@ class Search extends XFCP_Search
 
         if ($search === null)
         {
-            if (\XF::isAddOnActive('SV/ElasticSearchEssentials'))
-            {
-                Globals::$allowEmptyResults = true;
-            }
-
             $search = $this->em->create('XF:Search');
             assert($search instanceof SearchEntity);
             $search->setupFromQuery($query, $constraints);
