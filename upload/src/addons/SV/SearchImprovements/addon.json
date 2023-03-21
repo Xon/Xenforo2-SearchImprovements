@@ -2,7 +2,7 @@
     "legacy_addon_id": "SV_SearchImprovements",
     "title": "Search Improvements",
     "description": "Minor search improvements",
-    "version_id": 2090008,
+    "version_id": 2090009,
     "version_string": "2.9.0",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",
@@ -12,7 +12,7 @@
     "require": {
         "XF": [2020070, "XenForo 2.2.0+"],
         "php": ["7.2.0", "PHP 7.2.0+"],
-        "SV/StandardLib": [1020000,"Standard Library by Xon v1.2.0+"]
+        "SV/StandardLib": [1170000,"Standard Library by Xon v1.17.0+"]
     },
     "require-soft": {
         "NF/Tickets": [2000000, "NixFifty's Tickets v2.0.0+", false]

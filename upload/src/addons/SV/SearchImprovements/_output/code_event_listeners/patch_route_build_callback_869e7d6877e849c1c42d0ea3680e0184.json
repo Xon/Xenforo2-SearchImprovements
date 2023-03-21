@@ -1,0 +1,9 @@
+{
+    "event_id": "patch_route_build_callback",
+    "execute_order": 10,
+    "callback_class": "SV\\SearchImprovements\\Listener\\LinkBuilder",
+    "callback_method": "adminLinkBuilder",
+    "active": true,
+    "hint": "Admin",
+    "description": "Extend admin route building"
+}
