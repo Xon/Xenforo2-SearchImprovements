@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XFES\Admin\Controller;
 
+use SV\SearchImprovements\Listener\LinkBuilder;
 use SV\SearchImprovements\Repository\SpecializedSearchIndex;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
@@ -30,10 +31,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $search = \XF::app()->search();
         $search->specializedIndexProxying = false;
 
-        /** @var \SV\SearchImprovements\Repository\LinkBuilder $linkBuilderRepo */
-        $linkBuilderRepo = $this->repository('SV\SearchImprovements:LinkBuilder');
-        $linkBuilderRepo->hookRouteBuilder();
-
         $contentType = $params->get('content_type');
         if ($contentType)
         {
@@ -46,7 +43,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             $this->assertValidSpecializedContentType($contentType);
             $this->svShimContentType = $contentType;
-            $linkBuilderRepo->setContentType($contentType);
+            LinkBuilder::$contentType = $contentType;
         }
     }
 
@@ -212,9 +209,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
             throw $this->exception($this->notFound());
         }
 
-        /** @var \SV\SearchImprovements\Repository\LinkBuilder $linkBuilderRepo */
-        $linkBuilderRepo = $this->repository('SV\SearchImprovements:LinkBuilder');
-        $linkBuilderRepo->setContentType($contentType);
+        LinkBuilder::$contentType = $contentType;
 
         return $handler;
     }
