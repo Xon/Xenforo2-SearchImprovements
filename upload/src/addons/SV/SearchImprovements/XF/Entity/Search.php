@@ -6,6 +6,7 @@ use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
 use function array_diff;
+use function array_key_exists;
 use function array_merge;
 use function arsort;
 use function assert;
@@ -275,7 +276,7 @@ class Search extends XFCP_Search
             $phrase = $this->getSearchConstraintPhrase($key, $value);
             if ($phrase === null)
             {
-                $query['svSearchConstraint.'.$key] = $value;
+                $query[$key] = $value;
             }
         }
     }
@@ -372,11 +373,22 @@ class Search extends XFCP_Search
 
     protected function getSvUnstructuredQuery(): array
     {
-        $query = [];
+        $rawQuery = [];
         $searchConstraint = $this->search_constraints;
         unset($searchConstraint['content'], $searchConstraint['type']);
-        $this->extractUnstructuredSearchConstraint($query, $searchConstraint, '');
-        arsort($query);
+        $this->extractUnstructuredSearchConstraint($rawQuery, $searchConstraint, '');
+        arsort($rawQuery);
+
+        $structuredQuery = $this->sv_structured_query;
+        $query = [];
+        foreach ($rawQuery as $key => $value)
+        {
+            if (!array_key_exists($key, $structuredQuery))
+            {
+                $query['svSearchConstraint.'.$key] = $value;
+            }
+        }
+
         // add sort-by clause
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase === null)
