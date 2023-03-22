@@ -29,3 +29,24 @@
 		</div>
 	</xf:formrow>
 </xf:macro>
+
+<xf:macro name="date_range"
+		  arg-label="!"
+		  arg-fieldPrefix="!"
+		  arg-lowerBoundValue="!"
+		  arg-upperBoundValue="!"
+		  >
+	<xf:formrow label="{$label}">
+		<div class="inputGroup">
+			<xf:dateinput name="{$fieldPrefix}[lower]" 
+						  required=""
+						  value="{{ $lowerBoundValue ?: '' }}" 
+						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
+			<span class="inputGroup-text">-</span>
+			<xf:dateinput name="{$fieldPrefix}[upper]"
+						  required=""
+						  value="{{ $upperBoundValue ?: '' }}" 
+						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
+		</div>
+	</xf:formrow>
+</xf:macro>
