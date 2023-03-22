@@ -1,6 +1,6 @@
-<xf:macro name="replies" arg-input="{{ [] }}">
+<xf:macro name="replies" arg-label="{{ phrase('svSearchImprov_reply_count') }}" arg-input="{{ [] }}">
 	<xf:macro name="range" 
-			  arg-label="{{ phrase('svSearchImprov_reply_count') }}"
+			  arg-label="{$label}"
 			  arg-fieldPrefix="c[replies]"
 			  arg-lowerBoundValue="{$input.c.replies.lower}"
 			  arg-upperBoundValue="{$input.c.replies.upper}"
