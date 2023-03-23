@@ -158,6 +158,9 @@ class Search extends XFCP_Search
     {
         if (is_array($value) && $key === 'nodes')
         {
+             /** @var \XF\Repository\Node $nodeRepo */
+            $nodeRepo = $this->repository('XF:Node');
+            $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
             foreach ($value as $id)
             {
                 $id = (int)$id;
@@ -166,9 +169,6 @@ class Search extends XFCP_Search
                     continue;
                 }
 
-                /** @var \XF\Repository\Node $nodeRepo */
-                $nodeRepo = $this->repository('XF:Node');
-                $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
                 /** @var \XF\Entity\Node|null $node */
                 $node = $nodes[$id] ?? null;
                 if ($node !== null)
