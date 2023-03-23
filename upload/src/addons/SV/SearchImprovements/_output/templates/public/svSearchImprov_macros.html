@@ -32,11 +32,12 @@
 
 <xf:macro name="date_range"
 		  arg-label="!"
+		  arg-rowtype=""
 		  arg-fieldPrefix="!"
 		  arg-lowerBoundValue="!"
 		  arg-upperBoundValue="!"
 		  >
-	<xf:formrow label="{$label}">
+	<xf:formrow label="{$label}" rowtype="{$rowtype}">
 		<div class="inputGroup">
 			<xf:dateinput name="{$fieldPrefix}[lower]" 
 						  required=""
