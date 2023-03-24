@@ -59,6 +59,8 @@
 		  global="1"
 		  arg-name="!"
 		  arg-label="!"
+		  arg-explainSingle=""
+		  arg-explainMulti="{{ phrase('separate_names_with_comma') }}"
 		  arg-single="{{ true }}"
 		  >
 	<xf:set var="$constraint" value="c.{$name}" />
@@ -66,7 +68,7 @@
 				   value="{{ getDotted($input, $constraint, '') }}"
 				   ac="true"
 				   label="{{ $label }}"
-				   explain="{{ $single ? '' : phrase('separate_names_with_comma') }}"
+				   explain="{{ $single ? $explainSingle : $explainMulti }}"
 				   />
 </xf:macro>
 
