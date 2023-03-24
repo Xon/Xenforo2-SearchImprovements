@@ -94,7 +94,7 @@
 		  >
 	<xf:set var="$constraint" value="c.{$name}" />
 	<xf:set var="$existing" value="{{ getDotted($input, $constraint, $default) }}"/>
-	<xf:checkboxrow name="{$constraint}" label="{$label}">
+	<xf:checkboxrow name="{$constraint|dotToArray}" label="{$label}">
 		<xf:foreach loop="$keyValues" key="$key" value="$value">
 			<xf:option value="{$key}" label="{$value}" checked="{{ in_array($key, $existing) }}" />
 		</xf:foreach>
