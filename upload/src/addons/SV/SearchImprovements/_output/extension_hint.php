@@ -21,6 +21,11 @@ namespace SV\SearchImprovements\SV\CollaborativeThreads\Service\Collaboration
 	class XFCP_Manager extends \SV\CollaborativeThreads\Service\Collaboration\Manager {}
 }
 
+namespace SV\SearchImprovements\SV\StandardLib
+{
+	class XFCP_TemplaterHelper extends \SV\StandardLib\TemplaterHelper {}
+}
+
 namespace SV\SearchImprovements\XFES\Admin\Controller
 {
 	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}

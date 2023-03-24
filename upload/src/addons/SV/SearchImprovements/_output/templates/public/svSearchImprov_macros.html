@@ -1,53 +1,87 @@
-<xf:macro name="replies" arg-label="{{ phrase('svSearchImprov_reply_count') }}" arg-input="{{ [] }}">
+<xf:macro name="replies"
+		  global="1"
+		  arg-label="{{ phrase('svSearchImprov_reply_count') }}"
+		  >
 	<xf:macro name="range" 
 			  arg-label="{$label}"
-			  arg-fieldPrefix="c[replies]"
-			  arg-lowerBoundValue="{$input.c.replies.lower}"
-			  arg-upperBoundValue="{$input.c.replies.upper}"
+			  arg-name="replies"
 			  />
 </xf:macro>
 
 <xf:macro name="range"
+		  global="1"
+		  arg-name="!"
 		  arg-label="!"
-		  arg-fieldPrefix="!"
-		  arg-lowerBoundValue="!"
-		  arg-upperBoundValue="!"
 		  >
+	<xf:set var="$lowConstraint" value="c.{$name}.lower" />
+	<xf:set var="$upperConstraint" value="c.{$name}.upper" />
 	<xf:formrow label="{$label}">
 		<div class="inputGroup">
-			<xf:numberbox name="{$fieldPrefix}[lower]" 
+			<xf:numberbox name="{$lowConstraint|dotToArray}" 
 						  size="5" min="0" step="1" required=""
 						  class="input--number" 
-						  value="{{ $lowerBoundValue ?: '' }}" 
+						  value="{{ getDotted($input, $lowConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
 			<span class="inputGroup-text">-</span>
-			<xf:numberbox name="{$fieldPrefix}[upper]" 
+			<xf:numberbox name="{$upperConstraint|dotToArray}" 
 						  class="input--number" 
 						  size="5" min="0" step="1" required=""
-						  value="{{ $upperBoundValue ?: '' }}" 
+						  value="{{ getDotted($input, $upperConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
 		</div>
 	</xf:formrow>
 </xf:macro>
 
 <xf:macro name="date_range"
+		  global="1"
+		  arg-name="!"
 		  arg-label="!"
 		  arg-rowtype=""
-		  arg-fieldPrefix="!"
-		  arg-lowerBoundValue="!"
-		  arg-upperBoundValue="!"
 		  >
+	<xf:set var="$lowConstraint" value="c.{$name}.lower" />
+	<xf:set var="$upperConstraint" value="c.{$name}.upper" />
 	<xf:formrow label="{$label}" rowtype="{$rowtype}">
 		<div class="inputGroup">
-			<xf:dateinput name="{$fieldPrefix}[lower]" 
+			<xf:dateinput name="{$lowConstraint|dotToArray}" 
 						  required=""
-						  value="{{ $lowerBoundValue ?: '' }}" 
+						  value="{{ getDotted($input.c, $lowConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
 			<span class="inputGroup-text">-</span>
-			<xf:dateinput name="{$fieldPrefix}[upper]"
+			<xf:dateinput name="{$upperConstraint|dotToArray}" 
 						  required=""
-						  value="{{ $upperBoundValue ?: '' }}" 
+						  value="{{ getDotted($input, $upperConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
 		</div>
 	</xf:formrow>
+</xf:macro>
+
+<xf:macro name="user_field"
+		  global="1"
+		  arg-name="!"
+		  arg-label="!"
+		  arg-single="{{ true }}"
+		  >
+	<xf:set var="$constraint" value="c.{$name}" />
+	<xf:textboxrow name="{$constraint|dotToArray}"
+				   value="{{ getDotted($input, $constraint, '') }}"
+				   ac="true"
+				   label="{{ $label }}"
+				   explain="{{ $single ? '' : phrase('separate_names_with_comma') }}"
+				   />
+</xf:macro>
+
+<xf:macro name="multi_select_list"
+		  global="1"
+		  arg-name="!"
+		  arg-default="{{ [] }}"
+		  arg-label="!"
+		  arg-keyValues="!"
+		  >
+	<xf:set var="$constraint" value="c.{$name}" />
+	<xf:set var="$existing" value="{{ getDotted($input, $constraint, $default) }}"/>
+	<xf:checkboxrow name="{$constraint}" label="{$label}">
+		<xf:foreach loop="$keyValues" key="$key" value="$value">
+			<xf:option value="{$key}" label="{$value}" checked="{{ in_array($key, $existing) }}" />
+		</xf:foreach>
+	</xf:checkboxrow>
 </xf:macro>
