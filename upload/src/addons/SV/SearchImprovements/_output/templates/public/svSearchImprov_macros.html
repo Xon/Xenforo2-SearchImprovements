@@ -55,20 +55,33 @@
 	</xf:formrow>
 </xf:macro>
 
-<xf:macro name="user_field"
+<xf:macro name="user_field_single"
 		  global="1"
 		  arg-name="!"
 		  arg-label="!"
-		  arg-explainSingle=""
-		  arg-explainMulti="{{ phrase('separate_names_with_comma') }}"
-		  arg-single="{{ false }}"
+		  arg-explain=""
 		  >
 	<xf:set var="$constraint" value="c.{$name}" />
 	<xf:textboxrow name="{$constraint|dotToArray}"
 				   value="{{ getDotted($input, $constraint, '') }}"
 				   ac="true"
-				   label="{{ $label }}"
-				   explain="{{ $single ? $explainSingle : $explainMulti }}"
+				   label="{$label}"
+				   explain="{$explain}"
+				   />
+</xf:macro>
+
+<xf:macro name="user_field_multi"
+		  global="1"
+		  arg-name="!"
+		  arg-label="!"
+		  arg-explain="{{ phrase('separate_names_with_comma') }}"
+		  >
+	<xf:set var="$constraint" value="c.{$name}" />
+	<xf:textboxrow name="{$constraint|dotToArray}"
+				   value="{{ getDotted($input, $constraint, '') }}"
+				   ac="true"
+				   label="{$label}"
+				   explain="{$explain}"
 				   />
 </xf:macro>
 
