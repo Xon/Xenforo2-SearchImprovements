@@ -2,7 +2,7 @@
     "legacy_addon_id": "SV_SearchImprovements",
     "title": "Search Improvements",
     "description": "Minor search improvements",
-    "version_id": 2090014,
+    "version_id": 2090015,
     "version_string": "2.9.0",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",
@@ -10,9 +10,9 @@
     "support_url": "https://xenforo.com/community/resources/search-improvements.6838/",
     "extra_urls": [],
     "require": {
+        "SV/StandardLib": [2001180000, "Standard Library by Xon v1.18.0+"],
         "XF": ["2.2.0", "XenForo 2.2.0+"],
-        "php": ["7.2.0", "PHP 7.2.0+"],
-        "SV/StandardLib": [1170000,"Standard Library by Xon v1.18.0+"]
+        "php": ["7.2.0", "PHP 7.2.0+"]
     },
     "require-soft": {
         "SV/ElasticSearchEssentials": ["3.14.0","ElasticSearch Essentials v3.14.0+", false],
