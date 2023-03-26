@@ -5,10 +5,8 @@ namespace SV\SearchImprovements\XF\Search\Query\Constraints;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\MetadataConstraint;
 use XFES\Search\Source\Elasticsearch;
-use function array_filter;
 use function array_merge;
 use function count;
-use function reset;
 
 class OrConstraint extends AbstractConstraint
 {
@@ -39,26 +37,13 @@ class OrConstraint extends AbstractConstraint
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        /** @var array<MetadataConstraint|null> $constraints */
-        $constraints = array_filter($this->getValues(), function ($v): bool {
-            return $v !== null;
-        });
-        if (count($constraints) === 0)
-        {
-            return;
-        }
-        else if (count($constraints) === 1)
-        {
-            $constraint = reset($constraints);
-            $source->svApplyMetadataConstraint($constraint, $filters, $filtersNot);
-
-            return;
-        }
-
         $childFilters = $childNotFilters = [];
-        foreach ($constraints as $constraint)
+        $childCount = $this->processChildConstraints($source, $childFilters, $childNotFilters);
+        if ($childCount === 1)
         {
-            $source->svApplyMetadataConstraint($constraint, $childFilters, $childNotFilters);
+            $filters = array_merge($filters, $childFilters);
+            $childNotFilters = array_merge($filters, $childNotFilters);
+            return;
         }
 
         $bool = [];

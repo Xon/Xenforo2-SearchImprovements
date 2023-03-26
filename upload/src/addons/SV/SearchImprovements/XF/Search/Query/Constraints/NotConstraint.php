@@ -36,18 +36,11 @@ class NotConstraint extends AbstractConstraint
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
-        /** @var array<MetadataConstraint|null> $constraints */
-        $constraints = $this->getValues();
-
         $childFilters = $childNotFilters = [];
-        foreach ($constraints as $constraint)
+        $childCount = $this->processChildConstraints($source, $childFilters, $childNotFilters);
+        if ($childCount === 0)
         {
-            if ($constraint === null)
-            {
-                continue;
-            }
-
-            $source->svApplyMetadataConstraint($constraint, $childFilters, $childNotFilters);
+            return;
         }
 
         $bool = [];
