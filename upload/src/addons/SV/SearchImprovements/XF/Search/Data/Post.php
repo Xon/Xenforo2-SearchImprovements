@@ -69,7 +69,7 @@ class Post extends XFCP_Post
         }
 
         // Node permissions are flat data, but the visibility status encodes hierarchical view data
-        $nodePerms = Helper::perms()->getContentPermissions('node', 'node');
+        $nodePerms = Helper::perms()->getPerContentPermissions('node');
 
         $nonViewableNodeIds = $viewableStickiesNodeIds = [];
         $viewStickies = \XF::isAddOnActive('SV/ViewStickyThreads');
