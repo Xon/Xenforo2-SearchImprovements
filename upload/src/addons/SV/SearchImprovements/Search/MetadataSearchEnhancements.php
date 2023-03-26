@@ -29,4 +29,9 @@ trait MetadataSearchEnhancements
     {
         $this->applyMetadataConstraint($metadata, $filters, $filtersNot);
     }
+
+    public function es(): \XFES\Elasticsearch\Api
+    {
+        return $this->es;
+    }
 }
