@@ -6,6 +6,7 @@ use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\SqlConstraint;
 use XF\Search\Query\TableReference;
 use XFES\Search\Source\Elasticsearch;
+use function count;
 
 class RangeConstraint extends AbstractConstraint
 {
@@ -32,6 +33,20 @@ class RangeConstraint extends AbstractConstraint
         parent::__construct($key, $values, $matchType);
         $this->tableReferences = $tableReferences;
         $this->source = $source;
+    }
+
+    public function setValues($values)
+    {
+        if (!is_array($values))
+        {
+            $values = [$values];
+        }
+        if (count($values) === 0 || count($values) > 2)
+        {
+            throw new \LogicException(self::class . '::setValues() expects either $lower/$upper/[$lower,$upper] arguments');
+        }
+
+        parent::setValues($values);
     }
 
     protected function getAllowedMatchTypes(): array
