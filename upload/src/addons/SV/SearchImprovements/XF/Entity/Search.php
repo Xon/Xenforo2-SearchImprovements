@@ -24,13 +24,13 @@ class Search extends XFCP_Search
     /**
      * Special case for items pulled to the very start of the search term results
      * Overrides the $svDateConstraint/$svUserConstraint sort order
-     * The order of items in this list is used in sortSearchConstraints
+     * The order of items in this list is used in sortSearchQueryForDisplay
      * @var string[]
      */
     protected $svSortFirst = [
     ];
     /**
-     * The order of items in this list is used in sortSearchConstraints
+     * The order of items in this list is used in sortSearchQueryForDisplay
      * @var string[]
      */
     protected $svDateConstraint = [
@@ -38,7 +38,7 @@ class Search extends XFCP_Search
         'older_than',
     ];
     /**
-     * The order of items in this list is used in sortSearchConstraints
+     * The order of items in this list is used in sortSearchQueryForDisplay
      * @var string[]
      */
     protected $svUserConstraint = [
@@ -52,7 +52,7 @@ class Search extends XFCP_Search
     /**
      * Special case for items pulled to the very end of the search term results
      * Overrides the $svSortFirst/$svDateConstraint/$svUserConstraint sort order
-     * The order of items in this list is used in sortSearchConstraints
+     * The order of items in this list is used in sortSearchQueryForDisplay
      * @var string[]
      */
     protected $svSortLast = [
@@ -316,61 +316,61 @@ class Search extends XFCP_Search
         ];
     }
 
-    protected function sortSearchConstraints(array $searchConstraints): array
+    protected function sortSearchQueryForDisplay(array $unsortedQuery): array
     {
-        if (count($searchConstraints) < 2)
+        if (count($unsortedQuery) < 2)
         {
-            return $searchConstraints;
+            return $unsortedQuery;
         }
 
         // urlConstraints appears weirdly sorted, so apply some basic sorting to try to make this look good
-        $constraints = [];
+        $query = [];
         $lastItems = [];
         foreach ($this->svSortLast as $key)
         {
-            if (array_key_exists($key, $searchConstraints))
+            if (array_key_exists($key, $unsortedQuery))
             {
-                $lastItems[$key] = $searchConstraints[$key];
-                unset($searchConstraints[$key]);
+                $lastItems[$key] = $unsortedQuery[$key];
+                unset($unsortedQuery[$key]);
             }
         }
         foreach ($this->getConstraintSortLists() as $list)
         {
             foreach ($list as $key)
             {
-                if (array_key_exists($key, $searchConstraints))
+                if (array_key_exists($key, $unsortedQuery))
                 {
-                    $constraints[$key] = $searchConstraints[$key];
-                    unset($searchConstraints[$key]);
+                    $query[$key] = $unsortedQuery[$key];
+                    unset($unsortedQuery[$key]);
                 }
             }
         }
-        foreach ($searchConstraints as $key => $value)
+        foreach ($unsortedQuery as $key => $value)
         {
-            $constraints[$key] = $value;
+            $query[$key] = $value;
         }
         foreach ($lastItems as $key => $value)
         {
-            $constraints[$key] = $value;
+            $query[$key] = $value;
         }
 
-        return $constraints;
+        return $query;
     }
 
     protected function getSvStructuredQuery(): array
     {
         $query = [];
-        $searchConstraint = $this->sortSearchConstraints($this->search_constraints);
+        $searchConstraints = $this->search_constraints;
 
-        $typeFilter = $searchConstraint['content'] ?? $searchConstraint['type'] ?? null;
-        $containerOnly = \XF::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraint['container_only'] ?? false);
+        $typeFilter = $searchConstraints['content'] ?? $searchConstraints['type'] ?? null;
+        $containerOnly = \XF::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraints['container_only'] ?? false);
         $addContentTypeTerm = $this->search_type !== '' && !$this->search_grouping;
         if ($containerOnly && $typeFilter !== null || $addContentTypeTerm && $containerOnly)
         {
-            unset($searchConstraint['container_only']);
+            unset($searchConstraints['container_only']);
         }
-        unset($searchConstraint['content'], $searchConstraint['type']);
-        $this->extractStructuredSearchConstraint($query, $searchConstraint, '');
+        unset($searchConstraints['content'], $searchConstraints['type']);
+        $this->extractStructuredSearchConstraint($query, $searchConstraints, '');
         foreach ($query as &$queryPhrase)
         {
             if ($queryPhrase instanceof \XF\Phrase)
@@ -379,6 +379,7 @@ class Search extends XFCP_Search
             }
         }
         unset($queryPhrase);
+        $query = $this->sortSearchQueryForDisplay($query);
 
         // add content-type
         if ($addContentTypeTerm)
@@ -421,7 +422,7 @@ class Search extends XFCP_Search
 
                 if (count($types) !== 0)
                 {
-                    $query['svSearchOrder.' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
+                    $query['search-content search-content--' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
                         'contentTypes' => implode(', ', $types),
                     ])->render('raw');
                 }
@@ -431,7 +432,7 @@ class Search extends XFCP_Search
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase !== null)
         {
-            $query['svSearchOrder.'.$this->search_order] = \XF::phrase('svSearchClauses.order_by', [
+            $query['search-order search-order--'.$this->search_order] = \XF::phrase('svSearchClauses.order_by', [
                 'order' => $phrase
             ])->render('raw');
         }
@@ -439,7 +440,7 @@ class Search extends XFCP_Search
         {
             $contentType = $this->getContainerContentType() ?? $this->search_type;
             $value = \XF::app()->getContentTypePhrase($contentType, true);
-            $query['svSearchClauses.group_by'] = \XF::phrase('svSearchClauses.group_by', [
+            $query['search-clause search-clause--group_by'] = \XF::phrase('svSearchClauses.group_by', [
                 'value' => $value
             ])->render('raw');
         }
