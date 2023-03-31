@@ -21,10 +21,26 @@ use function is_string;
  */
 class Search extends XFCP_Search
 {
+    /**
+     * Special case for items pulled to the very start of the search term results
+     * Overrides the $svDateConstraint/$svUserConstraint sort order
+     * The order of items in this list is used in sortSearchConstraints
+     * @var string[]
+     */
+    protected $svSortFirst = [
+    ];
+    /**
+     * The order of items in this list is used in sortSearchConstraints
+     * @var string[]
+     */
     protected $svDateConstraint = [
         'newer_than',
         'older_than',
     ];
+    /**
+     * The order of items in this list is used in sortSearchConstraints
+     * @var string[]
+     */
     protected $svUserConstraint = [
         'users',
         'profile_users',
@@ -33,6 +49,15 @@ class Search extends XFCP_Search
         'assigned',
         'assigner',
     ];
+    /**
+     * Special case for items pulled to the very end of the search term results
+     * Overrides the $svSortFirst/$svDateConstraint/$svUserConstraint sort order
+     * The order of items in this list is used in sortSearchConstraints
+     * @var string[]
+     */
+    protected $svSortLast = [
+    ];
+
     protected $svIgnoreConstraint = [
         'child_nodes',
         'nodes',
@@ -282,10 +307,57 @@ class Search extends XFCP_Search
         }
     }
 
+    protected function getConstraintSortLists(): array
+    {
+        return [
+            $this->svSortFirst,
+            $this->svDateConstraint,
+            $this->svUserConstraint,
+        ];
+    }
+
+
+    protected function sortSearchConstraints(array $searchConstraint): array
+    {
+        // urlConstraints appears weirdly sorted, so apply some basic sorting to try to make this look good
+        $constraints = [];
+        $lastItems = [];
+        foreach ($this->svSortLast as $key)
+        {
+            if (array_key_exists($key, $searchConstraint))
+            {
+                $lastItems[$key] = $searchConstraint[$key];
+                unset($searchConstraint[$key]);
+            }
+        }
+        foreach ($this->getConstraintSortLists() as $list)
+        {
+            foreach ($list as $key)
+            {
+                if (array_key_exists($key, $searchConstraint))
+                {
+                    $constraints[$key] = $searchConstraint[$key];
+                    unset($searchConstraint[$key]);
+                }
+            }
+        }
+        foreach ($searchConstraint as $key => $value)
+        {
+            $constraints[$key] = $value;
+        }
+        foreach ($lastItems as $key => $value)
+        {
+            $constraints[$key] = $value;
+        }
+
+        return $constraints;
+    }
+
     protected function getSvStructuredQuery(): array
     {
         $query = [];
-        $searchConstraint = $this->search_constraints;
+        $searchConstraint = $this->sortSearchConstraints($this->search_constraints);
+
         $typeFilter = $searchConstraint['content'] ?? $searchConstraint['type'] ?? null;
         $containerOnly = \XF::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraint['container_only'] ?? false);
         $addContentTypeTerm = $this->search_type !== '' && !$this->search_grouping;
@@ -304,7 +376,6 @@ class Search extends XFCP_Search
         }
         unset($queryPhrase);
 
-        arsort($query);
         // add content-type
         if ($addContentTypeTerm)
         {
