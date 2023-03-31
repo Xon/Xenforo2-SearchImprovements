@@ -316,32 +316,36 @@ class Search extends XFCP_Search
         ];
     }
 
-
-    protected function sortSearchConstraints(array $searchConstraint): array
+    protected function sortSearchConstraints(array $searchConstraints): array
     {
+        if (count($searchConstraints) < 2)
+        {
+            return $searchConstraints;
+        }
+
         // urlConstraints appears weirdly sorted, so apply some basic sorting to try to make this look good
         $constraints = [];
         $lastItems = [];
         foreach ($this->svSortLast as $key)
         {
-            if (array_key_exists($key, $searchConstraint))
+            if (array_key_exists($key, $searchConstraints))
             {
-                $lastItems[$key] = $searchConstraint[$key];
-                unset($searchConstraint[$key]);
+                $lastItems[$key] = $searchConstraints[$key];
+                unset($searchConstraints[$key]);
             }
         }
         foreach ($this->getConstraintSortLists() as $list)
         {
             foreach ($list as $key)
             {
-                if (array_key_exists($key, $searchConstraint))
+                if (array_key_exists($key, $searchConstraints))
                 {
-                    $constraints[$key] = $searchConstraint[$key];
-                    unset($searchConstraint[$key]);
+                    $constraints[$key] = $searchConstraints[$key];
+                    unset($searchConstraints[$key]);
                 }
             }
         }
-        foreach ($searchConstraint as $key => $value)
+        foreach ($searchConstraints as $key => $value)
         {
             $constraints[$key] = $value;
         }
