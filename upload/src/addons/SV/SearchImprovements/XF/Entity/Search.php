@@ -29,6 +29,7 @@ class Search extends XFCP_Search
         'users',
         'profile_users',
         'recipients', // SV/ConversationImprovements
+        'participants', // SV/ReportImprovements mostly
         'assigned',
         'assigner',
     ];
