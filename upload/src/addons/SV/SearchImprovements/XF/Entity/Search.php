@@ -5,6 +5,7 @@ namespace SV\SearchImprovements\XF\Entity;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
+use XF\Util\Arr;
 use function array_diff;
 use function array_key_exists;
 use function array_merge;
@@ -105,7 +106,15 @@ class Search extends XFCP_Search
 
         if (in_array($key, $this->svUserConstraint, true))
         {
-            $usernames = (array)$this->inputFilterer->filter((array)$value, 'array-string');
+            if (!is_array($value))
+            {
+                assert(is_string($value));
+                $usernames = Arr::stringToArray($value, '/,\s*/');
+            }
+            else
+            {
+                $usernames = $value;
+            }
 
             $templater = \XF::app()->templater();
             /** @var \XF\Repository\User $userRepo */
@@ -137,7 +146,7 @@ class Search extends XFCP_Search
                 ]));
             }
             /** @noinspection PhpUnnecessaryLocalVariableInspection */
-            $value = implode(',', $formattedUsernames);
+            $value = implode(', ', $formattedUsernames);
 
             return $value;
         }
