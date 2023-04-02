@@ -20,13 +20,13 @@
 			<xf:numberbox name="{$lowConstraint|dotToArray}" 
 						  size="5" min="0" step="1" required=""
 						  class="input--number" 
-						  value="{{ getDotted($input, $lowConstraint, '') ?: '' }}"
+						  value="{{ getDotted($input, $lowConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
 			<span class="inputGroup-text">-</span>
 			<xf:numberbox name="{$upperConstraint|dotToArray}" 
 						  class="input--number" 
 						  size="5" min="0" step="1" required=""
-						  value="{{ getDotted($input, $upperConstraint, '') ?: '' }}"
+						  value="{{ getDotted($input, $upperConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
 		</div>
 	</xf:formrow>
@@ -44,12 +44,12 @@
 		<div class="inputGroup">
 			<xf:dateinput name="{$lowConstraint|dotToArray}" 
 						  required=""
-						  value="{{ getDotted($input.c, $lowConstraint, '') ?: '' }}"
+						  value="{{ getDotted($input.c, $lowConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
 			<span class="inputGroup-text">-</span>
 			<xf:dateinput name="{$upperConstraint|dotToArray}" 
 						  required=""
-						  value="{{ getDotted($input, $upperConstraint, '') ?: '' }}"
+						  value="{{ getDotted($input, $upperConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_upper_bound') }}" />
 		</div>
 	</xf:formrow>
@@ -63,7 +63,7 @@
 		  >
 	<xf:set var="$constraint" value="c.{$name}" />
 	<xf:textboxrow name="{$constraint|dotToArray}"
-				   value="{{ getDotted($input, $constraint, '') ?: '' }}"
+				   value="{{ getDotted($input, $constraint, '') }}"
 				   ac="true"
 				   label="{$label}"
 				   explain="{$explain}"
@@ -78,7 +78,7 @@
 		  >
 	<xf:set var="$constraint" value="c.{$name}" />
 	<xf:textboxrow name="{$constraint|dotToArray}"
-				   value="{{ getDotted($input, $constraint, '') ?: '' }}"
+				   value="{{ getDotted($input, $constraint, '') }}"
 				   ac="true"
 				   label="{$label}"
 				   explain="{$explain}"
