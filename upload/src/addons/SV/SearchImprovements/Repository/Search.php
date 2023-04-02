@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Repository;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Util\Arr;
+use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
@@ -54,17 +55,15 @@ class Search extends Repository
         $container['checkForUpdates'][] = $field;
     }
 
-
-
     /**
      * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
      *
      * @param Query                 $query
      * @param array                 $constraints
      * @param array                 $urlConstraints
-     * @param string                $searchField
      * @param string                $lowerConstraintField
      * @param string                $upperConstraintField
+     * @param string                $searchField
      * @param array<TableReference> $tableRef
      * @param string|null           $sqlTable
      * @return bool
@@ -101,6 +100,64 @@ class Search extends Repository
         {
             Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
             $query->withMetadata(new RangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $tableRef, $source));
+        }
+        else
+        {
+            Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
+            Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
+     *
+     * @param Query                 $query
+     * @param array                 $constraints
+     * @param array                 $urlConstraints
+     * @param string                $lowerConstraintField
+     * @param string                $upperConstraintField
+     * @param string                $searchField
+     * @param array<TableReference> $tableRef
+     * @param string|null           $sqlTable
+     * @param int                   $neverHandling
+     * @return bool
+     */
+    public function applyDateRangeConstraint(\XF\Search\Query\Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null, int $neverHandling = DateRangeConstraint::NEVER_IS_ZERO): bool
+    {
+        $lowerConstraint = (int)Arr::getByPath($constraints, $lowerConstraintField);
+        $upperConstraint = Arr::getByPath($constraints, $upperConstraintField);
+        if ($upperConstraint !== null)
+        {
+            $upperConstraint = (int)$upperConstraint;
+        }
+        if ($upperConstraint === 0)
+        {
+            $lowerConstraint = 0;
+        }
+
+        $repo = Globals::repo();
+        $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
+        if ($source === null)
+        {
+            $source = $tableRef[0]->getAlias();
+        }
+        if ($lowerConstraint !== 0 && $upperConstraint !== null)
+        {
+            $query->withMetadata(new DateRangeConstraint($searchField, [$upperConstraint, $lowerConstraint], RangeConstraint::MATCH_BETWEEN, $neverHandling, $tableRef, $source));
+        }
+        else if ($lowerConstraint !== 0)
+        {
+            Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
+            $query->withMetadata(new DateRangeConstraint($searchField, $lowerConstraint, RangeConstraint::MATCH_GREATER, $neverHandling, $tableRef, $source));
+        }
+        else if ($upperConstraint !== null)
+        {
+            Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
+            $query->withMetadata(new DateRangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $neverHandling, $tableRef, $source));
         }
         else
         {
