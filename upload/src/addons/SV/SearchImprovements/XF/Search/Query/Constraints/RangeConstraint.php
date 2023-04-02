@@ -35,6 +35,10 @@ class RangeConstraint extends AbstractConstraint
         $this->source = $source;
     }
 
+    /**
+     * @param array{0:int,0:int}|array{0:int}|int $values
+     * @return void
+     */
     public function setValues($values)
     {
         if (!is_array($values))
@@ -78,11 +82,11 @@ class RangeConstraint extends AbstractConstraint
                 $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d ", $this->values);
                 break;
             case self::MATCH_BETWEEN:
-                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d and {$this->source}.{$this->key} <= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d AND {$this->source}.{$this->key} <= %d ", $this->values);
                 break;
         }
 
-        if ($sqlConstraint !== null && $this->tableReferences)
+        if ($sqlConstraint !== null && count($this->tableReferences) !== 0)
         {
             foreach ($this->tableReferences as $tableReference)
             {
@@ -109,7 +113,7 @@ class RangeConstraint extends AbstractConstraint
                 $filters[] = [
                     'range' => [
                         $key => [
-                            "lte" => $values[0],
+                            'lte' => $values[0],
                         ]
                     ]
                 ];
@@ -119,7 +123,7 @@ class RangeConstraint extends AbstractConstraint
                 $filters[] = [
                     'range' => [
                         $key => [
-                            "gte" => $values[0],
+                            'gte' => $values[0],
                         ]
                     ]
                 ];
@@ -129,8 +133,8 @@ class RangeConstraint extends AbstractConstraint
                 $filters[] = [
                     'range' => [
                         $key => [
-                            "lte" => $values[0],
-                            "gte" => $values[1],
+                            'lte' => $values[0],
+                            'gte' => $values[1],
                         ]
                     ]
                 ];
