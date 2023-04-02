@@ -54,7 +54,7 @@ trait DiscussionTrait
         {
             $this->setupDiscussionUserMetadata($entity, $metaData);
 
-            $userIds= EntityGetterCache::getCachedValue($entity, '_svDiscussionUserIdForSearch', function () use ($entity): array {
+            $userIds = EntityGetterCache::getCachedValue($entity, '_svDiscussionUserIdForSearch', function () use ($entity): array {
                 $userIds = $entity->getDiscussionUserIds();
 
                 // ensure consistent behavior that it is an array of ints, and no zero user ids are sent to XFES
@@ -72,7 +72,6 @@ trait DiscussionTrait
 
             if (count($userIds) !== 0)
             {
-
                 $metaData['discussion_user'] = $userIds;
             }
         }
