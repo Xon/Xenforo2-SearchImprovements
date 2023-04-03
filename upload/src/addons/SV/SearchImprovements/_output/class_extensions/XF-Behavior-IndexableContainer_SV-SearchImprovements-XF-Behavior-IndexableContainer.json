@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Behavior\\IndexableContainer",
+    "to_class": "SV\\SearchImprovements\\XF\\Behavior\\IndexableContainer",
+    "execute_order": 1,
+    "active": true
+}

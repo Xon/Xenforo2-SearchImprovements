@@ -57,6 +57,11 @@ namespace SV\SearchImprovements\XF\Admin\Controller
 	class XFCP_Index extends \XF\Admin\Controller\Index {}
 }
 
+namespace SV\SearchImprovements\XF\Behavior
+{
+	class XFCP_IndexableContainer extends \XF\Behavior\IndexableContainer {}
+}
+
 namespace SV\SearchImprovements\XF\Entity
 {
 	class XFCP_Search extends \XF\Entity\Search {}
