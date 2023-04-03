@@ -479,9 +479,7 @@ class Search extends XFCP_Search
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase === null)
         {
-            $query['svSearchOrder.'.$this->search_order] = \XF::phrase('svSearchOrder.order_by_clause', [
-                'order' => $this->search_order
-            ])->render('raw');
+            $query['svSearchOrder.'.$this->search_order] = 'svSearchOrder.'.$this->search_order;
         }
 
         return $query;
