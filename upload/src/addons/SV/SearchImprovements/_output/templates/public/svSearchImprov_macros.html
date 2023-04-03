@@ -44,7 +44,7 @@
 		<div class="inputGroup">
 			<xf:dateinput name="{$lowConstraint|dotToArray}" 
 						  required=""
-						  value="{{ getDotted($input.c, $lowConstraint, '') }}" 
+						  value="{{ getDotted($input, $lowConstraint, '') }}" 
 						  placeholder="{{ phrase('svSearchImprov_lower_bound') }}" /> 
 			<span class="inputGroup-text">-</span>
 			<xf:dateinput name="{$upperConstraint|dotToArray}" 
