@@ -31,11 +31,11 @@ class Search extends Repository
 
     public function addContainerIndexableField(\XF\Mvc\Entity\Structure $structure, string $field): void
     {
-        $container = $structure->behaviors['XF:IndexableContainer'] ?? null;
-        if ($container === null)
+        if (!array_key_exists('XF:IndexableContainer', $structure->behaviors))
         {
             return;
         }
+        $container =& $structure->behaviors['XF:IndexableContainer'];
 
         if (!array_key_exists('checkForUpdates', $container))
         {
