@@ -113,6 +113,18 @@ class Search extends Repository
     }
 
     /**
+     * ElasticSearch can be configured to transform dates in various ways.
+     * This is a hook so php can generate correct queries
+     *
+     * @param int $date
+     * @return int|mixed
+     */
+    protected function transformDate(int $date)
+    {
+        return $date;
+    }
+
+    /**
      * Query can be KeywordQuery or MoreLikeThisQuery (XFES).
      *
      * @param Query                 $query
@@ -147,17 +159,17 @@ class Search extends Repository
         }
         if ($lowerConstraint !== 0 && $upperConstraint !== null)
         {
-            $query->withMetadata(new DateRangeConstraint($searchField, [$upperConstraint, $lowerConstraint], RangeConstraint::MATCH_BETWEEN, $neverHandling, $tableRef, $source));
+            $query->withMetadata(new DateRangeConstraint($searchField, [$this->transformDate($upperConstraint), $this->transformDate($lowerConstraint)], RangeConstraint::MATCH_BETWEEN, $neverHandling, $tableRef, $source));
         }
         else if ($lowerConstraint !== 0)
         {
             Arr::unsetUrlConstraint($urlConstraints, $upperConstraintField);
-            $query->withMetadata(new DateRangeConstraint($searchField, $lowerConstraint, RangeConstraint::MATCH_GREATER, $neverHandling, $tableRef, $source));
+            $query->withMetadata(new DateRangeConstraint($searchField, $this->transformDate($lowerConstraint), RangeConstraint::MATCH_GREATER, $neverHandling, $tableRef, $source));
         }
         else if ($upperConstraint !== null)
         {
             Arr::unsetUrlConstraint($urlConstraints, $lowerConstraintField);
-            $query->withMetadata(new DateRangeConstraint($searchField, $upperConstraint, RangeConstraint::MATCH_LESSER, $neverHandling, $tableRef, $source));
+            $query->withMetadata(new DateRangeConstraint($searchField, $this->transformDate($upperConstraint), RangeConstraint::MATCH_LESSER, $neverHandling, $tableRef, $source));
         }
         else
         {

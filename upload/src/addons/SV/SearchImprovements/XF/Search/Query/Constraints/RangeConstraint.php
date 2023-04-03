@@ -36,7 +36,7 @@ class RangeConstraint extends AbstractConstraint
     }
 
     /**
-     * @param array{0:int,0:int}|array{0:int}|int $values
+     * @param array{0:int|string,0:int|string}|array{0:int|string}|int|string $values
      * @return void
      */
     public function setValues($values)
