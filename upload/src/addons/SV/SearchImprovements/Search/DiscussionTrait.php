@@ -13,10 +13,14 @@ use SV\SearchImprovements\Search\Features\SearchOrder;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\SqlOrder;
 use function array_filter;
+use function array_key_exists;
 use function array_map;
+use function array_merge;
 use function array_unique;
 use function array_values;
+use function assert;
 use function count;
+use function is_string;
 use function is_subclass_of;
 
 /**
@@ -119,16 +123,39 @@ trait DiscussionTrait
      */
     public function getTypeOrder($order)
     {
-        if ($order === 'replies' && Globals::repo()->isUsingElasticSearch())
+        assert(is_string($order));
+        if (array_key_exists($order, $this->getAdditionalSortOrders()))
+        {
+            return new SearchOrder([$order, 'date']);
+        }
+
+        return parent::getTypeOrder($order);
+    }
+
+    protected function getSvSortOrders(): array
+    {
+        $sorts = [];
+
+        if (Globals::repo()->isUsingElasticSearch())
         {
             $class = $this->getSvDiscussionEntityClass();
             if (is_subclass_of($class, ISearchableReplyCount::class))
             {
-                return new SearchOrder(['replies', 'date']);
+                $sorts['replies'] = \XF::phrase('svSearchImprov_reply_count');
             }
         }
 
-        return parent::getTypeOrder($order);
+        return $sorts;
+    }
+
+    public function getSearchFormData(): array
+    {
+        $form = parent::getSearchFormData();
+
+        $sorts = $form['sortOrders'] ?? [];
+        $form['sortOrders'] = array_merge($sorts, $this->getSvSortOrders());
+
+        return $form;
     }
 
     protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure): void
