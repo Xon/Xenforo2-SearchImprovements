@@ -6,6 +6,7 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Util\Arr;
 use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
@@ -112,6 +113,31 @@ class Search extends Repository
         return true;
     }
 
+    public function getEntityToMessage(Entity $entity): string
+    {
+        $message = '';
+        foreach ($entity->structure()->columns as $column => $schema)
+        {
+            if (
+                ($schema['type'] ?? '') !== Entity::STR ||
+                !empty($schema['allowedValues']) || // aka enums
+                ($schema['noIndex'] ?? false)
+            )
+            {
+                continue;
+            }
+
+            $value = $entity->get($column);
+            if ($value === null || $value === '')
+            {
+                continue;
+            }
+
+            $message .= "\n" . $value;
+        }
+
+        return $message;
+    }
     /**
      * ElasticSearch can be configured to transform dates in various ways.
      * This is a hook so php can generate correct queries
