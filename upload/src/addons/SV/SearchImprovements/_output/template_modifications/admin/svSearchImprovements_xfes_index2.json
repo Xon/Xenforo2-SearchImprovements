@@ -1,0 +1,9 @@
+{
+    "template": "xfes_index",
+    "description": "Make enhanced search config page multi-index aware - 2",
+    "execution_order": 68381,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:title>{{ phrase('xfes_enhanced_search') }}</xf:title>",
+    "replace": "<xf:if is=\"$contentType\">\n<xf:title>{{ phrase('xfes_enhanced_search') }} - {$contentTypePhrase}</xf:title>\n<xf:else/>\n$0\n</xf:if>"
+}
