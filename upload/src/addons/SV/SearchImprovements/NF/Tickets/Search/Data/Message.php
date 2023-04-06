@@ -79,11 +79,16 @@ class Message extends XFCP_Message
     public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
     {
         $constraints = $request->filter([
+            'c.participants' => 'str',
+
             'c.replies.lower' => 'uint',
             'c.replies.upper' => '?uint,empty-str-to-null',
         ]);
 
         $repo = Globals::repo();
+        $repo->applyUserConstraint($query, $constraints, $urlConstraints,
+            'c.participants', 'discussion_user'
+        );
         if ($repo->applyRangeConstraint($query, $constraints, $urlConstraints,
             'c.replies.lower', 'c.replies.upper','replies',
             [$this->getTicketQueryTableReference()]))

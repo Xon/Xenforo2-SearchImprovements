@@ -1,0 +1,9 @@
+{
+    "template": "search_form_nf_tickets_message",
+    "description": "Inject participants search",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:macro template=\"search_form_macros\" name=\"date\"",
+    "replace": "<xf:macro name=\"svSearchImprov_macros::user_field_multi\" arg-name=\"participants\" arg-label=\"{{ phrase('svReportImprov_participants') }}\" />\n$0"
+}
