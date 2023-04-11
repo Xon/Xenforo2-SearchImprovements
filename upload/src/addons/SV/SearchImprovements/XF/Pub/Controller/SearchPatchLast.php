@@ -21,7 +21,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $visitor = \XF::visitor();
         if (!$visitor->canSearch($error))
         {
-            throw $this->errorException($this->noPermission($error));
+            throw $this->exception($this->noPermission($error));
         }
 
         parent::preDispatchController($action, $params);
