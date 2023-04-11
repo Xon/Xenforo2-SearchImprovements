@@ -64,6 +64,11 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
     public function actionIndexes(ParameterBag $params): AbstractReply
     {
+        if (!(\XF::options()->xfesEnabled ?? false))
+        {
+            return $this->redirect($this->buildLink('enhanced-search'));
+        }
+
         $contentType = (string)$params->get('content_type');
         if (\strlen($contentType) !== 0)
         {
