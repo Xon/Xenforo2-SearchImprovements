@@ -142,21 +142,10 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
         $searchData = [
             'search_type' => $contentFilter,
-            'keywords' => '',
             'c' => $input['c'],
-            'grouped' => 0,
             'order' => 'date'
         ];
-        $query = $this->prepareSearchQuery($searchData, $constraints);
-        if ($query->getErrors())
-        {
-            return $this->error($query->getErrors());
-        }
-        if ($searcher->isQueryEmpty($query, $error))
-        {
-            return $this->error($error);
-        }
 
-        return $this->runSearch($query, $constraints);
+        return $this->redirect($this->buildLink('search/search', null, $searchData));
     }
 }
