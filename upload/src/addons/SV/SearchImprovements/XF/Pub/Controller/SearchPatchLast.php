@@ -3,15 +3,15 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use SV\SearchImprovements\XF\Search\Search as ExtendedSearcher;
+use XF\Entity\User as UserEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
-use function array_filter;
 use function assert;
 
 /**
  * Extends \XF\Pub\Controller\Search
  */
-class SearchPatch extends XFCP_SearchPatch
+class SearchPatchLast extends XFCP_SearchPatchLast
 {
     protected function preDispatchController($action, ParameterBag $params)
     {

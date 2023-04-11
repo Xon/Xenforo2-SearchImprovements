@@ -517,7 +517,7 @@ class Search extends XFCP_Search
             assert($searchRepo instanceof SearchRepo);
 
             $firstChildType = $searchRepo->getChildContentTypeForContainerType($this->search_type);
-            if ($firstChildType !== null)
+            if ($firstChildType !== null && $firstChildType !== $searchType)
             {
                 $constraints = $this->search_constraints;
                 $constraints['content']  = $this->search_type;
