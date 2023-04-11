@@ -9,6 +9,7 @@ use XF\Mvc\Reply\AbstractReply;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use function assert;
 use function count;
+use function in_array;
 
 /**
  * Extends \XF\Pub\Controller\Search
@@ -36,9 +37,26 @@ class SearchPatchFirst extends XFCP_SearchPatchFirst
                 if ($firstChildType !== null && $firstChildType !== $searchType)
                 {
                     $data['c']['content'] = $urlConstraints['content'] = $searchType;
+                    unset($data['c']['type']);
                     $data['search_type'] = $firstChildType;
                 }
             }
+
+            // only allow sub-types if they are part of the selected handler
+            $allowedTypeFilters = $handler->getSearchableContentTypes();
+            if (isset($data['c']['content']) && !in_array($data['c']['content'], $allowedTypeFilters, true))
+            {
+                unset($data['c']['content']);
+            }
+            if (isset($data['c']['type']) && !in_array($data['c']['type'], $allowedTypeFilters, true))
+            {
+                unset($data['c']['type']);
+            }
+        }
+        else
+        {
+            unset($data['c']['content']);
+            unset($data['c']['type']);
         }
 
         return parent::prepareSearchQuery($data, $urlConstraints);
