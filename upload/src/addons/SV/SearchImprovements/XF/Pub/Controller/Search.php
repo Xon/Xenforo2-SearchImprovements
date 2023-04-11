@@ -177,7 +177,7 @@ class Search extends XFCP_Search
                 $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
             }
         }
-        if ($reply instanceof ViewReply && ($search = $reply->getParam('search')))
+        if ((\XF::config('svForceSearchQueryNonEmptyOnDisplay') ?? true)  && $reply instanceof ViewReply && ($search = $reply->getParam('search')))
         {
             assert($search instanceof SearchEntity);
             if ($search->search_query === '')
