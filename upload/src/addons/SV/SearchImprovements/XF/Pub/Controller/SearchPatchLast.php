@@ -6,6 +6,7 @@ use SV\SearchImprovements\XF\Search\Search as ExtendedSearcher;
 use XF\Entity\User as UserEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\Exception;
 use function assert;
 
 /**
@@ -83,5 +84,79 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         }
 
         return parent::actionResults($params);
+    }
+
+    /**
+     * @return AbstractReply
+     * @throws Exception
+     * @noinspection PhpMissingReturnTypeInspection
+     */
+    public function actionMember()
+    {
+        $this->assertNotEmbeddedImageRequest();
+
+        $userId = $this->filter('user_id', 'uint');
+        /** @var UserEntity $user */
+        $user = $this->assertRecordExists('XF:User', $userId, null, 'requested_member_not_found');
+
+        $searcher = $this->app()->search();
+        assert($searcher instanceof ExtendedSearcher);
+
+        // map old XF member search to standard search arguments
+        $input = $this->filter([
+            'type' => 'str',
+            'content' => 'str',
+            'before' => 'uint',
+            'thread_type' => 'str',
+            // allow standard XF search arguments
+            'c' => 'array',
+        ]);
+
+        $input['c']['users'] = $user->username;
+
+        $contentFilter = '';
+        $content = $input['content'];
+        $type = $input['type'];
+        if ($content !== '' && $searcher->isValidContentType($content))
+        {
+            $contentFilter = $content;
+            if ($type !== '' && $searcher->isValidContentType($type))
+            {
+                $input['c']['content'] = $type;
+            }
+        }
+        else if ($type !== '' && $searcher->isValidContentType($type))
+        {
+            $contentFilter = $type;
+        }
+
+        if ($input['thread_type'] !== '')
+        {
+            $input['c']['thread_type'] = $input['thread_type'];
+        }
+
+        if ($input['before'] !== 0)
+        {
+            $input['c']['older_than'] = $input['before'];
+        }
+
+        $searchData = [
+            'search_type' => $contentFilter,
+            'keywords' => '',
+            'c' => $input['c'],
+            'grouped' => 0,
+            'order' => 'date'
+        ];
+        $query = $this->prepareSearchQuery($searchData, $constraints);
+        if ($query->getErrors())
+        {
+            return $this->error($query->getErrors());
+        }
+        if ($searcher->isQueryEmpty($query, $error))
+        {
+            return $this->error($error);
+        }
+
+        return $this->runSearch($query, $constraints);
     }
 }
