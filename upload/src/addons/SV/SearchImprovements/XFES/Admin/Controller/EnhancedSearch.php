@@ -64,10 +64,15 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
     public function actionIndexes(ParameterBag $params): AbstractReply
     {
-        if (!(\XF::options()->xfesEnabled ?? false))
+        $this->svShimContentType = '';
+        $configurer = $this->getConfigurer();
+        if (!$configurer->isEnabled() || !$configurer->hasActiveConfig())
         {
             return $this->redirect($this->buildLink('enhanced-search'));
         }
+        /** @var \SV\SearchImprovements\XFES\Elasticsearch\Api $defaultEs */
+        $defaultEs = $configurer->getEsApi();
+        $esClusterStatus = $defaultEs->getClusterInfo();
 
         $contentType = (string)$params->get('content_type');
         if (\strlen($contentType) !== 0)
@@ -134,6 +139,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $this->svShimContentType = '';
 
         $viewParams = [
+            'es' => $defaultEs,
+            'esClusterStatus' => $esClusterStatus,
             'version' => $version,
             'indexes' => $indexes,
         ];

@@ -1,5 +1,9 @@
 <xf:title>{{ phrase('admin_navigation.svSearchImprovements_xfes_indexes') }}</xf:title>
 
+<xf:pageaction if="$es">
+	<xf:button href="{{ link('enhanced-search/config') }}" icon="config" overlay="true">{{ phrase('xfes_reconfigure') }}</xf:button>
+</xf:pageaction>
+
 <xf:if is="!$xf.options.xfesEnabled">
 	<div class="blockMessage blockMessage--important blockMessage--iconic">
 		{{ phrase('xfes_enhanced_search_not_currently_enabled') }}
@@ -15,6 +19,45 @@
 		{$testError}
 	</div>
 </xf:if>
+
+<div class="block">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:formrow label="{{ phrase('enabled') }}" rowtype="button">
+					<xf:if is="$xf.options.xfesEnabled">
+						{{ phrase('yes') }}
+						<xf:button href="{{ link('enhanced-search/toggle') }}" data-xf-click="overlay">{{ phrase('disable') }}</xf:button>
+					<xf:else />
+						{{ phrase('no') }}
+						<xf:button href="{{ link('enhanced-search/toggle') }}" data-xf-click="overlay">{{ phrase('enable') }}</xf:button>
+					</xf:if>
+				</xf:formrow>
+				<xf:formrow label="{{ phrase('xfes_elasticsearch_server') }}">{$es.printableBaseUrl}</xf:formrow>
+
+				<xf:if is="$version">
+					<xf:formrow label="{{ phrase('xfes_version') }}">{$version}</xf:formrow>
+				</xf:if>
+				<xf:if is="$esClusterStatus">
+					<xf:formrow label="{{ phrase('sv_xfes_cluster_status') }}">{$esClusterStatus.status}</xf:formrow>
+					<xf:formrow label="{{ phrase('sv_xfes_active_shards') }}">
+						{$esClusterStatus.active_shards}
+						<xf:if is="$esClusterStatus.active_shards_percent_as_number || $esClusterStatus.active_shards_percent_as_number === 0.0 || $esClusterStatus.active_shards_percent_as_number === 0">
+							{{ parens($esClusterStatus.active_shards_percent_as_number|number . '%') }}
+						</xf:if>
+					</xf:formrow>
+					<xf:if is="$esClusterStatus.initializing_shards">
+						<xf:formrow label="{{ phrase('sv_xfes_initializing_shards') }}">{$esClusterStatus.initializing_shards}</xf:formrow>
+					</xf:if>
+					<xf:if is="$esClusterStatus.relocating_shards">
+						<xf:formrow label="{{ phrase('sv_xfes_relocating_shards') }}">{$esClusterStatus.relocating_shards}</xf:formrow>
+					</xf:if>
+					<xf:if is="$esClusterStatus.unassigned_shards">
+						<xf:formrow label="{{ phrase('sv_xfes_unassigned_shards') }}">{$esClusterStatus.unassigned_shards}</xf:formrow>
+					</xf:if>
+				</xf:if>
+			</div>
+	</div>
+</div>
 
 <div class="block-container">
 	<div class="block-body">
