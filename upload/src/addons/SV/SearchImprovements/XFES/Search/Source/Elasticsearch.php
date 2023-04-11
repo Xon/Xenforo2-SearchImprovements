@@ -45,6 +45,9 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     public function getKeywordSearchDsl(\XF\Search\Query\KeywordQuery $query, $maxResults)
     {
+        // searches without an explicit search limit pickup \XF::options()->maximumSearchResults which is stored as a stringy value
+        $maxResults = (int)$maxResults;
+
         if ($query->getKeywords() === '*' && $query->getParsedKeywords() === '')
         {
             // getDslFromQuery/getQueryStringDsl disables relevancy if `getParsedKeywords` is empty
