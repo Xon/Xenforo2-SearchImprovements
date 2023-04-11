@@ -42,6 +42,7 @@ class SearchPatchFirst extends XFCP_SearchPatchFirst
                 }
             }
 
+            // XF bug: https://xenforo.com/community/threads/search-c-type-c-content-allows-skipping-a-search-handlers-gettypepermissionconstraints.213722/
             // only allow sub-types if they are part of the selected handler
             $allowedTypeFilters = $handler->getSearchableContentTypes();
             if (isset($data['c']['content']) && !in_array($data['c']['content'], $allowedTypeFilters, true))
