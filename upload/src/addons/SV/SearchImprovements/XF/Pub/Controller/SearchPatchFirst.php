@@ -18,6 +18,7 @@ class SearchPatchFirst extends XFCP_SearchPatchFirst
 {
     protected function prepareSearchQuery(array $data, &$urlConstraints = [])
     {
+        // XF bug: https://xenforo.com/community/threads/crafted-post-search-query-can-skip-post-gettypepermissionconstraints.213723/
         // rewrite searches which target the parent content into a child content search with a type constraint
         // this covers member searches, but also constructed searches
         $searcher = $this->app()->search();
