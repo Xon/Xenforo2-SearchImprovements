@@ -45,12 +45,9 @@ class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchab
         $structure = parent::getStructure($structure);
 
         $repo = Globals::repo();
-        if ($repo->isPushingViewOtherChecksIntoSearch())
-        {
-            $repo->addContainerIndexableField($structure, 'user_id');
-        }
         if ($repo->isUsingElasticSearch())
         {
+            $repo->addContainerIndexableField($structure, 'user_id');
             $repo->addContainerIndexableField($structure, 'reply_count');
         }
 

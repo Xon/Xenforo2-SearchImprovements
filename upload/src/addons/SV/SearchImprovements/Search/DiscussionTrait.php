@@ -54,7 +54,7 @@ trait DiscussionTrait
             return;
         }
 
-        if ($repo->isPushingViewOtherChecksIntoSearch() && ($entity instanceof ISearchableDiscussionUser))
+        if ($entity instanceof ISearchableDiscussionUser)
         {
             $this->setupDiscussionUserMetadata($entity, $metaData);
 
@@ -105,7 +105,7 @@ trait DiscussionTrait
 
         $class = $this->getSvDiscussionEntityClass();
 
-        if (is_subclass_of($class, ISearchableDiscussionUser::class) && $repo->isPushingViewOtherChecksIntoSearch())
+        if (is_subclass_of($class, ISearchableDiscussionUser::class))
         {
             $structure->addField('discussion_user', MetadataStructure::INT);
             $this->setupDiscussionUserMetadataStructure($structure);

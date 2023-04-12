@@ -27,7 +27,7 @@ class Search extends Repository
 
     public function isPushingViewOtherChecksIntoSearch(): bool
     {
-        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && static::isUsingElasticSearch();
+        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && $this->isUsingElasticSearch();
     }
 
     public function addContainerIndexableField(\XF\Mvc\Entity\Structure $structure, string $field): void

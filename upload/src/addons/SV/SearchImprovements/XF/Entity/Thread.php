@@ -47,7 +47,7 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser
         $structure = parent::getStructure($structure);
 
         $repo = Globals::repo();
-        if ($repo->isPushingViewOtherChecksIntoSearch() && isset($structure->behaviors['XF:IndexableContainer']))
+        if (isset($structure->behaviors['XF:IndexableContainer']))
         {
             $structure->options['svReindexThreadForCollaborators'] = false;
             $repo->addContainerIndexableField($structure, 'user_id');
