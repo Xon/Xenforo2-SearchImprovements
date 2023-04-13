@@ -1,1 +1,2 @@
-Option to log search DSL for troubleshooting
+Option to log ElasticSearch query DSL for troubleshooting.<br/><br/>
+Requires XenForo Enhanced Search
