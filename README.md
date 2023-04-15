@@ -4,11 +4,24 @@ A collection of improvements to XF's enhanced search and XenForo's default MySQL
 
 - Allow `*` (or empty search string) to return results, for MySQL and XFES
 - range_query search DSL
-- allows arbitrary range queries for numerical data
+  - allows arbitrary range queries for numerical data
 - Allow users to select the default search order independent for the forum wide setting.
+  - Re-adds the global option for the default search type
+- Display search terms on the search results page 
+- Add "Search only X" search criteria to individual handler pages, where X is thread/conversation/ticket/ect instead of searching thread/post etc.
+   - Makes general search a true subset of member search
 
 Elasticsearch only features:
-- Restore default search order option
+- Add ability to push "can view threads/tickets by other" permission(s) into ElasticSearch query, reducing php-side culling of matching content.
+  This improves searching forums/tickets where the user lacks these permissions.
+
+  This is gated behind the option `Push "View X by others" check into XFES'`, as it requires a full reindex. (Default disabled)
+
+  Supports the following add-ons:
+    - View Sticky Threads (free) add-on.
+    - Collaborative Threads (paid) add-on.
+    - NixFifty's Tickets (paid) add-on.
+For best results, use ElasticSearch Essentials add-on, as it simplifies this permission constraint compared to stock XenForo
 - Per content type weighting
 - Adds Elasticsearch information to the AdminCP home screen.
 - Adds a debug option to log the search DSL queries to error log for troubleshooting
@@ -69,5 +82,13 @@ $query->matchQuery($q, ['myField'])
       ->withNgram()
       ->withExact();
 $myEntities = $repo->executeSearch($query, $maxResults)->getResultsData();
-  ```
+```
   
+## Search result terms support
+
+- Each search constraint needs a `svSearchConstraint.` prefixed phrase.
+  Arrays are mapped to phrases by adding a `_` for each sub-array/key as such; `c[warning][points][lower]` => `svSearchConstraint.warning_points_lower`
+- Each search order needs a `svSearchOrder.` prefixed phrase.
+- Extend `XF\Entity\Search::getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase` to provide custom phrase handling (ie node names)
+- Extend `XF\Entity\Search::formatConstraintValue(string $key, $value)` to provide custom formatting.
+- Extend `XF\Entity\Search::setupConstraintFields(): void` to populate `$svDateConstraint`/`$svUserConstraint`/`$svIgnoreConstraint` properties which control formatting
