@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Pub\\View\\Search\\Results",
+    "to_class": "SV\\SearchImprovements\\XF\\Pub\\View\\Search\\Results",
+    "execute_order": 6838,
+    "active": true
+}

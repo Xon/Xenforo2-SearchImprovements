@@ -79,6 +79,11 @@ namespace SV\SearchImprovements\XF\Pub\Controller
 	class XFCP_SearchPatchLast extends \XF\Pub\Controller\Search {}
 }
 
+namespace SV\SearchImprovements\XF\Pub\View\Search
+{
+	class XFCP_Results extends \XF\Pub\View\Search\Results {}
+}
+
 namespace SV\SearchImprovements\XF\Repository
 {
 	class XFCP_Search extends \XF\Repository\Search {}
