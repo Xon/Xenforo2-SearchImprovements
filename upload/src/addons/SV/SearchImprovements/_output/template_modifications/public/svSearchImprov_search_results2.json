@@ -5,5 +5,5 @@
     "enabled": true,
     "action": "preg_replace",
     "find": "#([\\t ]*<div class=\"block-container\">.*?\\$results.*<\\/xf:if>.*?<\\/div>)(.*?<div class=\"block-outer)#si",
-    "replace": "<xf:if is=\"$search.result_count\">\n$1\n<xf:else />\n\t<div class=\"blockMessage\">\n\t\t{{ $isExpiredSearch ? phrase('svSearchImprove_expired_search', {'url' : link('search')}) : phrase('no_results_found') }}\n\t</div>\n</xf:if>\n$2"
+    "replace": "<xf:if is=\"$search.result_count\">\n$1\n<xf:else />\n\t<div class=\"block-container\">\n\t\t<ol class=\"block-body\">\n\t\t\t<div class=\"blockMessage\">\n\t\t\t\t{{ $isExpiredSearch ? phrase('svSearchImprove_expired_search', {'url' : link('search')}) : phrase('no_results_found') }}\n\t\t\t</div>\n\t\t</ol>\n\t</div>\n</xf:if>\n$2"
 }
