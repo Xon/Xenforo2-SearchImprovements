@@ -146,6 +146,6 @@ class SearchPatchLast extends XFCP_SearchPatchLast
             'order' => 'date'
         ];
 
-        return $this->redirect($this->buildLink('search/search', null, $searchData));
+        return $this->redirect($this->buildLink('search/search', null, $searchData), '');
     }
 }
