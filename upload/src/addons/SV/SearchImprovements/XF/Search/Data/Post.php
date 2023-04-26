@@ -11,6 +11,8 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\PermissionConstraint;
+use SV\SearchImprovements\XF\Search\Query\Constraints\TypeConstraint;
 use SV\StandardLib\Helper;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
@@ -95,20 +97,36 @@ class Post extends XFCP_Post
         if (count($nonViewableNodeIds) !== 0 || count($viewableStickiesNodeIds) !== 0)
         {
             $userId = (int)\XF::visitor()->user_id;
-            // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
-            $constraints[] = new OrConstraint(
-                $isOnlyType ? null : new NotConstraint(new ExistsConstraint('node')),
+            $viewConstraint = new OrConstraint(
                 $userId === 0 ? null : new MetadataConstraint('discussion_user', $userId),
-                count($viewableStickiesNodeIds) === 0
+                (count($viewableStickiesNodeIds) === 0
                     ? null
                     : new AndConstraint(
-                    new ExistsConstraint('sticky'),
-                    new MetadataConstraint('node', $viewableStickiesNodeIds)
-                ),
-                count($nonViewableNodeIds) === 0
+                        new ExistsConstraint('sticky'),
+                        new MetadataConstraint('node', $viewableStickiesNodeIds)
+                    )),
+                (count($nonViewableNodeIds) === 0
                     ? null
                     : new NotConstraint(new MetadataConstraint('node', $nonViewableNodeIds))
+                )
             );
+
+            if ($isOnlyType)
+            {
+                // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
+                $constraints[] = $viewConstraint;
+            }
+            else
+            {
+                // XF constraints are AND'ed together for positive queries (ANY/ALL), and OR'ed for all negative queries (NONE).
+                // PermissionConstraint forces the sub-query as a negative query instead of being part of the AND'ed positive queries
+                $constraints[] = new PermissionConstraint(
+                    new AndConstraint(
+                        new TypeConstraint(...$this->getSearchableContentTypes()),
+                        new NotConstraint($viewConstraint)
+                    )
+                );
+            }
         }
 
         return $constraints;
