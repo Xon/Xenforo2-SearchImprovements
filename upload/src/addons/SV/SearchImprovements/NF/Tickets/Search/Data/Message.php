@@ -65,7 +65,7 @@ class Message extends XFCP_Message
         if (count($nonViewableNodeIds) !== 0)
         {
             // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
-            $userId = \XF::visitor()->user_id;
+            $userId = (int)\XF::visitor()->user_id;
             $constraints[] = new OrConstraint(
                 $isOnlyType ? null : new NotConstraint(new ExistsConstraint('ticketcat')),
                 $userId === 0 ? null : new MetadataConstraint('discussion_user', $userId),

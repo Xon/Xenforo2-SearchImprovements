@@ -94,10 +94,11 @@ class Post extends XFCP_Post
 
         if (count($nonViewableNodeIds) !== 0 || count($viewableStickiesNodeIds) !== 0)
         {
+            $userId = (int)\XF::visitor()->user_id;
             // Note; ElasticSearchEssentials forces all getTypePermissionConstraints to have $isOnlyType=true as it knows how to compose multiple types together
             $constraints[] = new OrConstraint(
                 $isOnlyType ? null : new NotConstraint(new ExistsConstraint('node')),
-                new MetadataConstraint('discussion_user', \XF::visitor()->user_id),
+                $userId === 0 ? null : new MetadataConstraint('discussion_user', $userId),
                 count($viewableStickiesNodeIds) === 0
                     ? null
                     : new AndConstraint(
