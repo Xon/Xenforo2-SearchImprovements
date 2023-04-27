@@ -1,1 +1,1 @@
-On search results page, show search DSL & debug statistics
+Collect search DSL & debug statistics

@@ -1,12 +1,12 @@
 {
-    "edit_format": "onoff",
-    "edit_format_params": "",
-    "data_type": "boolean",
+    "edit_format": "radio",
+    "edit_format_params": "={{ phrase('svShowSearchDebugInfo_off') }}\nlog={{ phrase('svShowSearchDebugInfo_log') }}\nlog_and_show={{ phrase('svShowSearchDebugInfo_log_and_show') }}",
+    "data_type": "string",
     "sub_options": [],
     "validation_class": "",
     "validation_method": "",
     "advanced": true,
-    "default_value": "0",
+    "default_value": "",
     "relations": {
         "svSearchImprovements": 90030
     }

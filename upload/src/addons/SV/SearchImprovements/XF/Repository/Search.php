@@ -131,7 +131,10 @@ class Search extends XFCP_Search
 
     public function runSearch(\XF\Search\Query\KeywordQuery $query, array $constraints = [], $allowCached = true)
     {
-        Globals::$capturedSearchDebugInfo = [];
+        if (\XF::options()->svShowSearchDebugInfo ?? '')
+        {
+            Globals::$capturedSearchDebugInfo = [];
+        }
         try
         {
             $search = parent::runSearch($query, $constraints, $allowCached);
@@ -160,14 +163,10 @@ class Search extends XFCP_Search
                     $this->getSearchDebugRequestStateSnapshot(),
                     $this->getSearchDebugSummary($search)
                 );
-            }
-            else
-            {
-                $capturedSearchDebugInfo = null;
-            }
 
-            $search->sv_debug_info = $capturedSearchDebugInfo;
-            $search->save();
+                $search->sv_debug_info = $capturedSearchDebugInfo;
+                $search->save();
+            }
 
             return $search;
         }
