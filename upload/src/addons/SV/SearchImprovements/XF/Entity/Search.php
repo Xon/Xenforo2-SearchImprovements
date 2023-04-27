@@ -18,6 +18,7 @@ use function is_numeric;
 use function is_string;
 
 /**
+ * @property array|null $sv_debug_info
  * @property-read array<string,\XF\Phrase> $sv_structured_query
  */
 class Search extends XFCP_Search
@@ -533,6 +534,7 @@ class Search extends XFCP_Search
     {
         $structure = parent::getStructure($structure);
 
+        $structure->columns['sv_debug_info'] = ['type' => self::JSON_ARRAY, 'nullable' => true, 'default' => null];
         $structure->columns['search_results']['required'] = false;
         $structure->columns['search_results']['default'] = [];
 

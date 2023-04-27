@@ -15,6 +15,8 @@ class Globals
 {
     /** @var bool */
     public static $shimSearchForSpecialization = true;
+    /** @var ?array */
+    public static $capturedSearchDebugInfo = null;
 
     public static function repo(): Search
     {

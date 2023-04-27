@@ -2,9 +2,11 @@
 
 namespace SV\SearchImprovements\XF\Search\Source;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use XF\Search\Query\KeywordQuery;
 use XF\Search\Query\SqlConstraint;
+use function end;
 use function is_array;
 
 class MySqlFt extends XFCP_MySqlFt
@@ -43,6 +45,32 @@ class MySqlFt extends XFCP_MySqlFt
         }
         $query->setMetadataConstraints($constraints);
 
-        return parent::search($query, $maxResults);
+        $db = $this->db();
+        $wasLoggingQueries = false;
+        $logSearchDebugInfo = Globals::$capturedSearchDebugInfo !== null;
+        if ($logSearchDebugInfo)
+        {
+            $wasLoggingQueries = $db->areQueriesLogged();
+            $db->logQueries(true, false);
+        }
+        try
+        {
+            return parent::search($query, $maxResults);
+        }
+        finally
+        {
+            if ($logSearchDebugInfo)
+            {
+                $queryLog = $db->getQueryLog();
+                $lastQuery = end($queryLog);
+                if ($lastQuery !== false)
+                {
+                    Globals::$capturedSearchDebugInfo['mysql_dsl'] = $lastQuery['query'] ?? '';
+                    Globals::$capturedSearchDebugInfo['mysql_params'] = $lastQuery['params'] ?? [];
+                }
+
+                $db->logQueries($wasLoggingQueries);
+            }
+        }
     }
 }

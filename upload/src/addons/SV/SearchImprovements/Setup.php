@@ -62,7 +62,7 @@ class Setup extends AbstractSetup
         $this->installStep1();
     }
 
-    public function upgrade2000001Step2(): void
+    public function upgrade1682619091Step2(): void
     {
         $this->installStep2();
     }
@@ -123,6 +123,10 @@ class Setup extends AbstractSetup
             'xf_user_option' => function (Alter $table): void {
                 $this->addOrChangeColumn($table, 'sv_default_search_order', 'varchar', 50)->setDefault('');
             },
+            'xf_search' => function (Alter $table): void {
+                // figure out how to use `json` type and determine if the mysql instance supports that type...
+                $this->addOrChangeColumn($table, 'sv_debug_info', 'longtext')->nullable(true)->setDefault(null);
+            },
         ];
     }
 
@@ -131,6 +135,9 @@ class Setup extends AbstractSetup
         return [
             'xf_user_option' => function (Alter $table): void {
                 $table->dropColumns(['sv_default_search_order']);
+            },
+            'xf_search' => function (Alter $table): void {
+                $table->dropColumns(['sv_debug_info']);
             },
         ];
     }

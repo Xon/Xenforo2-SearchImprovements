@@ -16,4 +16,8 @@
 			</xf:if>
 		</xf:description>
 	</xf:if>
+	<xf:set var="$searchInfo" value="{$search.sv_debug_info}" />
+	<xf:if is="$xf.options.svShowSearchDebugInfo && $searchInfo">
+		{{ dump($searchInfo) }}
+	</xf:if>
 </xf:if>

@@ -5,11 +5,13 @@
 
 namespace SV\SearchImprovements\XFES\Search\Source;
 
+use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\XF\Search\Query\KeywordQuery;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
+use XFES\Elasticsearch\Exception as EsException;
 use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge, is_callable;
 
 /**
@@ -71,7 +73,8 @@ class Elasticsearch extends XFCP_Elasticsearch
     }
 
     /** @var array<string>|null */
-    protected $svValidSearchTypes  = null;
+    protected $svValidSearchTypes = null;
+
     /**
      * @return array<string>
      */
@@ -281,5 +284,45 @@ class Elasticsearch extends XFCP_Elasticsearch
                 'functions' => $functions
             ]
         ];
+    }
+
+    protected function executeSearch(Query $query, array $dsl, $maxResults)
+    {
+        $logSearchDebugInfo = Globals::$capturedSearchDebugInfo !== null;
+        if ($logSearchDebugInfo)
+        {
+            Globals::$capturedSearchDebugInfo['es_dsl'] = $dsl;
+        }
+
+        $matches = parent::executeSearch($query, $dsl, $maxResults);
+
+        if ($logSearchDebugInfo)
+        {
+            foreach ($matches as $match)
+            {
+                $contentType = $match['content_type'] ?? null;
+                if (!is_string($contentType))
+                {
+                    throw new \LogicException('Unknown return contents from '.__METHOD__);
+                }
+                if (!isset(Globals::$capturedSearchDebugInfo['summary'][$contentType]['raw']))
+                {
+                    Globals::$capturedSearchDebugInfo['summary'][$contentType]['raw'] = 0;
+                }
+                Globals::$capturedSearchDebugInfo['summary'][$contentType]['raw'] += 1;
+            }
+        }
+
+        return $matches;
+    }
+
+    protected function logElasticsearchException(EsException $e, $errorPrefix = "Elasticsearch error: ")
+    {
+        if (Globals::$capturedSearchDebugInfo !== null)
+        {
+            Globals::$capturedSearchDebugInfo['exception'] = $e->getMessage();
+        }
+
+        parent::logElasticsearchException($e, $errorPrefix);
     }
 }
