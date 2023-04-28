@@ -47,7 +47,7 @@ class MySqlFt extends XFCP_MySqlFt
 
         $db = $this->db();
         $wasLoggingQueries = false;
-        $logSearchDebugInfo = Globals::$capturedSearchDebugInfo !== null;
+        $logSearchDebugInfo = (Globals::$capturedSearchDebugInfo ?? null) !== null;
         if ($logSearchDebugInfo)
         {
             $wasLoggingQueries = $db->areQueriesLogged();

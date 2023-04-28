@@ -318,7 +318,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
     protected function logElasticsearchException(EsException $e, $errorPrefix = "Elasticsearch error: ")
     {
-        if (Globals::$capturedSearchDebugInfo !== null)
+        if ((Globals::$capturedSearchDebugInfo ?? null) !== null)
         {
             Globals::$capturedSearchDebugInfo['exception'] = $e->getMessage();
         }
