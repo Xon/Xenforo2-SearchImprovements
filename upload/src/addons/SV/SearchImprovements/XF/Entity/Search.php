@@ -589,12 +589,15 @@ class Search extends XFCP_Search
             if ($firstChildType !== null && $firstChildType !== $searchType)
             {
                 $constraints = $this->search_constraints;
-                $constraints['content']  = $searchType;
+                $constraints['content'] = $searchType;
                 $this->search_constraints = $constraints;
                 $this->search_type = $firstChildType;
             }
         }
+    }
 
+    protected function logSearchDebugInfo(): void
+    {
         // Log debug information if required.
         // This requires setup inside runSearch as by the time setupFromQuery is called the search DSL and other bits can't be collected
         $capturedSearchDebugInfo = Globals::$capturedSearchDebugInfo ?? [];
@@ -608,6 +611,17 @@ class Search extends XFCP_Search
             );
 
             $this->sv_debug_info = $capturedSearchDebugInfo;
+        }
+    }
+
+    protected function _preSave()
+    {
+        parent::_preSave();
+
+        if ($this->isInsert() && $this->sv_debug_info === null)
+        {
+            // setupFromQuery is called before the search is executed, while the save is alled after the search happens
+            $this->logSearchDebugInfo();
         }
     }
 
