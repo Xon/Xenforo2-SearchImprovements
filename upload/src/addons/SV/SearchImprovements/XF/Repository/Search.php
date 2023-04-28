@@ -165,8 +165,8 @@ class Search extends XFCP_Search
                 );
 
                 $search->sv_debug_info = $capturedSearchDebugInfo;
-                $search->save();
             }
+            $search->saveIfChanged();
 
             return $search;
         }
