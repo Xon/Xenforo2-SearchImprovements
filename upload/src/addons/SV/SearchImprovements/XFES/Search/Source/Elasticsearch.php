@@ -288,7 +288,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
     protected function executeSearch(Query $query, array $dsl, $maxResults)
     {
-        $logSearchDebugInfo = Globals::$capturedSearchDebugInfo !== null;
+        $logSearchDebugInfo = (Globals::$capturedSearchDebugInfo ?? null) !== null;
         if ($logSearchDebugInfo)
         {
             Globals::$capturedSearchDebugInfo['es_dsl'] = $dsl;
