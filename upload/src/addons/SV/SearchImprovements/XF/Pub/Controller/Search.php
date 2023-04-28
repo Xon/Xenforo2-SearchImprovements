@@ -129,27 +129,57 @@ class Search extends XFCP_Search
         return $query;
     }
 
+    /** @var bool */
+    protected $svCaptureLinkData = false;
+    /** @var SearchEntity|null */
+    protected $svCapturedLinkData = null;
+
+    public function assertValidPage($page, $perPage, $total, $linkType, $linkData = null)
+    {
+        if ($this->svCaptureLinkData && $linkType === 'search' && $linkData instanceof SearchEntity)
+        {
+            $this->svCapturedLinkData = $linkData;
+        }
+
+        parent::assertValidPage($page, $perPage, $total, $linkType, $linkData);
+    }
+
     public function actionResults(ParameterBag $params)
     {
-        $reply = parent::actionResults($params);
+        $this->svCaptureLinkData = true;
+        try
+        {
+            $reply = parent::actionResults($params);
+        }
+        finally
+        {
+            // assertValidPage is called after validation, so it is safe to reference it as being owned by the user
+            $validSearch = $this->svCapturedLinkData;
+            $this->svCapturedLinkData = null;
+            $this->svCaptureLinkData = false;
+        }
+
 
         if ($reply instanceof MessageReply)
         {
             $phrase = $reply->getMessage();
             if ($phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
             {
-                $emptySearch = $this->em()->create('XF:Search');
-                assert($emptySearch instanceof SearchEntity);
-
-                // extract from the URL public known information for the search result page
-                $searchId = (int)$params->get('search_id');
-                $emptySearch->setTrusted('search_id', $searchId);
-                $searchData = $this->convertShortSearchInputNames();
-                $query = $this->prepareSearchQuery($searchData, $constraints);
-                // Construct a known good empty-search
-                $emptySearch->setupFromQuery($query, $constraints);
-                $emptySearch->search_results = [];
-                $emptySearch->setReadOnly(true);
+                $emptySearch = $validSearch;
+                if ($emptySearch === null)
+                {
+                    $emptySearch = $this->em()->create('XF:Search');
+                    assert($emptySearch instanceof SearchEntity);
+                    // extract from the URL public known information for the search result page
+                    $searchId = (int)$params->get('search_id');
+                    $emptySearch->setTrusted('search_id', $searchId);
+                    $searchData = $this->convertShortSearchInputNames();
+                    $query = $this->prepareSearchQuery($searchData, $constraints);
+                    // Construct a known good empty-search
+                    $emptySearch->setupFromQuery($query, $constraints);
+                    $emptySearch->search_results = [];
+                    $emptySearch->setReadOnly(true);
+                }
 
                 $resultOptions = [
                     'search' => $emptySearch,
