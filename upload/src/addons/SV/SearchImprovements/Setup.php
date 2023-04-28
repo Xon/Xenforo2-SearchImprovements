@@ -62,7 +62,7 @@ class Setup extends AbstractSetup
         $this->installStep1();
     }
 
-    public function upgrade1682619091Step2(): void
+    public function upgrade1682639327Step2(): void
     {
         $this->installStep2();
     }
