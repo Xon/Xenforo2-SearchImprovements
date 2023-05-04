@@ -10,6 +10,7 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
+use function array_filter;
 use function array_key_exists;
 use function count;
 use function gettype;
@@ -20,6 +21,38 @@ use function preg_split;
 
 class Search extends Repository
 {
+    /**
+     * @param array<?string> $types
+     * @return bool
+     * @noinspection PhpRedundantOptionalArgumentInspection
+     */
+    public function isShowingTagTooltip(array $types): bool
+    {
+        /** @var array<string> $types */
+        $types = array_filter($types, function (?string $s) {
+            return $s !== null && $s !== '';
+        });
+        if (count($types) === 0)
+        {
+            // general search, likely will hit tags
+            return true;
+        }
+
+        $tagRepo = $this->repository('XF:Tag');
+        assert($tagRepo instanceof \XF\Repository\Tag);
+
+        foreach ($types as $type)
+        {
+            $tagHandler = $tagRepo->getTagHandler($type, false);
+            if ($tagHandler !== null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isUsingElasticSearch(): bool
     {
         return \XF::isAddOnActive('XFES') && (\XF::options()->xfesEnabled ?? false);

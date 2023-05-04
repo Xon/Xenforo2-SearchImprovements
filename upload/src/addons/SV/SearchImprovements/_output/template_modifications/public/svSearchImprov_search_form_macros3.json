@@ -1,0 +1,9 @@
+{
+    "template": "search_form_macros",
+    "description": "Conditionally display \"tags will be searched\" tooltip",
+    "execution_order": 1,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "$xf.options.enableTagging",
+    "replace": "($0 &&  $xf.app.em.getRepository('SV\\SearchImprovements:Search').isShowingTagTooltip([$__globals.containerType, $__globals.contentType]))"
+}

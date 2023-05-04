@@ -62,6 +62,7 @@ class Search extends XFCP_Search
             {
                 $searchRepo = $this->repository('XF:Search');
                 assert($searchRepo instanceof SearchRepo);
+                $reply->setParam('contentType', $contentType);
                 $reply->setParam('containerType', $searchRepo->getContainerTypeForContentType($contentType));
             }
         }
