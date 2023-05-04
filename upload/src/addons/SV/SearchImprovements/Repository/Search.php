@@ -21,6 +21,11 @@ use function preg_split;
 
 class Search extends Repository
 {
+    protected function isShowingTagTooltipForType(string $contentType): bool
+    {
+        return true;
+    }
+
     /**
      * @param array<?string> $types
      * @return bool
@@ -44,7 +49,7 @@ class Search extends Repository
         foreach ($types as $type)
         {
             $tagHandler = $tagRepo->getTagHandler($type, false);
-            if ($tagHandler !== null)
+            if ($tagHandler !== null && $this->isShowingTagTooltipForType($type))
             {
                 return true;
             }
