@@ -6,16 +6,14 @@
 
 	<xf:if is="$containerType">
 		<li>
-			<xf:if is="$containerType === 'conversation'">
-				<xf:set var="$label" value="{{ phrase('svSearchImprov_search_titles_and_first_messages_only') }}" />
-			<xf:elseif is="$containerType === 'thread'" />
-				<xf:set var="$label" value="{{ phrase('svSearchImprov_search_titles_and_first_posts_only') }}" />
-			<xf:else />
-				<xf:set var="$label" value="{{ phrase('svSearchImprov_search_x_only', {
+			<xf:set var="$phrase" value="{{ phrase_dynamic('svSearchImprov_search_container.'.$containerType) }}" />
+			<xf:set var="$label" value="{{
+			$phrase !== 'svSearchImprov_search_container.'.$containerType 
+				? $phrase 
+				: phrase('svSearchImprov_search_container.x_only', {
 					'containerType': $xf.app.getContentTypePhrase($containerType, true)|to_lower
-				}) }}" />
-			</xf:if>
-
+				}) 
+			}}" />
 			<xf:checkbox standalone="true">
 				<xf:option name="c[content]" value="{$containerType}"
 						   selected="{{ $input.c.content === $containerType }}"
