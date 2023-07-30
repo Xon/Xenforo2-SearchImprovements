@@ -34,12 +34,13 @@ class Index extends XFCP_Index
 
                     if ($esVersion && $es->test($esTestError))
                     {
+                        $esClusterStatus = $es->getClusterInfo();
+
                         if ($es->indexExists())
                         {
                             /** @var \XFES\Service\Stats $service */
                             $service = $this->service('XFES:Stats', $es);
                             $esStats = $service->getStats();
-                            $esClusterStatus = $es->getClusterInfo();
                         }
                     }
                 }
