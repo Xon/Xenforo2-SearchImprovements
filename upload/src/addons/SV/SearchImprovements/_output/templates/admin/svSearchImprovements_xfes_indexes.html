@@ -95,6 +95,8 @@
 					<xf:cell>
 						<xf:if is="$index.isOptimizable">
 							<xf:button href="{{ link('enhanced-search/optimize', null, {'content_type':$contentType}) }}" data-xf-click="overlay">{{ phrase('xfes_optimize_now') }}</xf:button>
+						<xf:elseif is="$index.testError is not empty or $index.version is empty" />
+							{{ phrase('n_a') }}
 						<xf:else/>
 							{{ phrase('no') }}
 						</xf:if>

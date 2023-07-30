@@ -72,7 +72,24 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         }
         /** @var \SV\SearchImprovements\XFES\Elasticsearch\Api $defaultEs */
         $defaultEs = $configurer->getEsApi();
-        $esClusterStatus = $defaultEs->getClusterInfo();
+        $esClusterStatus = [];
+        $hasTestError = null;
+        $version = null;
+        $testError = null;
+        if ($configurer->hasActiveConfig())
+        {
+            try
+            {
+                $version = $defaultEs->version();
+                $hasTestError = $defaultEs->test($testError);
+
+                if ($version && $hasTestError)
+                {
+                    $esClusterStatus = $defaultEs->getClusterInfo();
+                }
+            }
+            catch (\XFES\Elasticsearch\Exception $e) {}
+        }
 
         $contentType = (string)$params->get('content_type');
         if (\strlen($contentType) !== 0)
@@ -88,9 +105,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $definitions = $repo->getSearchHandlerDefinitions();
         $definitions = ['' => ''] + $definitions;
         $indexes = [];
-        $version = null;
-        $testError = null;
-        $hasTestError = null;
         foreach ($definitions as $contentType => $definition)
         {
             $this->svShimContentType = $contentType;
@@ -104,8 +118,11 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
                 try
                 {
-                    $version = $version ?? $es->version();
-                    $hasTestError = $hasTestError ?? $es->test($testError);
+                    if ($contentType !== '')
+                    {
+                        $version = $es->version();
+                        $hasTestError = $es->test($testError);
+                    }
 
                     if ($version && $hasTestError)
                     {
@@ -130,6 +147,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
             $indexes[$contentType] = [
                 'phrase'        => $phrases[$contentType] ?? $contentType,
+                'version'       => $version,
                 'testError'     => $testError,
                 'stats'         => $stats,
                 'isOptimizable' => $isOptimizable,
@@ -141,7 +159,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $viewParams = [
             'es' => $defaultEs,
             'esClusterStatus' => $esClusterStatus,
-            'version' => $version,
+            'testError' => $indexes['']['testError'] ?? '',
+            'version' => $indexes['']['version'] ?? '',
             'indexes' => $indexes,
         ];
 
