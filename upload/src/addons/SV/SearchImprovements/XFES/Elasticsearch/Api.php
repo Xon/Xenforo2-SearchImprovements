@@ -9,8 +9,25 @@ use function json_encode;
  */
 class Api extends XFCP_Api
 {
-    /** @var array|null s */
+    /** @var array|null */
     protected $dslForError;
+    /** @var array<array> */
+    protected $svQueries = [];
+    protected $svLogQueries = false;
+
+    public function setLogQueries(bool $logQueries): void
+    {
+        $this->svLogQueries = $logQueries;
+        if (!$logQueries)
+        {
+            $this->svQueries = [];
+        }
+    }
+
+    public function svGetQueries(): array
+    {
+        return $this->svQueries;
+    }
 
     public function getClusterInfo(): ?array
     {
@@ -20,6 +37,11 @@ class Api extends XFCP_Api
     /** @noinspection PhpMissingReturnTypeInspection */
     public function search(array $dsl)
     {
+        if ($this->svLogQueries)
+        {
+            $this->svQueries[] = $dsl;
+        }
+
         if (\XF::options()->esLogDSL ?? false)
         {
             $this->dslForError = null;
