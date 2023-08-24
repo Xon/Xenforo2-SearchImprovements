@@ -89,6 +89,8 @@ class Source extends Elasticsearch
     /** @noinspection PhpUnusedParameterInspection */
     protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, int $maxResults, array &$filters, array &$filtersNot): array
     {
+        $withPrefixPreferred = $query->isWithPrefixPreferred();
+        $prefixMatchBoost = $query->prefixMatchBoost();
         $withNgram = $query->isWithNgram();
         $ngramBoost = $query->ngramBoost();
         $withExact = $query->isWithExact();
@@ -99,19 +101,25 @@ class Source extends Elasticsearch
         $dsl = [];
         foreach($query->textMatches() as $textMatch)
         {
-            list($text, $simpleFieldList, $fieldBoost) = $textMatch;
+            [$text, $simpleFieldList, $fieldBoost] = $textMatch;
             // generate actual search field list
             $fields = [];
+            $prefixFields = [];
             foreach ($simpleFieldList as $field)
             {
-                $fields[] = $field . $fieldBoost;
+                $esField = $field . $fieldBoost;
+                $fields[] = $esField;
+                $prefixFields[] = $esField;
                 if ($withNgram)
                 {
-                    $fields[] = $field . '.ngram' . $ngramBoost;
+                    $esField = $field . '.ngram' . $ngramBoost;
+                    $fields[] = $esField;
                 }
                 if ($withExact)
                 {
-                    $fields[] = $field . '.exact' . $exactBoost;
+                    $esField = $field . '.exact' . $exactBoost;
+                    $fields[] = $esField;
+                    $prefixFields[] = $esField;
                 }
             }
 
@@ -129,7 +137,35 @@ class Source extends Elasticsearch
                 $queryDsl['fuzziness'] = $fuzziness;
                 $queryDsl['max_expansions'] = min($maxResults, 50);
             }
-            $dsl[] = ['multi_match' => $queryDsl];
+
+            if ($withPrefixPreferred)
+            {
+                $prefixMatch = [
+                    'type'     => 'phrase_prefix',
+                    'query'    => $text,
+                    'fields'   => $prefixFields,
+                    'operator' => 'or',
+                    //'operator' => count($fields) === 1 ? 'and' : 'or',
+                ];
+                if ($prefixMatchBoost !== null)
+                {
+                    $prefixMatch['boost'] = $prefixMatchBoost;
+                }
+
+                $dsl[] = [
+                    'bool' => [
+                        'should'               => [
+                            ['multi_match' => $queryDsl],
+                            ['multi_match' => $prefixMatch],
+                        ],
+                        'minimum_should_match' => 1,
+                    ]
+                ];
+            }
+            else
+            {
+                $dsl[] = ['multi_match' => $queryDsl];
+            }
         }
 
         if (count($dsl) === 0)

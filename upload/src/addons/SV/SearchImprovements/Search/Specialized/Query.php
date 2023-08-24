@@ -12,6 +12,10 @@ class Query extends \XF\Search\Query\Query
 {
     /** @var array */
     protected $textMatches = [];
+    /** @var bool  */
+    protected $withPrefixPreferred = false;
+    /** @var ?float */
+    protected $prefixMatchBoost = 2.5;
     /** @var bool */
     protected $withNgram = false;
     /** @var bool */
@@ -115,6 +119,26 @@ class Query extends \XF\Search\Query\Query
     public function withSql(SqlConstraint $constraint): self
     {
         throw new \LogicException('Not supported');
+    }
+
+    public function withPrefixPreferred(bool $withPrefixPreferred = true, ?float $prefixMatchBoost = null): self
+    {
+        $this->withPrefixPreferred = $withPrefixPreferred;
+        if ($prefixMatchBoost !== null)
+        {
+            $this->prefixMatchBoost = $prefixMatchBoost;
+        }
+        return $this;
+    }
+
+    public function isWithPrefixPreferred(): bool
+    {
+        return $this->withPrefixPreferred;
+    }
+
+    public function prefixMatchBoost(): ?float
+    {
+        return $this->prefixMatchBoost;
     }
 
     public function withNgram(bool $withNgram = true, string $boost = null): self
