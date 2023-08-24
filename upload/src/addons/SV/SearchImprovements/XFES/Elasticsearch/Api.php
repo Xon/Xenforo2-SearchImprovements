@@ -31,7 +31,7 @@ class Api extends XFCP_Api
 
     public function getClusterInfo(): ?array
     {
-        return $this->request('get', "/_cluster/health")->getBody();
+        return $this->request('get', '/_cluster/health')->getBody();
     }
 
     /** @noinspection PhpMissingReturnTypeInspection */
@@ -73,7 +73,7 @@ class Api extends XFCP_Api
         // log DSL on error
         if ((\XF::options()->esLogDSLOnError ?? true) && $this->dslForError !== null)
         {
-            $reason = ($reason ? $reason . "\n " : '') . "DSL:" . json_encode($this->dslForError);
+            $reason = ($reason ? $reason . "\n " : '') . 'DSL:' . json_encode($this->dslForError);
         }
 
         return $reason;

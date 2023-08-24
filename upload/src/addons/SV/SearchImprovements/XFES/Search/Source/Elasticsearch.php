@@ -55,7 +55,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         {
             // getDslFromQuery/getQueryStringDsl disables relevancy if `getParsedKeywords` is empty
             // Which then causes the weightByContentType clause to not match
-            /** @var \SV\SearchImprovements\XF\Search\Query\KeywordQuery $query */
+            /** @var KeywordQuery $query */
             $query->setParsedKeywords('*');
         }
 
@@ -208,8 +208,8 @@ class Elasticsearch extends XFCP_Elasticsearch
 
         return [
             [
-                "filter" => $term,
-                "weight" => (float)$weight,
+                'filter' => $term,
+                'weight' => (float)$weight,
             ]
         ];
     }
@@ -317,7 +317,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         return $matches;
     }
 
-    protected function logElasticsearchException(EsException $e, $errorPrefix = "Elasticsearch error: ")
+    protected function logElasticsearchException(EsException $e, $errorPrefix = 'Elasticsearch error: ')
     {
         if ((Globals::$capturedSearchDebugInfo ?? null) !== null)
         {

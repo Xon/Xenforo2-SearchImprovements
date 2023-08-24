@@ -11,7 +11,7 @@ use function count;
 
 class AndConstraint extends AbstractConstraint
 {
-    const MATCH_AND = 'svAND';
+    public const MATCH_AND = 'svAND';
 
     public function __construct(?MetadataConstraint ...$constraints)
     {

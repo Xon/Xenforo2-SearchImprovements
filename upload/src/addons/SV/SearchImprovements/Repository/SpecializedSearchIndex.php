@@ -17,7 +17,7 @@ class SpecializedSearchIndex extends Repository
 {
     /** @var array<class-string,XenForoSearch>|null */
     protected $search = null;
-    /** @var array<class-string,\XF\Search\Data\AbstractData>|null */
+    /** @var array<class-string,AbstractData>|null */
     protected $handlers = null;
 
     public function getIndexApi(string $contentType, array $config = []): Api
@@ -167,7 +167,7 @@ class SpecializedSearchIndex extends Repository
         return $handler;
     }
 
-    protected function getQuery(\XF\Search\Search $search, SpecializedData $handler): SpecializedQuery
+    protected function getQuery(XenForoSearch $search, SpecializedData $handler): SpecializedQuery
     {
         $extendClass = \XF::extendClass(SpecializedQuery::class);
         return new $extendClass($search, $handler);

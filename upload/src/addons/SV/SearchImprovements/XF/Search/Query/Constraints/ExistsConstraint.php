@@ -7,7 +7,7 @@ use XFES\Search\Source\Elasticsearch;
 
 class ExistsConstraint extends AbstractConstraint
 {
-    const MATCH_SV_EXISTS = 'svEXISTS';
+    public const MATCH_SV_EXISTS = 'svEXISTS';
 
     /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct(string $key)

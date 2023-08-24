@@ -13,7 +13,7 @@ use function count;
  */
 class PermissionConstraint extends AbstractConstraint
 {
-    const MATCH_SV_PERM = 'svPerm';
+    public const MATCH_SV_PERM = 'svPerm';
 
     public function __construct(?MetadataConstraint $constraint)
     {

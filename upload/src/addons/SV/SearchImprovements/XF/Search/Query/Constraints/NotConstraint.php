@@ -9,7 +9,7 @@ use function count;
 
 class NotConstraint extends AbstractConstraint
 {
-    const MATCH_SV_NOT = 'svNOT';
+    public const MATCH_SV_NOT = 'svNOT';
 
     public function __construct(?MetadataConstraint $constraint)
     {

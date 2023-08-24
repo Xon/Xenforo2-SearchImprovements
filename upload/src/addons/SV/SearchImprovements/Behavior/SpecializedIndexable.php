@@ -19,12 +19,12 @@ class SpecializedIndexable extends Indexable
     {
         if (!$this->contentType())
         {
-            throw new \LogicException("Structure must provide a contentType value");
+            throw new \LogicException('Structure must provide a contentType value');
         }
 
         if ($this->config['checkForUpdates'] === null && !is_callable([$this->entity, 'requiresSpecializedSearchIndexUpdate']))
         {
-            throw new \LogicException("If checkForUpdates is null/not specified, the entity must define requiresSpecializedSearchIndexUpdate");
+            throw new \LogicException('If checkForUpdates is null/not specified, the entity must define requiresSpecializedSearchIndexUpdate');
         }
     }
 

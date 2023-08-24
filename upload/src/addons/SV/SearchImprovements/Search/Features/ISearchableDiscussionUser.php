@@ -7,5 +7,5 @@ interface ISearchableDiscussionUser
     /**
      * @return array<int>
      */
-    function getDiscussionUserIds(): array;
+    public function getDiscussionUserIds(): array;
 }

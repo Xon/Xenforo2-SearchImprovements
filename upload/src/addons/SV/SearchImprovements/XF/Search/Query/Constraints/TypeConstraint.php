@@ -9,7 +9,7 @@ use function count;
 
 class TypeConstraint extends AbstractConstraint
 {
-    const MATCH_SV_TYPE = 'svTYPE';
+    public const MATCH_SV_TYPE = 'svTYPE';
 
     /**
      * @var array<string|null>

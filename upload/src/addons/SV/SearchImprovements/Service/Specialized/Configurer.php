@@ -19,7 +19,7 @@ class Configurer extends \XFES\Service\Configurer
         $config = $config ?? [];
         if (is_array($config))
         {
-            $config = $this->getSpecializedSearchIndexRepo()->getIndexApi($singleType, $config ?? []);
+            $config = $this->getSpecializedSearchIndexRepo()->getIndexApi($singleType, $config);
         }
 
         parent::__construct($app, $config);

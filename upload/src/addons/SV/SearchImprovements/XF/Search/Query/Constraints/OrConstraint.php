@@ -10,7 +10,7 @@ use function count;
 
 class OrConstraint extends AbstractConstraint
 {
-    const MATCH_SV_OR = 'svOR';
+    public const MATCH_SV_OR = 'svOR';
 
     public function __construct(?MetadataConstraint ...$constraints)
     {

@@ -5,7 +5,7 @@ namespace SV\SearchImprovements\Search\Specialized;
 use SV\SearchImprovements\Search\MetadataStructureEx;
 use XF\Search\MetadataStructure;
 
-abstract class AbstractData extends \XF\Search\Data\AbstractData implements \SV\SearchImprovements\Search\Specialized\SpecializedData
+abstract class AbstractData extends \XF\Search\Data\AbstractData implements SpecializedData
 {
     public function getMetadataStructure(): array
     {

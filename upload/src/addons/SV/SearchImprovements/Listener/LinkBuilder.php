@@ -13,12 +13,12 @@ abstract class LinkBuilder
     /** @var string|null */
     public static $contentType = null;
 
-    public static function adminLinkBuilder(\SV\StandardLib\Repository\LinkBuilder $linkBuilder, \XF\Mvc\Router $router): void
+    public static function adminLinkBuilder(\SV\StandardLib\Repository\LinkBuilder $linkBuilder, Router $router): void
     {
         $linkBuilder->injectLinkBuilderCallback($router, 'enhanced-search', [self::class, 'injectContentTypeIntoLink']);
     }
 
-    public static function publicLinkBuilder(\SV\StandardLib\Repository\LinkBuilder $linkBuilder, \XF\Mvc\Router $router): void
+    public static function publicLinkBuilder(\SV\StandardLib\Repository\LinkBuilder $linkBuilder, Router $router): void
     {
         $linkBuilder->injectLinkBuilderCallback($router, 'search', [self::class, 'fixQueryString']);
     }

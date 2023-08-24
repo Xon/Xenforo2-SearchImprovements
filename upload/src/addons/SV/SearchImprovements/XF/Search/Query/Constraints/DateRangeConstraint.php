@@ -10,9 +10,9 @@ use function count;
 
 class DateRangeConstraint extends RangeConstraint
 {
-    const NEVER_IS_NA   = 0;
-    const NEVER_IS_ZERO = 1; // for elasictic search NEVER_IS_ZERO gets mapped to NEVER_IS_NULL
-    const NEVER_IS_NULL = 2;
+    public const NEVER_IS_NA = 0;
+    public const NEVER_IS_ZERO = 1; // for elasictic search NEVER_IS_ZERO gets mapped to NEVER_IS_NULL
+    public const NEVER_IS_NULL = 2;
     /** @var int */
     protected $neverHandling;
 
@@ -162,7 +162,7 @@ class DateRangeConstraint extends RangeConstraint
                             [
                                 'range' => [
                                     $key => [
-                                        "gte" => $values[0],
+                                        'gte' => $values[0],
                                     ]
                                 ]
                             ]

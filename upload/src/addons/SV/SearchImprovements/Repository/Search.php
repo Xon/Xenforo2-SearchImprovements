@@ -21,6 +21,7 @@ use function preg_split;
 
 class Search extends Repository
 {
+    /** @noinspection PhpUnusedParameterInspection */
     protected function isShowingTagTooltipForType(string $contentType): bool
     {
         return true;
@@ -107,7 +108,7 @@ class Search extends Repository
      * @param string|null           $sqlTable
      * @return bool
      */
-    public function applyRangeConstraint(\XF\Search\Query\Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null): bool
+    public function applyRangeConstraint(Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null): bool
     {
         $lowerConstraint = (int)Arr::getByPath($constraints, $lowerConstraintField);
         $upperConstraint = Arr::getByPath($constraints, $upperConstraintField);
@@ -176,12 +177,14 @@ class Search extends Repository
 
         return $message;
     }
+
     /**
      * ElasticSearch can be configured to transform dates in various ways.
      * This is a hook so php can generate correct queries
      *
      * @param int $date
      * @return int|mixed
+     * @noinspection PhpReturnDocTypeMismatchInspection
      */
     protected function transformDate(int $date)
     {
@@ -202,7 +205,7 @@ class Search extends Repository
      * @param int                   $neverHandling
      * @return bool
      */
-    public function applyDateRangeConstraint(\XF\Search\Query\Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null, int $neverHandling = DateRangeConstraint::NEVER_IS_ZERO): bool
+    public function applyDateRangeConstraint(Query $query, array $constraints, array &$urlConstraints, string $lowerConstraintField, string $upperConstraintField, string $searchField, array $tableRef, ?string $sqlTable = null, int $neverHandling = DateRangeConstraint::NEVER_IS_ZERO): bool
     {
         $lowerConstraint = (int)Arr::getByPath($constraints, $lowerConstraintField);
         $upperConstraint = Arr::getByPath($constraints, $upperConstraintField);
