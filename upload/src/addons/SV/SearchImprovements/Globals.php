@@ -4,14 +4,7 @@ namespace SV\SearchImprovements;
 
 use SV\SearchImprovements\Repository\Search;
 
-/**
- * This class is used to encapsulate global state between layers without using $GLOBAL[] or relying on the consumer
- * being loaded correctly by the dynamic class autoloader
- * Class Globals
- *
- * @package SV\SearchImprovements
- */
-class Globals
+abstract class Globals
 {
     /** @var bool */
     public static $shimSearchForSpecialization = true;

@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Option;
 
 use XF\Option\AbstractOption;
 
+use function class_exists;
 use function count, floatval;
 
 /**
@@ -22,7 +23,7 @@ class ContentTypes extends AbstractOption
 
         foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
         {
-            if ($search->isValidContentType($contentType) && \class_exists($handlerClass))
+            if ($search->isValidContentType($contentType) && class_exists($handlerClass))
             {
                 $choices[] = [
                     'phraseName'  => \XF::phrase($app->getContentTypePhraseName($contentType)),

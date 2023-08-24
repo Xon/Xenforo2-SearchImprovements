@@ -40,7 +40,7 @@ class SpecializedIndexable extends Indexable
         if ($checkForUpdates === null)
         {
             // method is verified above
-            /** @noinspection PhpUndefinedMethodInspection */
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             return $this->entity->requiresSpecializedSearchIndexUpdate();
         }
         else if (is_array($checkForUpdates) || is_string($checkForUpdates))

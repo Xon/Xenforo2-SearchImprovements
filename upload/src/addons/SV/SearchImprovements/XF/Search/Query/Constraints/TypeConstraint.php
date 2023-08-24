@@ -5,7 +5,6 @@ namespace SV\SearchImprovements\XF\Search\Query\Constraints;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\MetadataConstraint;
 use XFES\Search\Source\Elasticsearch;
-use function array_filter;
 use function count;
 
 class TypeConstraint extends AbstractConstraint

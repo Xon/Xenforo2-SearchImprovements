@@ -3,12 +3,8 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use SV\SearchImprovements\XF\Search\Search as ExtendedSearcher;
-use XF\Entity\User as UserEntity;
-use XF\Mvc\ParameterBag;
-use XF\Mvc\Reply\AbstractReply;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use function assert;
-use function count;
 use function in_array;
 
 /**

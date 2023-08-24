@@ -4,7 +4,7 @@ namespace SV\SearchImprovements\Listener;
 
 use XF\Mvc\RouteBuiltLink;
 use XF\Mvc\Router;
-use function array_filter;
+use function strtolower;
 
 abstract class LinkBuilder
 {
@@ -36,7 +36,7 @@ abstract class LinkBuilder
      */
     public static function injectContentTypeIntoLink(string &$prefix, array &$route, string &$action, &$data, array &$params, Router $router, bool &$suppressDefaultCallback)
     {
-        $action = \strtolower($action);
+        $action = strtolower($action);
 
         if (($action !== '' || !empty($params['reindex'])) &&
             $action !== 'indexes' &&

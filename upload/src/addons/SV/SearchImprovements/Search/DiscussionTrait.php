@@ -123,7 +123,6 @@ trait DiscussionTrait
      */
     public function getTypeOrder($order)
     {
-        assert(is_string($order));
         if (array_key_exists($order, $this->getSvSortOrders()))
         {
             return new SearchOrder([$order, 'date']);

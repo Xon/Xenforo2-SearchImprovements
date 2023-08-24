@@ -5,7 +5,6 @@ namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
-use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\PermissionConstraint;

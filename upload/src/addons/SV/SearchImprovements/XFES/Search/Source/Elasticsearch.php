@@ -12,7 +12,8 @@ use SV\SearchImprovements\XF\Search\Query\KeywordQuery;
 use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
 use XFES\Elasticsearch\Exception as EsException;
-use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge, is_callable;
+use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge;
+use function class_exists;
 
 /**
  * Class Elasticsearch
@@ -87,7 +88,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             $search = $app->search();
             foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
             {
-                if ($search->isValidContentType($contentType) && \class_exists($handlerClass))
+                if ($search->isValidContentType($contentType) && class_exists($handlerClass))
                 {
                     $types[] = $contentType;
                 }

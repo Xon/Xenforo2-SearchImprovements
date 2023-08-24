@@ -279,7 +279,7 @@ class Search extends Repository
         $matchedUsers = $userRepo->getUsersByNames($users, $notFound);
         if (count($notFound) !== 0)
         {
-            $query->error('users', \XF::phrase('following_members_not_found_x', ['members' => \implode(', ', $notFound)]));
+            $query->error('users', \XF::phrase('following_members_not_found_x', ['members' => implode(', ', $notFound)]));
 
             return false;
         }

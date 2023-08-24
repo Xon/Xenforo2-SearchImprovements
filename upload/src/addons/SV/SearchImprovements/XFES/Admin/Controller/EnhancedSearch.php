@@ -14,6 +14,7 @@ use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Data\AbstractData;
 use XFES\Service\Stats as StatsService;
+use function strlen;
 
 /**
  * Extends \XFES\Admin\Controller\EnhancedSearch
@@ -92,7 +93,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         }
 
         $contentType = (string)$params->get('content_type');
-        if (\strlen($contentType) !== 0)
+        if (strlen($contentType) !== 0)
         {
             return $this->actionSpecialized($params);
         }
