@@ -4,12 +4,16 @@ namespace SV\SearchImprovements\XF\Repository;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
+use XF\PrintableException;
 use function array_diff;
 use function assert;
 use function count;
 use function in_array;
 use function is_array;
+use function is_callable;
+use function is_string;
 use function reset;
+use function strlen;
 
 /**
  * Extends \XF\Repository\Search
@@ -75,6 +79,27 @@ class Search extends XFCP_Search
         }
         try
         {
+            $length = strlen((string)$query->getKeywords());
+            if ($length > 0)
+            {
+                $structure = $this->em->getEntityStructure('XF:Search');
+                $maxLength = $structure->columns['search_query']['maxLength'] ?? -1;
+                if ($maxLength > 0 && $length > $maxLength)
+                {
+                    $error = \XF::phrase('please_enter_value_using_x_characters_or_fewer', ['count' => $maxLength]);
+
+                    if (is_callable([$query, 'setIsImpossibleQuery']))
+                    {
+                        $query->error('keywords', $error);
+                        $query->setIsImpossibleQuery();
+                    }
+                    else
+                    {
+                        throw new PrintableException($error);
+                    }
+                }
+            }
+
             $search = parent::runSearch($query, $constraints, $allowCached);
 
             if ($search === null)
