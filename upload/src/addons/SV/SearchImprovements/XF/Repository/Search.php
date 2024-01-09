@@ -79,7 +79,7 @@ class Search extends XFCP_Search
         }
         try
         {
-            $length = strlen((string)$query->getKeywords());
+            $length = mb_strlen((string)$query->getKeywords());
             if ($length > 0)
             {
                 $structure = $this->em->getEntityStructure('XF:Search');
