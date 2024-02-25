@@ -8,6 +8,7 @@ use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Search\Specialized\Source as SpecializedSource;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\XFES\Elasticsearch\Api;
+use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Data\AbstractData;
 use XF\Search\Search as XenForoSearch;
@@ -19,6 +20,11 @@ class SpecializedSearchIndex extends Repository
     protected $search = null;
     /** @var array<class-string,AbstractData>|null */
     protected $handlers = null;
+
+    public static function get(): self
+    {
+        return Helper::repository(self::class);
+    }
 
     public function getIndexApi(string $contentType, array $config = []): Api
     {

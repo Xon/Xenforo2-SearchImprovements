@@ -3,15 +3,19 @@
 namespace SV\SearchImprovements\Repository;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Util\Arr;
 use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
+use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
+use XFES\Search\Source\Elasticsearch as ElasticsearchSource;
 use function array_filter;
 use function array_key_exists;
+use function assert;
 use function count;
 use function gettype;
 use function implode;
@@ -21,6 +25,11 @@ use function preg_split;
 
 class Search extends Repository
 {
+    public static function get(): self
+    {
+        return Helper::repository(self::class);
+    }
+
     /** @noinspection PhpUnusedParameterInspection */
     protected function isShowingTagTooltipForType(string $contentType): bool
     {
@@ -291,5 +300,35 @@ class Search extends Repository
         Arr::setUrlConstraint($urlConstraints, $constraintField, implode(', ', $users));
 
         return true;
+    }
+
+    /**
+     * @param string $contentType
+     * @param string|int $id
+     * @return string
+     * @noinspection PhpDocMissingThrowsInspection
+     */
+    public function getSearchIdFromEntityId(string $contentType, $id): string
+    {
+        $specializedSearchIndexRepo = SpecializedSearchIndex::get();
+        $types = $specializedSearchIndexRepo->getSearchHandlerDefinitions();
+        if (isset($types[$contentType]))
+        {
+            $search = $specializedSearchIndexRepo->search($contentType);
+        }
+        else
+        {
+            $search = \XF::app()->search();
+        }
+
+        $source = SearchSourceExtractor::getSource($search);
+        assert($source instanceof ElasticsearchSource);
+
+        if ($source->getEsApi()->isSingleTypeIndex())
+        {
+            return $contentType . '-' . $id;
+        }
+
+        return $id;
     }
 }
