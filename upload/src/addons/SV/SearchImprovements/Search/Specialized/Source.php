@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Search\Specialized;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
+use SV\StandardLib\Helper;
 use XF\Search\IndexRecord;
 use XF\Search\Query;
 use XFES\Search\Source\Elasticsearch;
@@ -191,8 +192,7 @@ class Source extends Elasticsearch
         {
             throw new \LogicException('Specialized index requires an explicit type to truncate');
         }
-        /** @var SpecializedOptimizer $optimizer */
-        $optimizer = \XF::app()->service(SpecializedOptimizer::class, $type, $this->es);
+        $optimizer = Helper::service(SpecializedOptimizer::class, $type, $this->es);
         $optimizer->optimize([], true);
     }
 }

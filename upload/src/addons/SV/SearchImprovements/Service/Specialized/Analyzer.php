@@ -2,7 +2,8 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
-use XFES\Service\Optimizer;
+use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
+use SV\StandardLib\Helper;
 use function array_values, array_merge, array_key_exists, is_array, array_replace;
 
 /**
@@ -179,8 +180,7 @@ class Analyzer extends \XFES\Service\Analyzer
 
         if (!$this->es->indexExists())
         {
-            /** @var Optimizer $optimizer */
-            $optimizer = $this->service('SV\SearchImprovements:Specialized\Optimizer', $this->singleType, $this->es);
+            $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es);
             $optimizer->optimize($settings, true);
 
             return;

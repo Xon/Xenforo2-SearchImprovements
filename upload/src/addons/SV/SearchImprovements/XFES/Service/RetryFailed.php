@@ -2,7 +2,9 @@
 
 namespace SV\SearchImprovements\XFES\Service;
 
-use SV\SearchImprovements\Repository\SpecializedSearchIndex;
+use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
+use XF\App;
+use XFES\Elasticsearch\Api as EsApi;
 use function microtime;
 
 /**
@@ -10,7 +12,7 @@ use function microtime;
  */
 class RetryFailed extends XFCP_RetryFailed
 {
-    public function __construct(\XF\App $app, \XFES\Elasticsearch\Api $es)
+    public function __construct(App $app, EsApi $es)
     {
         parent::__construct($app, $es);
     }
@@ -32,7 +34,7 @@ class RetryFailed extends XFCP_RetryFailed
 
     protected function svAllSpecializedRetries(float &$maxRunTime = null)
     {
-        $specializedContentTypes = $this->getSpecializedSearchIndexRepo()->getSearchHandlerDefinitions();
+        $specializedContentTypes = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
 
         foreach($specializedContentTypes as $type => $handler)
         {
@@ -59,7 +61,7 @@ class RetryFailed extends XFCP_RetryFailed
         $indexFailedRepo = $this->repository('XFES:IndexFailed');
 
         $es = $this->es;
-        $this->es = $this->getSpecializedSearchIndexRepo()->getIndexApi($type);
+        $this->es = SpecializedSearchIndexRepo::get()->getIndexApi($type);
         $indexFailedRepo->svSpecializedContentTypes = $type;
         try
         {
@@ -70,11 +72,5 @@ class RetryFailed extends XFCP_RetryFailed
             $indexFailedRepo->svSpecializedContentTypes = null;
             $this->es = $es;
         }
-    }
-
-    protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }

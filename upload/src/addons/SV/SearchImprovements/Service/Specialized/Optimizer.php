@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Service\Specialized;
 
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
+use SV\StandardLib\Helper;
 
 /**
  * Extends \XFES\Service\Optimizer
@@ -29,18 +30,15 @@ class Optimizer extends \XFES\Service\Optimizer
 
     public function optimize(array $settings = [], $updateConfig = false)
     {
-        /** @var SpecializedConfigurer $configurer */
-        $configurer = $this->service(SpecializedConfigurer::class, $this->singleType, $this->es);
+        $configurer = Helper::service(SpecializedConfigurer::class, $this->singleType, $this->es);
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
-            /** @var SpecializedAnalyzer $analyzer */
-            $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
+            $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es);
             // seed config from the main index
             if (!$this->es->indexExists())
             {
-                /** @var \XFES\Service\Configurer $xfConfigurer */
-                $xfConfigurer = $this->service('XFES:Configurer', null);
+                $xfConfigurer = Helper::service(\XFES\Service\Configurer ::class, null);
                 $xfAnalyzerConfig = $xfConfigurer->getAnalyzerConfig();
 
                 $this->seedFromMainIndex($analyzer, $xfConfigurer, $xfAnalyzerConfig, $analyzerConfig);

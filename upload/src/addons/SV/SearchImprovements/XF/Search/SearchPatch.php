@@ -6,7 +6,7 @@
 namespace SV\SearchImprovements\XF\Search;
 
 use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\Repository\SpecializedSearchIndex;
+use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Search\AbstractDataSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use XF\Mvc\Entity\Entity;
@@ -27,7 +27,7 @@ class SearchPatch extends XFCP_SearchPatch
     protected $additionalTypes = [];
     /** @var array<string,SpecializedData|AbstractData> */
     protected $additionalHandlers = [];
-    /** @var SpecializedSearchIndex|null */
+    /** @var SpecializedSearchIndexRepo|null */
     protected $specializedSearchIndexRepo = null;
 
     public function __construct(AbstractSource $source, array $types)
@@ -35,7 +35,7 @@ class SearchPatch extends XFCP_SearchPatch
         if (Globals::$shimSearchForSpecialization ?? false)
         {
             $this->specializedIndexProxying = true;
-            $this->specializedSearchIndexRepo = \XF::repository('SV\SearchImprovements:SpecializedSearchIndex');
+            $this->specializedSearchIndexRepo = SpecializedSearchIndexRepo::get();
             $this->additionalTypes = $this->specializedSearchIndexRepo->getSearchHandlerDefinitions();
             $types = $types + $this->additionalTypes;
         }

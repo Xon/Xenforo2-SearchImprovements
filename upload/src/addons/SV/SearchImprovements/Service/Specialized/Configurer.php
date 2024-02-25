@@ -2,9 +2,11 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
-use SV\SearchImprovements\Repository\SpecializedSearchIndex;
+use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
+use SV\StandardLib\Helper;
+use XF\App;
 use function is_array;
 
 class Configurer extends \XFES\Service\Configurer
@@ -12,14 +14,14 @@ class Configurer extends \XFES\Service\Configurer
     /** @var string */
     protected $singleType;
 
-    public function __construct(\XF\App $app, string $singleType, $config = null)
+    public function __construct(App $app, string $singleType, $config = null)
     {
         $this->app = $app;
         $this->singleType = $singleType;
         $config = $config ?? [];
         if (is_array($config))
         {
-            $config = $this->getSpecializedSearchIndexRepo()->getIndexApi($singleType, $config);
+            $config = SpecializedSearchIndexRepo::get()->getIndexApi($singleType, $config);
         }
 
         parent::__construct($app, $config);
@@ -50,27 +52,17 @@ class Configurer extends \XFES\Service\Configurer
 
     public function getAnalyzerConfig(): array
     {
-        /** @var SpecializedAnalyzer $analyzer */
-        $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
-        return $analyzer->getCurrentConfig();
+        return Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es)->getCurrentConfig();
     }
 
     public function initializeIndex(array $analyzerConfig)
     {
         $this->purgeIndex();
 
-        /** @var SpecializedAnalyzer $analyzer */
-        $analyzer = $this->service(SpecializedAnalyzer::class, $this->singleType, $this->es);
+        $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es);
         $analyzerDsl = $analyzer->getAnalyzerFromConfig($analyzerConfig);
 
-        /** @var SpecializedOptimizer $optimizer */
-        $optimizer = $this->service(SpecializedOptimizer::class, $this->singleType, $this->es);
+        $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es);
         $optimizer->optimize($analyzerDsl);
-    }
-
-    protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }

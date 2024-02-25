@@ -3,16 +3,19 @@
 namespace SV\SearchImprovements\XFES\Admin\Controller;
 
 use SV\SearchImprovements\Listener\LinkBuilder;
-use SV\SearchImprovements\Repository\SpecializedSearchIndex;
+use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
+use SV\StandardLib\Helper;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Data\AbstractData;
+use XFES\Elasticsearch\Api as EsApi;
+use XFES\Service\Analyzer;
 use XFES\Service\Stats as StatsService;
 use function strlen;
 
@@ -102,8 +105,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
         $phrases = $this->app()->getContentTypePhrases(true, 'specialized_search_handler_class');
 
-        $repo = $this->getSpecializedSearchIndexRepo();
-        $definitions = $repo->getSearchHandlerDefinitions();
+        $definitions = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
         $definitions = ['' => ''] + $definitions;
         $indexes = [];
         foreach ($definitions as $contentType => $definition)
@@ -132,7 +134,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                             $isOptimizable = $this->getOptimizer($es)->isOptimizable();
 
                             /** @var StatsService $statsService */
-                            $statsService = $this->service(StatsService::class, $es);
+                            $statsService = Helper::service(StatsService::class, $es);
                             $stats = $statsService->getStats();
                         }
                         else
@@ -182,46 +184,39 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     {
         if ($this->svShimContentType !== '')
         {
-            /** @var SpecializedConfigurer $service */
-            $service = $this->service(SpecializedConfigurer::class, $this->svShimContentType, $config);
-
-            return $service;
+            return Helper::service(SpecializedConfigurer::class, $this->svShimContentType, $config);
         }
 
         return parent::getConfigurer($config);
     }
 
     /**
-     * @param \XFES\Elasticsearch\Api|null $es
+     * @param EsApi|null $es
      * @return \XFES\Service\Optimizer|SpecializedOptimizer
      */
-    protected function getOptimizer(\XFES\Elasticsearch\Api $es = null)
+    protected function getOptimizer(EsApi $es = null)
     {
         if ($this->svShimContentType !== '')
         {
-            $es = $es ?: $this->getSpecializedSearchIndexRepo()->getIndexApi($this->svShimContentType);
-            /** @var SpecializedOptimizer $service */
-            $service = $this->service(SpecializedOptimizer::class, $this->svShimContentType, $es);
+            $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
 
-            return $service;
+            return Helper::service(SpecializedOptimizer::class, $this->svShimContentType, $es);
         }
 
         return parent::getOptimizer($es);
     }
 
     /**
-     * @param \XFES\Elasticsearch\Api|null $es
-     * @return \XFES\Service\Analyzer|SpecializedAnalyzer
+     * @param EsApi|null $es
+     * @return Analyzer|SpecializedAnalyzer
      */
-    protected function getAnalyzer(\XFES\Elasticsearch\Api $es = null)
+    protected function getAnalyzer(EsApi $es = null)
     {
         if ($this->svShimContentType !== '')
         {
-            $es = $es ?: $this->getSpecializedSearchIndexRepo()->getIndexApi($this->svShimContentType);
-            /** @var SpecializedAnalyzer $service */
-            $service = $this->service(SpecializedAnalyzer::class, $this->svShimContentType, $es);
+            $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
 
-            return $service;
+            return Helper::service(SpecializedAnalyzer::class, $this->svShimContentType, $es);
         }
 
         return parent::getAnalyzer($es);
@@ -234,8 +229,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
      */
     protected function assertValidSpecializedContentType(string $contentType): SpecializedData
     {
-        $repo = $this->getSpecializedSearchIndexRepo();
-        $handler = $repo->getHandler($contentType, false);
+        $handler = SpecializedSearchIndexRepo::get()->getHandler($contentType, false);
         if ($handler === null)
         {
             throw $this->exception($this->notFound());
@@ -244,11 +238,5 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         LinkBuilder::$contentType = $contentType;
 
         return $handler;
-    }
-
-    protected function getSpecializedSearchIndexRepo(): SpecializedSearchIndex
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
     }
 }

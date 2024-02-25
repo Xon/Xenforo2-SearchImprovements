@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XF\Admin\Controller;
 
 use SV\SearchImprovements\Repository\Search as SearchRepo;
+use SV\StandardLib\Helper;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 
@@ -21,8 +22,7 @@ class Index extends XFCP_Index
         if ($reply instanceof ViewReply && SearchRepo::get()->isUsingElasticSearch())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
-            /** @var \XFES\Service\Configurer $configurer */
-            $configurer = $this->service('XFES:Configurer', null);
+            $configurer = Helper::service(\XFES\Service\Configurer ::class, null);
 
             if ($configurer->hasActiveConfig() && $configurer->isEnabled())
             {
@@ -38,8 +38,7 @@ class Index extends XFCP_Index
 
                         if ($es->indexExists())
                         {
-                            /** @var \XFES\Service\Stats $service */
-                            $service = $this->service('XFES:Stats', $es);
+                            $service = Helper::service(\XFES\Service\Stats::class, $es);
                             $esStats = $service->getStats();
                         }
                     }
