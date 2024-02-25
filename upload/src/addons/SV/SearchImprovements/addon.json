@@ -3,7 +3,7 @@
     "title": "Search Improvements",
     "description": "Various search improvements including infrastructure for additional search related addons",
     "version_id": 1704771303,
-    "version_string": "2.11.1",
+    "version_string": "2.12.0",
     "dev": "Atelier Aphelion",
     "dev_url": "https://atelieraphelion.com",
     "faq_url": "",
@@ -14,8 +14,8 @@
     },
     "require": {
         "SV/StandardLib": [
-            2001180100,
-            "Standard Library by Xon v1.18.1+"
+            2001190100,
+            "Standard Library by Xon v1.19.1+"
         ],
         "XF": [
             "2.2.0",
