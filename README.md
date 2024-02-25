@@ -75,8 +75,7 @@ public function setupMetadataStructure(MetadataStructure $structure)
 
 ## Specialized index usage example
 ```php
-/** @var SpecializedSearchIndex $repo */
-$repo = $this->repository('SV\SearchImprovements:SpecializedSearchIndex');
+$repo = SpecializedSearchIndex::get();
 $query = $repo->getQueryForSpecializedSearch('myContentType');
 $query->matchQuery($q, ['myField'])
       ->withNgram()
