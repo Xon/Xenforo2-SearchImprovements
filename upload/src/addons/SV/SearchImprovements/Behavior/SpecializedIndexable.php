@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection PhpMissingParentCallCommonInspection
+ */
 
 namespace SV\SearchImprovements\Behavior;
 

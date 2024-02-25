@@ -90,6 +90,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
      * @return AbstractReply
      * @throws Exception
      * @noinspection PhpMissingReturnTypeInspection
+     * @noinspection PhpMissingParentCallCommonInspection
      */
     public function actionMember()
     {

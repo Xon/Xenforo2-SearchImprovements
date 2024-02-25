@@ -7,6 +7,7 @@ namespace SV\SearchImprovements\XF\Behavior;
  */
 class IndexableContainer extends XFCP_IndexableContainer
 {
+    /** @noinspection PhpMissingParentCallCommonInspection */
     public function triggerReindex()
     {
         \XF::runOnce(

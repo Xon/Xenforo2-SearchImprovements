@@ -1,4 +1,8 @@
 <?php
+/**
+ * @noinspection PhpMissingParentCallCommonInspection
+ */
+
 namespace SV\SearchImprovements\Search\Specialized;
 
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
