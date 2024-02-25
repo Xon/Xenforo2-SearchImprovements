@@ -5,7 +5,7 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use XF\Mvc\Entity\Structure;
 use function array_column;
@@ -46,7 +46,7 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser
     {
         $structure = parent::getStructure($structure);
 
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if (isset($structure->behaviors['XF:IndexableContainer']))
         {
             $structure->options['svReindexThreadForCollaborators'] = false;

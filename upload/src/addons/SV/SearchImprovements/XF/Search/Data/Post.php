@@ -5,7 +5,7 @@
 
 namespace SV\SearchImprovements\XF\Search\Data;
 
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\ExistsConstraint;
@@ -64,7 +64,7 @@ class Post extends XFCP_Post
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
         // These are only meaningful with ElasticSearch+XenForo Enhanced Search
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if (!$repo->isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;

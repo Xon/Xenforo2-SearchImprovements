@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Search\Data;
 
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\DiscussionTrait;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AndConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\NotConstraint;
@@ -39,7 +39,7 @@ class Message extends XFCP_Message
     public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType): array
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if (!$repo->isPushingViewOtherChecksIntoSearch())
         {
             return $constraints;
@@ -102,7 +102,7 @@ class Message extends XFCP_Message
             'c.replies.upper' => '?uint,empty-str-to-null',
         ]);
 
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         $repo->applyUserConstraint($query, $constraints, $urlConstraints,
             'c.participants', 'discussion_user'
         );

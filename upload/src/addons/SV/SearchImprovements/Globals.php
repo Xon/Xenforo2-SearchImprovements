@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements;
 
-use SV\SearchImprovements\Repository\Search;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 
 abstract class Globals
 {
@@ -11,10 +11,12 @@ abstract class Globals
     /** @var ?array */
     public static $capturedSearchDebugInfo = null;
 
-    public static function repo(): Search
+    /**
+     * @deprecated
+     */
+    public static function repo(): SearchRepo
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return \XF::repository('SV\SearchImprovements:Search');
+        return SearchRepo::get();
     }
 
     private function __construct() { }

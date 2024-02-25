@@ -2,7 +2,7 @@
 
 namespace SV\SearchImprovements\Repository;
 
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Util\Arr;
 use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
@@ -130,7 +130,7 @@ class Search extends Repository
             $lowerConstraint = 0;
         }
 
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
         {
@@ -227,7 +227,7 @@ class Search extends Repository
             $lowerConstraint = 0;
         }
 
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
         {

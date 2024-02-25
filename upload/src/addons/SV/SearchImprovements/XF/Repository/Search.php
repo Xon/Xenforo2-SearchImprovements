@@ -11,9 +11,7 @@ use function count;
 use function in_array;
 use function is_array;
 use function is_callable;
-use function is_string;
 use function reset;
-use function strlen;
 
 /**
  * Extends \XF\Repository\Search

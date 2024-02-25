@@ -5,7 +5,7 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use XF\Mvc\Entity\Structure;
@@ -44,7 +44,7 @@ class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchab
     {
         $structure = parent::getStructure($structure);
 
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if ($repo->isUsingElasticSearch())
         {
             $repo->addContainerIndexableField($structure, 'user_id');

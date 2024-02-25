@@ -6,7 +6,7 @@
 namespace SV\SearchImprovements\Search;
 
 use SV\SearchImprovements\EntityGetterCache;
-use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use SV\SearchImprovements\Search\Features\SearchOrder;
@@ -20,7 +20,6 @@ use function array_unique;
 use function array_values;
 use function assert;
 use function count;
-use function is_string;
 use function is_subclass_of;
 
 /**
@@ -33,7 +32,6 @@ trait DiscussionTrait
 
     /**
      * @return class-string
-     * @noinspection PhpDocMissingThrowsInspection
      */
     protected function getSvDiscussionEntityClass(): string
     {
@@ -48,7 +46,7 @@ trait DiscussionTrait
 
     protected function populateDiscussionMetaData(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if (!$repo->isUsingElasticSearch())
         {
             return;
@@ -97,7 +95,7 @@ trait DiscussionTrait
 
     public function setupDiscussionMetadataStructure(MetadataStructure $structure): void
     {
-        $repo = Globals::repo();
+        $repo = SearchRepo::get();
         if (!$repo->isUsingElasticSearch())
         {
             return;
@@ -136,7 +134,7 @@ trait DiscussionTrait
     {
         $sorts = [];
 
-        if (Globals::repo()->isUsingElasticSearch())
+        if (SearchRepo::get()->isUsingElasticSearch())
         {
             $class = $this->getSvDiscussionEntityClass();
             if (is_subclass_of($class, ISearchableReplyCount::class))
