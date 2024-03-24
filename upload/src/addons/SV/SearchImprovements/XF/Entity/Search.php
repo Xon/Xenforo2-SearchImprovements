@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
+use SV\RedisCache\Repository\Redis as RedisRepo;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
@@ -531,8 +532,8 @@ class Search extends XFCP_Search
             }
             foreach ($contexts as $contextLabel => $config)
             {
-                $cache = \XF::app()->cache($contextLabel, false);
-                if ($cache instanceof \SV\RedisCache\Redis)
+                $cache = RedisRepo::get()->getRedisConnector($contextLabel, false);
+                if ($cache !== null)
                 {
                     $stats = $cache->getRedisStats();
                     if (!isset($debug['cache']['get'], $debug['cache']['set']))
