@@ -4,6 +4,6 @@
     "execution_order": 10,
     "enabled": true,
     "action": "preg_replace",
-    "find": "#<xf:macro name=\"order\".*?>#si",
+    "find": "#<xf:macro (?:id|name)=\"order\".*?>#si",
     "replace": "$0\n<xf:if is=\"$__globals.sortOrders is not empty\">\n\t<xf:set var=\"$options\" value=\"{{ $options + $__globals.sortOrders}}\" />\n</xf:if>"
 }

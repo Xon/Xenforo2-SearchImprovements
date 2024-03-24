@@ -4,6 +4,6 @@
     "execution_order": 6838,
     "enabled": true,
     "action": "preg_replace",
-    "find": "#(<xf:macro name=\"keywords\".*?)(\\s*<xf:if is=\"\\$canTitleLimit)#sm",
+    "find": "#(<xf:macro (?:id|name)=\"keywords\".*?)(\\s*<xf:if is=\"\\$canTitleLimit)#sm",
     "replace": "$1\n<xf:macro template=\"svSearchImprov_search_form_macros\"\n\t\t  name=\"search_only_container\"\n\t\t  arg-input=\"{$input}\"\n\t\t  arg-containerType=\"{$__globals.containerType}\" />\n$2"
 }
