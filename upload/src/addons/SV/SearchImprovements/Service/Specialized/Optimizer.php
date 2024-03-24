@@ -51,6 +51,7 @@ class Optimizer extends \XFES\Service\Optimizer
 
         $configurer->purgeIndex();
         // if we create an index in ES6+, we must force it to be single type
+        /** @noinspection PhpDeprecationInspection */
         $this->es->forceSingleType($this->es->majorVersion() >= 6);
 
         $config = [
@@ -95,6 +96,7 @@ class Optimizer extends \XFES\Service\Optimizer
             unset($mapping['_all']);
         }
         // todo remove
+        /** @noinspection PhpDeprecationInspection */
         if ($this->es->isSingleTypeIndex())
         {
             $mapping['properties']['type'] = ['type' => 'keyword', 'skip-rewrite' => true];
@@ -220,6 +222,7 @@ class Optimizer extends \XFES\Service\Optimizer
         {
             // ES7 may not have an explicit type, so we may _doc as the type, whereas we're expecting "xf".
             // When this happens, we won't be passing types into URLs, so we should be able to ignore it.
+            /** @noinspection PhpDeprecationInspection */
             $liveMappings = [$this->es->getSingleTypeName() => $liveMappings['_doc']];
         }
 

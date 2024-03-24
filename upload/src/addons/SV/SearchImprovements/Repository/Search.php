@@ -324,6 +324,7 @@ class Search extends Repository
         $source = SearchSourceExtractor::getSource($search);
         assert($source instanceof ElasticsearchSource);
 
+        /** @noinspection PhpDeprecationInspection */
         if ($source->getEsApi()->isSingleTypeIndex())
         {
             return $contentType . '-' . $id;

@@ -156,6 +156,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
+        /** @noinspection PhpDeprecationInspection */
         if ($this->es->isSingleTypeIndex())
         {
             // types are now stored in a field in the index directly
@@ -265,6 +266,7 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
         $validTypes = array_fill_keys($types, true);
         $functions = [];
+        /** @noinspection PhpDeprecationInspection */
         $isSingleTypeIndex = $this->es->isSingleTypeIndex();
         foreach ($contentTypeWeighting as $contentType => $weight)
         {

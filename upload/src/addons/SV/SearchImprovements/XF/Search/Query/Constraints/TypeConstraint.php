@@ -49,6 +49,7 @@ class TypeConstraint extends AbstractConstraint
             return;
         }
 
+        /** @noinspection PhpDeprecationInspection */
         if ($source->es()->isSingleTypeIndex())
         {
             // types are now stored in a field in the index directly
