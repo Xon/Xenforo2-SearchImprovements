@@ -19,7 +19,7 @@ class KeywordQuery extends XFCP_KeywordQuery
         $this->forceContentWeighting = $forceContentWeighting;
     }
 
-    public function setParsedKeywords(string $keywords = null)
+    public function setParsedKeywords(?string $keywords = null)
     {
         $this->parsedKeywords = $keywords;
     }

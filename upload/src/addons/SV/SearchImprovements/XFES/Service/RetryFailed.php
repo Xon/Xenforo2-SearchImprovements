@@ -55,7 +55,7 @@ class RetryFailed extends XFCP_RetryFailed
         }
     }
 
-    protected function svSpecializedRetry(string $type, float $maxRunTime = null)
+    protected function svSpecializedRetry(string $type, ?float $maxRunTime = null)
     {
         /** @var \SV\SearchImprovements\XFES\Repository\IndexFailed $indexFailedRepo */
         $indexFailedRepo = $this->repository('XFES:IndexFailed');

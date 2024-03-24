@@ -180,7 +180,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
      * @param array|null $config
      * @return \XFES\Service\Configurer|SpecializedConfigurer
      */
-    protected function getConfigurer(array $config = null)
+    protected function getConfigurer(?array $config = null)
     {
         if ($this->svShimContentType !== '')
         {
@@ -194,7 +194,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
      * @param EsApi|null $es
      * @return \XFES\Service\Optimizer|SpecializedOptimizer
      */
-    protected function getOptimizer(EsApi $es = null)
+    protected function getOptimizer(?EsApi $es = null)
     {
         if ($this->svShimContentType !== '')
         {
@@ -210,7 +210,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
      * @param EsApi|null $es
      * @return Analyzer|SpecializedAnalyzer
      */
-    protected function getAnalyzer(EsApi $es = null)
+    protected function getAnalyzer(?EsApi $es = null)
     {
         if ($this->svShimContentType !== '')
         {

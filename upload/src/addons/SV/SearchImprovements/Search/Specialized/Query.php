@@ -59,7 +59,7 @@ class Query extends \XF\Search\Query\Query
      * @param string|null $boost
      * @return $this
      */
-    public function matchText(string $text, array $fields, string $boost = null): self
+    public function matchText(string $text, array $fields, ?string $boost = null): self
     {
         $text = trim($text);
         if (strlen($text) !== 0)
@@ -75,7 +75,7 @@ class Query extends \XF\Search\Query\Query
      *
      * @deprecated
      */
-    public function matchQuery(string $text, array $fields, string $boost = null): self
+    public function matchQuery(string $text, array $fields, ?string $boost = null): self
     {
         return $this->matchText($text, $fields, $boost);
     }
@@ -144,7 +144,7 @@ class Query extends \XF\Search\Query\Query
         return $this->prefixMatchBoost;
     }
 
-    public function withNgram(bool $withNgram = true, string $boost = null): self
+    public function withNgram(bool $withNgram = true, ?string $boost = null): self
     {
         $this->withNgram = $withNgram;
         if ($boost !== null)
@@ -164,7 +164,7 @@ class Query extends \XF\Search\Query\Query
         return $this->ngramBoost;
     }
 
-    public function withExact(bool $withExact = true, string $boost = null): self
+    public function withExact(bool $withExact = true, ?string $boost = null): self
     {
         $this->withExact = $withExact;
         if ($boost !== null)
