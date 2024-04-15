@@ -76,6 +76,18 @@ class SearchPatchLast extends XFCP_SearchPatchLast
             // Determine if the search query (broadly) matches the stored query
             $searchData = $this->convertShortSearchInputNames();
             $storedArgs = $this->convertSearchToQueryInput($search);
+            // normalize 'empty search', otherwise the query can be forced to be re-run unexpectedly
+            if (\XF::options()->svAllowEmptySearch ?? false)
+            {
+                if (($searchData['keywords'] ?? '') === '*')
+                {
+                    $searchData['keywords'] = '';
+                }
+                if (($storedArgs['keywords'] ?? '') === '*')
+                {
+                    $storedArgs['keywords'] = '';
+                }
+            }
             // Use non-exact compare as it is recursively insensitive to element order
             if ($searchData != $storedArgs)
             {
