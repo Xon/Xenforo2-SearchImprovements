@@ -9,18 +9,28 @@ use SV\SearchImprovements\Search\DiscussionTrait;
 use XF\Mvc\Entity\Entity;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
+use XF\Search\Search;
 
 class Thread extends XFCP_Thread
 {
+    /** @var class-string */
     protected static $svDiscussionEntity = \XF\Entity\Thread::class;
+    /** @var bool */
+    protected $svIndexPrefixes;
     use DiscussionTrait;
+
+    public function __construct($contentType, Search $searcher)
+    {
+        parent::__construct($contentType, $searcher);
+        $this->svIndexPrefixes = (bool)(\XF::options()->svPushThreadPrefixesIntoSearch ?? true);
+    }
 
     public function getIndexData(Entity $entity)
     {
         /** @var \XF\Entity\Thread $entity */
         $index = parent::getIndexData($entity);
 
-        if ($index !== null)
+        if ($this->svIndexPrefixes && $index !== null)
         {
             $this->svIndexPrefixes($entity, $index);
         }

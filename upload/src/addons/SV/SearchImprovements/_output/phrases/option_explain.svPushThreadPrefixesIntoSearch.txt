@@ -1,0 +1,1 @@
+XenForo does not push the thread prefix text into search like it does with tags, making autocomplete not work as expected in all cases.
