@@ -10,6 +10,7 @@ use XF\Mvc\Entity\Entity;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
 use XF\Search\Search;
+use function implode;
 
 class Thread extends XFCP_Thread
 {
@@ -70,7 +71,16 @@ class Thread extends XFCP_Thread
 
         if (count($prefixes) !== 0)
         {
-            $index->title .= ' ' . implode(' ', $prefixes);
+            $fragment = ' ' . implode(' ', $prefixes);
+            $index->title .= $fragment;
+
+            $metaData = $index->metadata;
+            $autoCompleteTitle = $metaData['elasticess_title'] ?? null;
+            if ($autoCompleteTitle !==  null)
+            {
+                $metaData['elasticess_title'] .= $fragment;
+                $index->metadata = $metaData;
+            }
         }
     }
 
