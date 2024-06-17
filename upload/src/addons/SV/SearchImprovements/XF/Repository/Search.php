@@ -14,7 +14,7 @@ use function is_callable;
 use function reset;
 
 /**
- * Extends \XF\Repository\Search
+ * @Extends \XF\Repository\Search
  */
 class Search extends XFCP_Search
 {
@@ -67,53 +67,5 @@ class Search extends XFCP_Search
         }
 
         return null;
-    }
-
-    public function runSearch(\XF\Search\Query\KeywordQuery $query, array $constraints = [], $allowCached = true)
-    {
-        if (\XF::options()->svShowSearchDebugInfo ?? '')
-        {
-            Globals::$capturedSearchDebugInfo = [];
-        }
-        try
-        {
-            $length = mb_strlen((string)$query->getKeywords());
-            if ($length > 0)
-            {
-                $structure = $this->em->getEntityStructure('XF:Search');
-                $maxLength = $structure->columns['search_query']['maxLength'] ?? -1;
-                if ($maxLength > 0 && $length > $maxLength)
-                {
-                    $error = \XF::phrase('please_enter_value_using_x_characters_or_fewer', ['count' => $maxLength]);
-
-                    if (is_callable([$query, 'setIsImpossibleQuery']))
-                    {
-                        $query->error('keywords', $error);
-                        $query->setIsImpossibleQuery();
-                    }
-                    else
-                    {
-                        throw new PrintableException($error);
-                    }
-                }
-            }
-
-            $search = parent::runSearch($query, $constraints, $allowCached);
-
-            if ($search === null)
-            {
-                $search = $this->em->create('XF:Search');
-                assert($search instanceof SearchEntity);
-                $search->setupFromQuery($query, $constraints);
-                $search->user_id = \XF::visitor()->user_id;
-                $search->save();
-            }
-
-            return $search;
-        }
-        finally
-        {
-            Globals::$capturedSearchDebugInfo = null;
-        }
     }
 }

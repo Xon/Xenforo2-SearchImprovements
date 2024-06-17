@@ -573,30 +573,6 @@ class Search extends XFCP_Search
         return $arr;
     }
 
-    public function setupFromQuery(\XF\Search\Query\KeywordQuery $query, array $constraints = [])
-    {
-        parent::setupFromQuery($query, $constraints);
-
-        // smooth over differences between member search & normal search
-        // XF does falsy check on getGroupByType result :(
-        $handler = $this->getContentHandler();
-        if ($handler !== null && !$handler->getGroupByType())
-        {
-            $searchRepo = $this->repository('XF:Search');
-            assert($searchRepo instanceof SearchRepo);
-
-            $searchType = $this->search_type;
-            $firstChildType = $searchRepo->getChildContentTypeForContainerType($searchType);
-            if ($firstChildType !== null && $firstChildType !== $searchType)
-            {
-                $constraints = $this->search_constraints;
-                $constraints['content'] = $searchType;
-                $this->search_constraints = $constraints;
-                $this->search_type = $firstChildType;
-            }
-        }
-    }
-
     protected function logSearchDebugInfo(): void
     {
         // Log debug information if required.

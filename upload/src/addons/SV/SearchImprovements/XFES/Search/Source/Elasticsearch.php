@@ -14,6 +14,7 @@ use XF\Search\Query\MetadataConstraint;
 use XFES\Elasticsearch\Exception as EsException;
 use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge;
 use function class_exists;
+use function is_callable;
 
 /**
  * Class Elasticsearch
@@ -39,6 +40,39 @@ class Elasticsearch extends XFCP_Elasticsearch
         }
 
         return parent::parseKeywords($keywords, $error, $warning);
+    }
+
+    /**
+     * XF2.0/XF2.1 support
+     *
+     * @param Query $query
+     * @param int   $maxResults
+     * @return array
+     * @noinspection DuplicatedCode
+     */
+    protected function getDslFromQuery(Query $query, $maxResults)
+    {
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+        if ($query->getKeywords() === '*' && $query->getParsedKeywords() === '')
+        {
+            // getDslFromQuery/getQueryStringDsl disables relevancy if `getParsedKeywords` is empty
+            // Which then causes the weightByContentType clause to not match
+            /** @var \SV\SearchImprovements\XF\Search\Query\Query $query */
+            $query->setParsedKeywords('*');
+        }
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $dsl = parent::getDslFromQuery($query, $maxResults);
+
+        // only support ES > 1.2 & relevance weighting or plain sorting by relevance score
+        if (isset($dsl['sort'][0]) && ($dsl['sort'][0] === '_score') ||
+            isset($dsl['query']['function_score']) ||
+            isset($dsl['query']['bool']['must']['function_score']))
+        {
+            $this->weightByContentType($query, $dsl);
+        }
+
+        return $dsl;
     }
 
     /**
@@ -238,7 +272,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             return;
         }
 
-        $forceContentWeighting = ($query instanceof KeywordQuery) ? $query->isForceContentWeighting() : false;
+        $forceContentWeighting = is_callable([$query, 'isForceContentWeighting']) && $query->isForceContentWeighting();
         if (!$forceContentWeighting)
         {
             // skip specific type handler searches

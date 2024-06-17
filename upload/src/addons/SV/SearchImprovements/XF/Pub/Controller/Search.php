@@ -11,6 +11,7 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\View as ViewReply;
+use XF\Search\Query\Query;
 use function assert;
 use function strlen;
 
@@ -94,7 +95,9 @@ class Search extends XFCP_Search
     /**
      * @param array $data
      * @param array $urlConstraints
-     * @return \XF\Search\Query\KeywordQuery
+     * @return \XF\Search\Query\KeywordQuery|Query
+     * @noinspection PhpUndefinedClassInspection
+     * @noinspection PhpReturnDocTypeMismatchInspection
      */
     protected function prepareSearchQuery(array $data, &$urlConstraints = [])
     {

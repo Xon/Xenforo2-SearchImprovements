@@ -4,12 +4,12 @@
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 
-namespace SV\SearchImprovements\XF\Search\Source;
+namespace SV\SearchImprovements\XF\Entity;
 
 /** @noinspection PhpUndefinedClassInspection */
 \SV\StandardLib\Helper::repo()->aliasClass(
-    \SV\SearchImprovements\XF\Search\Source\MySqlFt::class,
+    SearchPatch::class,
     \XF::$versionId < 2020000
-        ? \SV\SearchImprovements\XF\Search\Source\XF21\MySqlFt::class
-        : \SV\SearchImprovements\XF\Search\Source\XF22\MySqlFt::class
+        ? \SV\SearchImprovements\XF\Entity\XF21\SearchPatch::class
+        : \SV\SearchImprovements\XF\Entity\XF22\SearchPatch::class
 );

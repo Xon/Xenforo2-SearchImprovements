@@ -5,9 +5,12 @@ namespace SV\SearchImprovements\XF\Search\Query;
 use XF\Search\Query\MetadataConstraint;
 
 /**
- * @extends \XF\Search\Query\KeywordQuery
+ * XF2.0/XF2.1 only, as XF2.2+ instead use specialized instances
+ *
+ * Note; parsedKeywords moved to KeywordQuery in XF2.2+
+ * @extends \XF\Search\Query\Query
  */
-class KeywordQuery extends XFCP_KeywordQuery
+class Query extends XFCP_Query
 {
     /** @var bool */
     protected $forceContentWeighting = false;
@@ -22,15 +25,16 @@ class KeywordQuery extends XFCP_KeywordQuery
         $this->forceContentWeighting = $forceContentWeighting;
     }
 
-    public function setParsedKeywords(?string $keywords = null)
+    public function setParsedKeywords($keywords)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $this->parsedKeywords = $keywords;
     }
 
     /**
      * @param MetadataConstraint[] $metadataConstraints
      */
-    public function setMetadataConstraints(array $metadataConstraints)
+    public function setMetadataConstraints($metadataConstraints)
     {
         $this->metadataConstraints = $metadataConstraints;
     }

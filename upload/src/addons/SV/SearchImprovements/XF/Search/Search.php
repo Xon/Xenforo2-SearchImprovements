@@ -49,6 +49,12 @@ class Search extends XFCP_Search
             }
         }
 
+        // pre-XF2.1.8 support
+        if (!is_callable('parent::isQueryEmpty'))
+        {
+            return !strlen($query->getKeywords()) && !$query->getUserIds();
+        }
+
         return parent::isQueryEmpty($query, $error);
     }
 

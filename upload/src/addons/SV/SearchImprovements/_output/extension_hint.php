@@ -65,6 +65,7 @@ namespace SV\SearchImprovements\XF\Behavior
 namespace SV\SearchImprovements\XF\Entity
 {
 	class XFCP_Search extends \XF\Entity\Search {}
+	class XFCP_SearchPatch extends \XF\Entity\Search {}
 	class XFCP_Thread extends \XF\Entity\Thread {}
 	class XFCP_ThreadCollab extends \XF\Entity\Thread {}
 	class XFCP_User extends \XF\Entity\User {}
@@ -87,6 +88,7 @@ namespace SV\SearchImprovements\XF\Pub\View\Search
 namespace SV\SearchImprovements\XF\Repository
 {
 	class XFCP_Search extends \XF\Repository\Search {}
+	class XFCP_SearchPatch extends \XF\Repository\Search {}
 }
 
 namespace SV\SearchImprovements\XF\Search\Data
@@ -98,6 +100,7 @@ namespace SV\SearchImprovements\XF\Search\Data
 namespace SV\SearchImprovements\XF\Search\Query
 {
 	class XFCP_KeywordQuery extends \XF\Search\Query\KeywordQuery {}
+	class XFCP_Query extends \XF\Search\Query\Query {}
 }
 
 namespace SV\SearchImprovements\XF\Search

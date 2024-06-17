@@ -69,6 +69,16 @@ class Api extends XFCP_Api
     protected function getErrorMessage(array $body)
     {
         $reason = parent::getErrorMessage($body);
+        // bad error...
+        if ($reason === 'all shards failed' &&
+            isset($body['error']['failed_shards'][0]['reason']['type']) &&
+            isset($body['error']['failed_shards'][0]['reason']['caused_by']['type']) &&
+            isset($body['error']['failed_shards'][0]['reason']['caused_by']['reason']))
+        {
+            return strval($body['error']['failed_shards'][0]['reason']['type']) . ': ' .
+                   strval($body['error']['failed_shards'][0]['reason']['caused_by']['type']) . ' ' .
+                   strval($body['error']['failed_shards'][0]['reason']['caused_by']['reason']);
+        }
 
         // log DSL on error
         if ((\XF::options()->esLogDSLOnError ?? true) && $this->dslForError !== null)
