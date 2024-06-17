@@ -70,7 +70,7 @@ class Search extends Repository
 
     public function isUsingElasticSearch(): bool
     {
-        return \XF::isAddOnActive('XFES') && (\XF::options()->xfesEnabled ?? false);
+        return Helper::isAddOnActive('XFES') && (\XF::options()->xfesEnabled ?? false);
     }
 
     public function isPushingViewOtherChecksIntoSearch(): bool

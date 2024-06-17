@@ -6,6 +6,7 @@ use SV\RedisCache\Repository\Redis as RedisRepo;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
 use XF\Util\Arr;
@@ -380,7 +381,7 @@ class Search extends XFCP_Search
         $searchConstraints = $this->search_constraints;
 
         $typeFilter = $searchConstraints['content'] ?? $searchConstraints['type'] ?? null;
-        $containerOnly = \XF::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraints['container_only'] ?? false);
+        $containerOnly = Helper::isAddOnActive('SV/ElasticSearchEssentials') && ($searchConstraints['container_only'] ?? false);
         $addContentTypeTerm = $this->search_type !== '' && !$this->search_grouping;
         if ($containerOnly && $typeFilter !== null || $addContentTypeTerm && $containerOnly)
         {
@@ -521,7 +522,7 @@ class Search extends XFCP_Search
             'memory' => round(memory_get_peak_usage() / 1024 / 1024, 2)
         ];
 
-        if (\XF::isAddOnActive('SV/RedisCache'))
+        if (Helper::isAddOnActive('SV/RedisCache'))
         {
             $mainConfig = \XF::app()->config()['cache'];
             $contexts = [];

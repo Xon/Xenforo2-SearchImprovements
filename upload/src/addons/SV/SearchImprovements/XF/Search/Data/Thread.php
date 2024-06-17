@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\XF\Search\Data;
 
 use SV\SearchImprovements\Search\DiscussionTrait;
+use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Entity;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
@@ -42,7 +43,7 @@ class Thread extends XFCP_Thread
     protected function svIndexPrefixes(\XF\Entity\Thread $thread, IndexRecord $index): void
     {
         $prefixIds = [];
-        if (\XF::isAddOnActive('SV/MultiPrefix') && $thread->isValidColumn('sv_prefix_ids'))
+        if (Helper::isAddOnActive('SV/MultiPrefix') && $thread->isValidColumn('sv_prefix_ids'))
         {
             /** @var \SV\MultiPrefix\XF\Entity\Thread $thread */
             $prefixIds = $thread->sv_prefix_ids;
@@ -96,7 +97,7 @@ class Thread extends XFCP_Thread
     protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
         /** @var \XF\Entity\Thread $entity */
-        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        if (Helper::isAddOnActive('SV/ViewStickyThreads'))
         {
             if ($entity->sticky ?? false)
             {
@@ -114,7 +115,7 @@ class Thread extends XFCP_Thread
 
     protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure): void
     {
-        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        if (Helper::isAddOnActive('SV/ViewStickyThreads'))
         {
             $structure->addField('sticky', MetadataStructure::BOOL);
         }

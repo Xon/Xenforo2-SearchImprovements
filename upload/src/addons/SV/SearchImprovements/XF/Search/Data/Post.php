@@ -36,7 +36,7 @@ class Post extends XFCP_Post
     protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
     {
         /** @var \XF\Entity\Thread $entity */
-        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        if (Helper::isAddOnActive('SV/ViewStickyThreads'))
         {
             if ($entity->sticky ?? false)
             {
@@ -54,7 +54,7 @@ class Post extends XFCP_Post
 
     protected function setupDiscussionUserMetadataStructure(MetadataStructure $structure): void
     {
-        if (\XF::isAddOnActive('SV/ViewStickyThreads'))
+        if (Helper::isAddOnActive('SV/ViewStickyThreads'))
         {
             $structure->addField('sticky', MetadataStructure::BOOL);
         }
@@ -74,7 +74,7 @@ class Post extends XFCP_Post
         $nodePerms = Helper::perms()->getPerContentPermissions('node');
 
         $nonViewableNodeIds = $viewableStickiesNodeIds = [];
-        $viewStickies = \XF::isAddOnActive('SV/ViewStickyThreads');
+        $viewStickies = Helper::isAddOnActive('SV/ViewStickyThreads');
         foreach ($nodePerms as $nodeId => $perm)
         {
             // The permission cache may not be an array, which implies the view/viewXXX will all be false and the parent's view check should have failed.
