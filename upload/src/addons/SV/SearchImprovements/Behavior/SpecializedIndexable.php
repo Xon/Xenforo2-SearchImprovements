@@ -12,10 +12,9 @@ class SpecializedIndexable extends Indexable
 {
     protected function getDefaultConfig(): array
     {
-        return [
-            'content_type' => null,
-            'checkForUpdates' => null,
-        ];
+        $config = parent::getDefaultConfig();
+        $config['content_type'] = null;
+        return $config;
     }
 
     protected function verifyConfig()
