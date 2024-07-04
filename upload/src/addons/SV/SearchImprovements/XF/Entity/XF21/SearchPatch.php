@@ -3,11 +3,11 @@
 namespace SV\SearchImprovements\XF\Entity\XF21;
 
 use SV\SearchImprovements\XF\Entity\Search;
-use SV\SearchImprovements\XF\Entity\XFCP_Search;
+use SV\SearchImprovements\XF\Entity\XFCP_SearchPatch;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
 use function assert;
 
-class SearchPatch extends XFCP_Search
+class SearchPatch extends XFCP_SearchPatch
 {
     public function setupFromQuery(\XF\Search\Query\Query $query, array $constraints = [])
     {

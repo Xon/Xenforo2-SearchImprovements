@@ -4,12 +4,12 @@ namespace SV\SearchImprovements\XF\Repository\XF21;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
-use SV\SearchImprovements\XF\Repository\XFCP_Search;
+use SV\SearchImprovements\XF\Repository\XFCP_SearchPatch;
 use XF\PrintableException;
 use function assert;
 use function is_callable;
 
-class SearchPatch extends XFCP_Search
+class SearchPatch extends XFCP_SearchPatch
 {
     public function runSearch(\XF\Search\Query\Query $query, array $constraints = [], $allowCached = true)
     {
