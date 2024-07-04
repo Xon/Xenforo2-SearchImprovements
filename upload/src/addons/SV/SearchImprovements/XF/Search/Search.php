@@ -40,7 +40,7 @@ class Search extends XFCP_Search
      */
     public function isQueryEmpty(Query\Query $query, &$error = null)
     {
-        if ($this->svAllowEmptySearch && $query instanceof KeywordQuery)
+        if ($this->svAllowEmptySearch && (\XF::$versionId < 2020000 || $query instanceof KeywordQuery))
         {
             $keywords = $query->getKeywords();
             if ($keywords === '*' || $keywords === '')

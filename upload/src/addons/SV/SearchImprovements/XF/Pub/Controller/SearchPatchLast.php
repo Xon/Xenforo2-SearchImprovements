@@ -8,6 +8,7 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception;
 use function assert;
+use function is_callable;
 
 /**
  * Extends \XF\Pub\Controller\Search
@@ -106,7 +107,10 @@ class SearchPatchLast extends XFCP_SearchPatchLast
      */
     public function actionMember()
     {
-        $this->assertNotEmbeddedImageRequest();
+        if (is_callable([$this, 'assertNotEmbeddedImageRequest'])) // XF2.1 support
+        {
+            $this->assertNotEmbeddedImageRequest();
+        }
 
         $userId = $this->filter('user_id', 'uint');
         /** @var UserEntity $user */

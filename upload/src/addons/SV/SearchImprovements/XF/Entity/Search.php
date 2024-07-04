@@ -217,9 +217,21 @@ class Search extends XFCP_Search
                 $node = $nodes[$id] ?? null;
                 if ($node !== null)
                 {
+                    if (\XF::$versionId < 2020000)
+                    {
+                        $nodeTypeInfo = $node->getNodeTypeInfo();
+                        $url = $nodeTypeInfo ? $this->app()->router('public')->buildLink($nodeTypeInfo['public_route'], $this) : '';
+                        $title = $node->title;
+                    }
+                    else
+                    {
+                        $url = $node->getContentUrl();
+                        $title = $node->getContentTitle();
+                    }
+
                     $query[$key . '_' . $id] = \XF::phrase('svSearchConstraint.nodes', [
-                        'url' => $node->getContentUrl(),
-                        'node' => $node->getContentTitle(),
+                        'url' => $url,
+                        'node' => $title,
                     ]);
                 }
             }
