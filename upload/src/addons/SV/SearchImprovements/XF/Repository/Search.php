@@ -2,15 +2,11 @@
 
 namespace SV\SearchImprovements\XF\Repository;
 
-use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
-use XF\PrintableException;
 use function array_diff;
 use function assert;
 use function count;
 use function in_array;
 use function is_array;
-use function is_callable;
 use function reset;
 
 /**
