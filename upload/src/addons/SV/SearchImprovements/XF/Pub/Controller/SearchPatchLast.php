@@ -7,8 +7,11 @@ use XF\Entity\User as UserEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception;
+use function array_key_exists;
 use function assert;
+use function is_array;
 use function is_callable;
+use function ksort;
 
 /**
  * Extends \XF\Pub\Controller\Search
@@ -54,6 +57,32 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         return $this->runSearch($query, $constraints);
     }
 
+    protected function svNormalizeSearchData(array $search): array
+    {
+        foreach ($search as $k => $v)
+        {
+            if (is_array($v))
+            {
+                $v = $this->svNormalizeSearchData($v);
+                if (count($v) === 0)
+                {
+                    unset($search[$k]);
+                    continue;
+                }
+
+                $search[$k] = $v;
+            }
+            else if ($v === null || $v === '')
+            {
+                unset($search[$k]);
+            }
+        }
+
+        ksort($search);
+
+        return $search;
+    }
+
     public function actionResults(ParameterBag $params)
     {
         // Re-do searches from the query data, as this gives saner experiences
@@ -89,14 +118,34 @@ class SearchPatchLast extends XFCP_SearchPatchLast
                     $storedArgs['keywords'] = '';
                 }
             }
-            // Use non-exact compare as it is recursively insensitive to element order
-            if ($searchData != $storedArgs)
+
+            $copy1 = $this->svNormalizeSearchData($searchData);
+            $copy2 = $this->svNormalizeSearchData($storedArgs);
+            if ($copy1 !== $copy2)
             {
                 return $this->svSearchFromQueryData($searchData);
             }
         }
 
         return parent::actionResults($params);
+    }
+
+    /** @noinspection PhpMissingReturnTypeInspection */
+    protected function convertShortSearchNames(array $input)
+    {
+        $output = parent::convertShortSearchNames($input);
+
+        // XF2.3.0 bug: https://xenforo.com/community/threads/searchcontroller-convertshortsearchnames-does-not-function-as-expected.223451/
+        if (array_key_exists('o', $output))
+        {
+            if (!array_key_exists('order', $output))
+            {
+                $output['order'] = $output['o'] ?: null;
+            }
+            unset($output['o']);
+        }
+
+        return $output;
     }
 
     /**
