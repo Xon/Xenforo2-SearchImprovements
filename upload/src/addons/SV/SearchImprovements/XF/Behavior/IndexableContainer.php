@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\XF\Behavior;
 
 /**
- * Extends \XF\Behavior\IndexableContainer
+ * @Extends \XF\Behavior\IndexableContainer
  */
 class IndexableContainer extends XFCP_IndexableContainer
 {

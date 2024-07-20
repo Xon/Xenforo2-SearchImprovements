@@ -7,7 +7,7 @@ use SV\StandardLib\Helper;
 use function array_values, array_merge, array_key_exists, is_array, array_replace;
 
 /**
- * Extends \XFES\Service\Analyzer
+ * @Extends \XFES\Service\Analyzer
  */
 class Analyzer extends \XFES\Service\Analyzer
 {

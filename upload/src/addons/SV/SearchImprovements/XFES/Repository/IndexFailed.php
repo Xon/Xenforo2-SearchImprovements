@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\XFES\Repository;
 
 /**
- * Extends \XFES\Repository\IndexFailed
+ * @Extends \XFES\Repository\IndexFailed
  */
 class IndexFailed extends XFCP_IndexFailed
 {

@@ -7,7 +7,7 @@ use XF\Template\Templater as BaseTemplater;
 use function explode;
 
 /**
- * Extends \SV\StandardLib\TemplaterHelper
+ * @Extends \SV\StandardLib\TemplaterHelper
  */
 class TemplaterHelper extends XFCP_TemplaterHelper
 {

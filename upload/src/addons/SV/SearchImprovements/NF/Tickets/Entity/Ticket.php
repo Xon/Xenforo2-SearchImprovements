@@ -12,7 +12,7 @@ use XF\Mvc\Entity\Structure;
 use function array_column;
 
 /**
- * Extends \NF\Tickets\Entity\Ticket
+ * @Extends \NF\Tickets\Entity\Ticket
  */
 class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchableReplyCount
 {

@@ -10,7 +10,7 @@ use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigure
 use SV\StandardLib\Helper;
 
 /**
- * Extends \XFES\Service\Optimizer
+ * @Extends \XFES\Service\Optimizer
  */
 class Optimizer extends \XFES\Service\Optimizer
 {

@@ -18,7 +18,7 @@ use function method_exists;
 use function strlen;
 
 /**
- * Extends \XF\Pub\Controller\Search
+ * @Extends \XF\Pub\Controller\Search
  */
 class Search extends XFCP_Search
 {

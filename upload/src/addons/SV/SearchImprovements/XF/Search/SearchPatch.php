@@ -15,7 +15,7 @@ use XF\Search\Source\AbstractSource;
 use function is_array, in_array, class_exists;
 
 /**
- * Extends \XF\Search\Search
+ * @Extends \XF\Search\Search
  */
 class SearchPatch extends XFCP_SearchPatch
 {

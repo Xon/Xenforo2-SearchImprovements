@@ -20,7 +20,7 @@ use XFES\Service\Stats as StatsService;
 use function strlen;
 
 /**
- * Extends \XFES\Admin\Controller\EnhancedSearch
+ * @Extends \XFES\Admin\Controller\EnhancedSearch
  */
 class EnhancedSearch extends XFCP_EnhancedSearch
 {

@@ -6,7 +6,7 @@ use XF\Mvc\Entity\Structure;
 use function strlen;
 
 /**
- * Extends \XF\Entity\User
+ * @Extends \XF\Entity\User
  *
  * @property UserOption Option
  */

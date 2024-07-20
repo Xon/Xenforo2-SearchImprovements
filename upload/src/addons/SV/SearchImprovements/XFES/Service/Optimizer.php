@@ -6,7 +6,7 @@
 namespace SV\SearchImprovements\XFES\Service;
 
 /**
- * Extends \XFES\Service\Optimizer
+ * @Extends \XFES\Service\Optimizer
  */
 class Optimizer extends XFCP_Optimizer
 {

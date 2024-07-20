@@ -8,7 +8,7 @@ use function assert;
 use function in_array;
 
 /**
- * Extends \XF\Pub\Controller\Search
+ * @Extends \XF\Pub\Controller\Search
  */
 class SearchPatchFirst extends XFCP_SearchPatchFirst
 {

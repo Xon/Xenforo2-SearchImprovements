@@ -7,7 +7,7 @@ use function assert;
 use function is_callable;
 
 /**
- * Extends \XF\Pub\View\Search\Results
+ * @Extends \XF\Pub\View\Search\Results
  */
 class Results extends XFCP_Results
 {

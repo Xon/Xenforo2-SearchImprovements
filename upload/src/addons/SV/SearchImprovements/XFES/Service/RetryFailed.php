@@ -8,7 +8,7 @@ use XFES\Elasticsearch\Api as EsApi;
 use function microtime;
 
 /**
- * Extends \XFES\Service\RetryFailed
+ * @Extends \XFES\Service\RetryFailed
  */
 class RetryFailed extends XFCP_RetryFailed
 {

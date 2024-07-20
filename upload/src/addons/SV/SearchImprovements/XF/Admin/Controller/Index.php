@@ -8,7 +8,7 @@ use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 
 /**
- * Extends \XF\Admin\Controller\Index
+ * @Extends \XF\Admin\Controller\Index
  */
 class Index extends XFCP_Index
 {

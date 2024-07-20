@@ -3,7 +3,7 @@
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
 /**
- * Extends \NF\Tickets\Entity\TicketParticipant
+ * @Extends \NF\Tickets\Entity\TicketParticipant
  */
 class TicketParticipant extends XFCP_TicketParticipant
 {

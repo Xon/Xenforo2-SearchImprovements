@@ -5,7 +5,7 @@ namespace SV\SearchImprovements\XFES\Elasticsearch;
 use function json_encode;
 
 /**
- * Extends \XFES\Elasticsearch\Api
+ * @Extends \XFES\Elasticsearch\Api
  */
 class Api extends XFCP_Api
 {

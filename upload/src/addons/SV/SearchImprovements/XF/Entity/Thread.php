@@ -12,7 +12,7 @@ use XF\Mvc\Entity\Structure;
 use function array_column;
 
 /**
- * Extends \XF\Entity\Thread
+ * @Extends \XF\Entity\Thread
  */
 class Thread extends XFCP_Thread implements ISearchableDiscussionUser
 {

@@ -10,7 +10,7 @@ use XF\Search\Query\KeywordQuery;
 use XF\Search\Source\AbstractSource;
 
 /**
- * Extends \XF\Search\Search
+ * @Extends \XF\Search\Search
  */
 class Search extends XFCP_Search
 {

@@ -8,7 +8,7 @@ namespace SV\SearchImprovements\XF\Pub\Controller;
 use XF\Entity\User;
 
 /**
- * Extends \XF\Pub\Controller\Account
+ * @Extends \XF\Pub\Controller\Account
  */
 class Account extends XFCP_Account
 {

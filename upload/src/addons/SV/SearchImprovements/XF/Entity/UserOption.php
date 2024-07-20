@@ -8,7 +8,7 @@ namespace SV\SearchImprovements\XF\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Extends \XF\Entity\UserOption
+ * @Extends \XF\Entity\UserOption
  *
  * @property string sv_default_search_order
  */

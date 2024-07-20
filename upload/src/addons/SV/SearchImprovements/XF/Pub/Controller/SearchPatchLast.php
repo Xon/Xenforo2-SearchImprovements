@@ -14,7 +14,7 @@ use function is_callable;
 use function ksort;
 
 /**
- * Extends \XF\Pub\Controller\Search
+ * @Extends \XF\Pub\Controller\Search
  */
 class SearchPatchLast extends XFCP_SearchPatchLast
 {
