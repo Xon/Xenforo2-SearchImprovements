@@ -13,8 +13,6 @@ use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Query\Query;
 use function assert;
-use function is_callable;
-use function method_exists;
 use function strlen;
 
 /**

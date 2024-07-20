@@ -6,12 +6,14 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
 use SV\SearchImprovements\XF\Repository\XFCP_SearchPatch;
 use XF\PrintableException;
+use XF\Search\Query\Query;
 use function assert;
 use function is_callable;
 
 class SearchPatch extends XFCP_SearchPatch
 {
-    public function runSearch(\XF\Search\Query\Query $query, array $constraints = [], $allowCached = true)
+    /** @noinspection PhpSignatureMismatchDuringInheritanceInspection */
+    public function runSearch(Query $query, array $constraints = [], $allowCached = true)
     {
         if (\XF::options()->svShowSearchDebugInfo ?? '')
         {
@@ -19,6 +21,7 @@ class SearchPatch extends XFCP_SearchPatch
         }
         try
         {
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             $length = mb_strlen((string)$query->getKeywords());
             if ($length > 0)
             {
@@ -40,6 +43,7 @@ class SearchPatch extends XFCP_SearchPatch
                 }
             }
 
+            /** @noinspection PhpParamsInspection */
             $search = parent::runSearch($query, $constraints, $allowCached);
 
             if ($search === null)

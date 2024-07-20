@@ -75,6 +75,7 @@ class Api extends XFCP_Api
             isset($body['error']['failed_shards'][0]['reason']['caused_by']['type']) &&
             isset($body['error']['failed_shards'][0]['reason']['caused_by']['reason']))
         {
+            /** @noinspection PhpUnnecessaryStringCastInspection */
             return strval($body['error']['failed_shards'][0]['reason']['type']) . ': ' .
                    strval($body['error']['failed_shards'][0]['reason']['caused_by']['type']) . ' ' .
                    strval($body['error']['failed_shards'][0]['reason']['caused_by']['reason']);

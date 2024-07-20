@@ -27,7 +27,7 @@ class Query extends XFCP_Query
 
     public function setParsedKeywords($keywords)
     {
-        /** @noinspection PhpUndefinedFieldInspection */
+        /** @noinspection PhpDynamicFieldDeclarationInspection */
         $this->parsedKeywords = $keywords;
     }
 

@@ -6,12 +6,13 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
 use SV\SearchImprovements\XF\Repository\XFCP_SearchPatch;
 use XF\PrintableException;
+use XF\Search\Query\KeywordQuery;
 use function assert;
 use function is_callable;
 
 class SearchPatch extends XFCP_SearchPatch
 {
-    public function runSearch(\XF\Search\Query\KeywordQuery $query, array $constraints = [], $allowCached = true)
+    public function runSearch(KeywordQuery $query, array $constraints = [], $allowCached = true)
     {
         if (\XF::options()->svShowSearchDebugInfo ?? '')
         {

@@ -9,6 +9,7 @@ use function assert;
 
 class SearchPatch extends XFCP_SearchPatch
 {
+    /** @noinspection PhpSignatureMismatchDuringInheritanceInspection */
     public function setupFromQuery(\XF\Search\Query\Query $query, array $constraints = [])
     {
         parent::setupFromQuery($query, $constraints);

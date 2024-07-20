@@ -94,7 +94,7 @@ class Thread extends XFCP_Thread
         return $metaData;
     }
 
-    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
+    protected function setupDiscussionUserMetadata(Entity $entity, array &$metaData): void
     {
         /** @var \XF\Entity\Thread $entity */
         if (Helper::isAddOnActive('SV/ViewStickyThreads'))
