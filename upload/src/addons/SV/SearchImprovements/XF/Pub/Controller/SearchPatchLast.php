@@ -121,8 +121,25 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
             $copy1 = $this->svNormalizeSearchData($searchData);
             $copy2 = $this->svNormalizeSearchData($storedArgs);
-            if ($copy1 !== $copy2)
+            if ($copy1 != $copy2) // MUST be non-exact so string juggling conversion can happen during comparison
             {
+                // try to avoid too many redirects due to failed matches
+                $session = \XF::session();
+                if ((int)$session->get('svExpiredSearchRedirect') >= \XF::$time - 1)
+                {
+                    if (\XF::$developmentMode)
+                    {
+                        \XF::logError('Rapid expired search record:'.\var_export($copy1, true). ','.\var_export($copy2, true));
+                    }
+
+                    $session->remove('svExpiredSearchRedirect');
+                    $reply = $this->message(\XF::phrase('no_results_found'));
+                    $reply->setPageParam('isExpiredSearch', true);
+                    return $reply;
+                }
+                $session->set('svExpiredSearchRedirect', \XF::$time);
+                $session->save();
+
                 return $this->svSearchFromQueryData($searchData);
             }
         }
