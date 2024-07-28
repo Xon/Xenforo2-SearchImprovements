@@ -108,15 +108,15 @@ class Optimizer extends \XFES\Service\Optimizer
     public function getExpectedMappingConfig(): array
     {
         /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-        $this->app->search()->specializedTypeFilter = $this->singleType;
+        \XF::app()->search()->specializedTypeFilter = $this->singleType;
         try
         {
-            $typeHandler = $this->app->search()->getValidHandlers()[$this->singleType] ?? null;
+            $typeHandler = \XF::app()->search()->getValidHandlers()[$this->singleType] ?? null;
             $expectedMapping = parent::getExpectedMappingConfig();
         }
         finally
         {
-            $this->app->search()->specializedTypeFilter = null;
+            \XF::app()->search()->specializedTypeFilter = null;
         }
 
 

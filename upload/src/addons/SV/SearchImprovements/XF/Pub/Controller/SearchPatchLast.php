@@ -47,7 +47,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         {
             return $this->error($query->getErrors());
         }
-        $searcher = $this->app->search();
+        $searcher = \XF::app()->search();
         assert($searcher instanceof ExtendedSearcher);
         if ($searcher->isQueryEmpty($query, $error))
         {
@@ -94,7 +94,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $visitorId = (int)$visitor->user_id;
         $searchId = (int)$params->get('search_id');
         /** @var \XF\Entity\Search|null $search */
-        $search = $this->em()->find('XF:Search', $searchId);
+        $search = \SV\StandardLib\Helper::find(\XF\Entity\Search::class, $searchId);
         if ($search === null || $search->user_id !== $visitorId)
         {
             // search has expired, or the cached search is owned by someone else
@@ -182,7 +182,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         /** @var UserEntity $user */
         $user = $this->assertRecordExists('XF:User', $userId, null, 'requested_member_not_found');
 
-        $searcher = $this->app()->search();
+        $searcher = \XF::app()->search();
         assert($searcher instanceof ExtendedSearcher);
 
         // map old XF member search to standard search arguments

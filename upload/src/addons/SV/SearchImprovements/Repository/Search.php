@@ -53,7 +53,7 @@ class Search extends Repository
             return true;
         }
 
-        $tagRepo = $this->repository('XF:Tag');
+        $tagRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Tag::class);
         assert($tagRepo instanceof \XF\Repository\Tag);
 
         foreach ($types as $type)
@@ -287,7 +287,7 @@ class Search extends Repository
         }
 
         /** @var \XF\Repository\User $userRepo */
-        $userRepo = \XF::repository('XF:User');
+        $userRepo = \SV\StandardLib\Helper::repository(\XF\Repository\User::class);
         $matchedUsers = $userRepo->getUsersByNames($users, $notFound);
         if (count($notFound) !== 0)
         {

@@ -23,7 +23,7 @@ class Search extends XFCP_Search
 
         try
         {
-            $handler = $this->app()->search()->handler($contentType);
+            $handler = \XF::app()->search()->handler($contentType);
         }
         catch (\Throwable $e)
         {
@@ -36,8 +36,8 @@ class Search extends XFCP_Search
     public function getChildContentTypeForContainerType(string $containerContentType): ?string
     {
         // XF lacks a link from the parent type to child types :`(
-        $search = $this->app()->search();
-        foreach ($this->app()->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
+        $search = \XF::app()->search();
+        foreach (\XF::app()->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
         {
             if ($containerContentType === $contentType)
             {

@@ -56,7 +56,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         if ($reply instanceof ViewReply)
         {
             $phrase = $this->svShimContentType !== ''
-                ? $this->app()->getContentTypePhrase($this->svShimContentType , true)
+                ? \XF::app()->getContentTypePhrase($this->svShimContentType , true)
                 : \XF::phraseDeferred('svSearchImprovements_default_index');
 
             $reply->setParam('contentTypePhrase', $phrase);
@@ -103,7 +103,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
         $this->setSectionContext('svSearchImprovements_xfes_indexes');
 
-        $phrases = $this->app()->getContentTypePhrases(true, 'specialized_search_handler_class');
+        $phrases = \XF::app()->getContentTypePhrases(true, 'specialized_search_handler_class');
 
         $definitions = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
         $definitions = ['' => ''] + $definitions;

@@ -60,7 +60,7 @@ class Search extends XFCP_Search
             $contentType = (string)$reply->getParam('type');
             if ($contentType !== '')
             {
-                $searchRepo = $this->repository('XF:Search');
+                $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
                 assert($searchRepo instanceof SearchRepo);
                 $reply->setParam('contentType', $contentType);
                 $reply->setParam('containerType', $searchRepo->getContainerTypeForContentType($contentType));
@@ -109,7 +109,7 @@ class Search extends XFCP_Search
         $query = parent::prepareSearchQuery($data, $urlConstraints);
 
         /** @var \SV\SearchImprovements\XF\Search\Search $searcher */
-        $searcher = $this->app->search();
+        $searcher = \XF::app()->search();
 
         if ($searcher->isSvAllowEmptySearch())
         {
@@ -121,7 +121,7 @@ class Search extends XFCP_Search
             {
                 $searcher->setSvAllowEmptySearch(true);
 
-                $searchRequest = new \XF\Http\Request($this->app->inputFilterer(), $data, [], []);
+                $searchRequest = new \XF\Http\Request(\XF::app()->inputFilterer(), $data, [], []);
                 $input = $searchRequest->filter([
                     'c.title_only' => 'uint',
                 ]);
@@ -171,7 +171,7 @@ class Search extends XFCP_Search
                 $emptySearch = $validSearch;
                 if ($emptySearch === null)
                 {
-                    $emptySearch = $this->em()->create('XF:Search');
+                    $emptySearch = \SV\StandardLib\Helper::createEntity(\XF\Entity\Search::class);
                     assert($emptySearch instanceof SearchEntity);
                     // extract from the URL public known information for the search result page
                     $searchId = (int)$params->get('search_id');
@@ -189,7 +189,7 @@ class Search extends XFCP_Search
                     'term'   => $emptySearch->search_query,
                 ];
 
-                $searcher = $this->app()->search();
+                $searcher = \XF::app()->search();
                 $resultSet = $searcher->getResultSet($emptySearch->search_results)->limitToViewableResults();
                 $resultsWrapped = $searcher->wrapResultsForRender($resultSet, $resultOptions);
 

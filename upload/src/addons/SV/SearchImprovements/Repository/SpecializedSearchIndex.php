@@ -63,7 +63,7 @@ class SpecializedSearchIndex extends Repository
      */
     public function getSearchHandlerDefinitions(): array
     {
-        return $this->app()->getContentTypeField('specialized_search_handler_class');
+        return \XF::app()->getContentTypeField('specialized_search_handler_class');
     }
 
     public function getSearchSource(string $contentType): SpecializedSource
