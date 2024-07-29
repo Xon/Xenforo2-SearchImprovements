@@ -530,7 +530,7 @@ class Search extends XFCP_Search
     {
         $debug = [
             'time' => round(microtime(true) - \XF::app()->container('time.granular'), 4),
-            'queries' => $this->db()->getQueryCount(),
+            'queries' => \XF::db()->getQueryCount(),
             'memory' => round(memory_get_peak_usage() / 1024 / 1024, 2)
         ];
 
