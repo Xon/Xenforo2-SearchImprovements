@@ -5,11 +5,16 @@ namespace SV\SearchImprovements\XF\Entity\XF21;
 use SV\SearchImprovements\XF\Entity\Search;
 use SV\SearchImprovements\XF\Entity\XFCP_SearchPatch;
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\StandardLib\Helper;
 use function assert;
 
 class SearchPatch extends XFCP_SearchPatch
 {
-    /** @noinspection PhpSignatureMismatchDuringInheritanceInspection */
+    /**
+     * @noinspection PhpSignatureMismatchDuringInheritanceInspection
+     * @noinspection PhpParamsInspection
+     * @noinspection PhpFullyQualifiedNameUsageInspection
+     */
     public function setupFromQuery(\XF\Search\Query\Query $query, array $constraints = [])
     {
         parent::setupFromQuery($query, $constraints);
@@ -20,7 +25,7 @@ class SearchPatch extends XFCP_SearchPatch
         $handler = $this->getContentHandler();
         if ($handler !== null && !$handler->getGroupByType())
         {
-            $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
+            $searchRepo = Helper::repository(\XF\Repository\Search::class);
             assert($searchRepo instanceof SearchRepo);
 
             $searchType = $this->search_type;

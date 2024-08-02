@@ -3,8 +3,10 @@
 namespace SV\SearchImprovements\XF\Repository\XF22;
 
 use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
+use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Repository\XFCP_SearchPatch;
+use SV\StandardLib\Helper;
+use XF\Entity\Search as SearchEntity;
 use XF\PrintableException;
 use XF\Search\Query\KeywordQuery;
 use function assert;
@@ -20,10 +22,10 @@ class SearchPatch extends XFCP_SearchPatch
         }
         try
         {
-            $length = mb_strlen((string)$query->getKeywords());
+            $length = mb_strlen($query->getKeywords());
             if ($length > 0)
             {
-                $structure = \SV\StandardLib\Helper::getEntityStructure(\XF\Entity\Search::class);
+                $structure = Helper::getEntityStructure(SearchEntity::class);
                 $maxLength = $structure->columns['search_query']['maxLength'] ?? -1;
                 if ($maxLength > 0 && $length > $maxLength)
                 {
@@ -45,8 +47,8 @@ class SearchPatch extends XFCP_SearchPatch
 
             if ($search === null)
             {
-                $search = \SV\StandardLib\Helper::createEntity(\XF\Entity\Search::class);
-                assert($search instanceof SearchEntity);
+                $search = Helper::createEntity(SearchEntity::class);
+                assert($search instanceof ExtendedSearchEntity);
                 $search->setupFromQuery($query, $constraints);
                 $search->user_id = \XF::visitor()->user_id;
                 $search->save();

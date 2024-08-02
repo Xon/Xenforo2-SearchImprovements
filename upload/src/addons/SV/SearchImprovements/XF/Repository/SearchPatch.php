@@ -1,5 +1,6 @@
 <?php
 /**
+ * @noinspection RedundantSuppression
  * @noinspection PhpFullyQualifiedNameUsageInspection
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */

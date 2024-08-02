@@ -118,7 +118,6 @@ trait DiscussionTrait
     /**
      * @param string|SqlOrder $order
      * @return SearchOrder|SqlOrder|string|null
-     * @noinspection PhpReturnDocTypeMismatchInspection
      */
     public function getTypeOrder($order)
     {

@@ -48,7 +48,7 @@ class Elasticsearch extends XFCP_Elasticsearch
      * @param Query $query
      * @param int   $maxResults
      * @return array
-     * @noinspection DuplicatedCode
+     * @noinspection PhpMissingParamTypeInspection
      */
     protected function getDslFromQuery(Query $query, $maxResults)
     {

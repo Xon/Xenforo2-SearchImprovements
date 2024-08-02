@@ -30,7 +30,7 @@ class KeywordQuery extends XFCP_KeywordQuery
     /**
      * @param MetadataConstraint[] $metadataConstraints
      */
-    public function setMetadataConstraints(array $metadataConstraints)
+    public function setMetadataConstraints(array $metadataConstraints): void
     {
         $this->metadataConstraints = $metadataConstraints;
     }

@@ -90,7 +90,7 @@ class Search extends XFCP_Search
 
     protected function getContainerContentType(): ?string
     {
-        $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
+        $searchRepo = Helper::repository(\XF\Repository\Search::class);
         assert($searchRepo instanceof SearchRepo);
         return $searchRepo->getContainerTypeForContentType($this->search_type);
     }
@@ -126,8 +126,7 @@ class Search extends XFCP_Search
             }
 
             $templater = \XF::app()->templater();
-            /** @var \XF\Repository\User $userRepo */
-            $userRepo = \SV\StandardLib\Helper::repository(\XF\Repository\User::class);
+            $userRepo = Helper::repository(\XF\Repository\User::class);
             $users = $userRepo->getUsersByNames($usernames, $notFound);
 
             $formattedUsernames = [];
@@ -172,7 +171,7 @@ class Search extends XFCP_Search
     {
         if ($key === 'thread' && is_numeric($value))
         {
-            $thread = \SV\StandardLib\Helper::find(\XF\Entity\Thread::class, (int)$value);
+            $thread = Helper::find(\XF\Entity\Thread::class, (int)$value);
             if (($thread instanceof \XF\Entity\Thread) && $thread->canView())
             {
                 return \XF::phrase('svSearchConstraint.thread_with_title', [
@@ -202,8 +201,7 @@ class Search extends XFCP_Search
     {
         if (is_array($value) && $key === 'nodes')
         {
-             /** @var \XF\Repository\Node $nodeRepo */
-            $nodeRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Node::class);
+            $nodeRepo = Helper::repository(\XF\Repository\Node::class);
             $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
             foreach ($value as $id)
             {

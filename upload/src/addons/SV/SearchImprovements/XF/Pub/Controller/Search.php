@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\StandardLib\Helper;
 use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
@@ -60,7 +61,7 @@ class Search extends XFCP_Search
             $contentType = (string)$reply->getParam('type');
             if ($contentType !== '')
             {
-                $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
+                $searchRepo = Helper::repository(\XF\Repository\Search::class);
                 assert($searchRepo instanceof SearchRepo);
                 $reply->setParam('contentType', $contentType);
                 $reply->setParam('containerType', $searchRepo->getContainerTypeForContentType($contentType));
@@ -98,6 +99,8 @@ class Search extends XFCP_Search
      * @return \XF\Search\Query\KeywordQuery|Query
      * @noinspection PhpUndefinedClassInspection
      * @noinspection PhpReturnDocTypeMismatchInspection
+     * @noinspection RedundantSuppression
+     * @noinspection PhpFullyQualifiedNameUsageInspection
      */
     protected function prepareSearchQuery(array $data, &$urlConstraints = [])
     {
@@ -171,8 +174,7 @@ class Search extends XFCP_Search
                 $emptySearch = $validSearch;
                 if ($emptySearch === null)
                 {
-                    $emptySearch = \SV\StandardLib\Helper::createEntity(\XF\Entity\Search::class);
-                    assert($emptySearch instanceof SearchEntity);
+                    $emptySearch = Helper::createEntity(SearchEntity::class);
                     // extract from the URL public known information for the search result page
                     $searchId = (int)$params->get('search_id');
                     $emptySearch->setTrusted('search_id', $searchId);

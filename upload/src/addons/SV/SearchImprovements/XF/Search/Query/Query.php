@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection RedundantSuppression
+ */
 
 namespace SV\SearchImprovements\XF\Search\Query;
 
@@ -34,7 +37,7 @@ class Query extends XFCP_Query
     /**
      * @param MetadataConstraint[] $metadataConstraints
      */
-    public function setMetadataConstraints($metadataConstraints)
+    public function setMetadataConstraints(array $metadataConstraints): void
     {
         $this->metadataConstraints = $metadataConstraints;
     }

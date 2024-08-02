@@ -1,4 +1,7 @@
 <?php
+/**
+ * @noinspection RedundantSuppression
+ */
 
 namespace SV\SearchImprovements\XF\Search\Source\XF21;
 
@@ -22,6 +25,7 @@ class MySqlFt extends XFCP_MySqlFt
      * @noinspection DuplicatedCode
      * @noinspection PhpHierarchyChecksInspection
      * @noinspection PhpSignatureMismatchDuringInheritanceInspection
+     * @noinspection PhpMissingReturnTypeInspection
      */
     public function search(Query $query, $maxResults)
     {
@@ -61,6 +65,7 @@ class MySqlFt extends XFCP_MySqlFt
         }
         try
         {
+            /** @noinspection PhpParamsInspection */
             return parent::search($query, $maxResults);
         }
         finally
