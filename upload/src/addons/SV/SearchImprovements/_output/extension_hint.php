@@ -26,32 +26,6 @@ namespace SV\SearchImprovements\SV\StandardLib
 	class XFCP_TemplaterHelper extends \SV\StandardLib\TemplaterHelper {}
 }
 
-namespace SV\SearchImprovements\XFES\Admin\Controller
-{
-	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}
-}
-
-namespace SV\SearchImprovements\XFES\Elasticsearch
-{
-	class XFCP_Api extends \XFES\Elasticsearch\Api {}
-}
-
-namespace SV\SearchImprovements\XFES\Repository
-{
-	class XFCP_IndexFailed extends \XFES\Repository\IndexFailed {}
-}
-
-namespace SV\SearchImprovements\XFES\Search\Source
-{
-	class XFCP_Elasticsearch extends \XFES\Search\Source\Elasticsearch {}
-}
-
-namespace SV\SearchImprovements\XFES\Service
-{
-	class XFCP_Optimizer extends \XFES\Service\Optimizer {}
-	class XFCP_RetryFailed extends \XFES\Service\RetryFailed {}
-}
-
 namespace SV\SearchImprovements\XF\Admin\Controller
 {
 	class XFCP_Index extends \XF\Admin\Controller\Index {}
@@ -112,4 +86,30 @@ namespace SV\SearchImprovements\XF\Search
 namespace SV\SearchImprovements\XF\Search\Source
 {
 	class XFCP_MySqlFt extends \XF\Search\Source\MySqlFt {}
+}
+
+namespace SV\SearchImprovements\XFES\Admin\Controller
+{
+	class XFCP_EnhancedSearch extends \XFES\Admin\Controller\EnhancedSearch {}
+}
+
+namespace SV\SearchImprovements\XFES\Elasticsearch
+{
+	class XFCP_Api extends \XFES\Elasticsearch\Api {}
+}
+
+namespace SV\SearchImprovements\XFES\Repository
+{
+	class XFCP_IndexFailed extends \XFES\Repository\IndexFailed {}
+}
+
+namespace SV\SearchImprovements\XFES\Search\Source
+{
+	class XFCP_Elasticsearch extends \XFES\Search\Source\Elasticsearch {}
+}
+
+namespace SV\SearchImprovements\XFES\Service
+{
+	class XFCP_Optimizer extends \XFES\Service\Optimizer {}
+	class XFCP_RetryFailed extends \XFES\Service\RetryFailed {}
 }

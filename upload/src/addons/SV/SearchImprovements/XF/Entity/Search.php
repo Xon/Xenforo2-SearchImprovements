@@ -90,7 +90,7 @@ class Search extends XFCP_Search
 
     protected function getContainerContentType(): ?string
     {
-        $searchRepo = $this->repository('XF:Search');
+        $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
         assert($searchRepo instanceof SearchRepo);
         return $searchRepo->getContainerTypeForContentType($this->search_type);
     }
@@ -127,7 +127,7 @@ class Search extends XFCP_Search
 
             $templater = \XF::app()->templater();
             /** @var \XF\Repository\User $userRepo */
-            $userRepo = $this->repository('XF:User');
+            $userRepo = \SV\StandardLib\Helper::repository(\XF\Repository\User::class);
             $users = $userRepo->getUsersByNames($usernames, $notFound);
 
             $formattedUsernames = [];
@@ -172,11 +172,11 @@ class Search extends XFCP_Search
     {
         if ($key === 'thread' && is_numeric($value))
         {
-            $thread = $this->app()->find('XF:Thread', (int)$value);
+            $thread = \SV\StandardLib\Helper::find(\XF\Entity\Thread::class, (int)$value);
             if (($thread instanceof \XF\Entity\Thread) && $thread->canView())
             {
                 return \XF::phrase('svSearchConstraint.thread_with_title', [
-                    'url'   => $this->app()->router('public')->buildLink('threads', $thread),
+                    'url'   => \XF::app()->router('public')->buildLink('threads', $thread),
                     'title' => $thread->title,
                 ]);
             }
@@ -203,7 +203,7 @@ class Search extends XFCP_Search
         if (is_array($value) && $key === 'nodes')
         {
              /** @var \XF\Repository\Node $nodeRepo */
-            $nodeRepo = $this->repository('XF:Node');
+            $nodeRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Node::class);
             $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
             foreach ($value as $id)
             {
@@ -220,7 +220,7 @@ class Search extends XFCP_Search
                     if (\XF::$versionId < 2020000)
                     {
                         $nodeTypeInfo = $node->getNodeTypeInfo();
-                        $url = $nodeTypeInfo ? $this->app()->router('public')->buildLink($nodeTypeInfo['public_route'], $this) : '';
+                        $url = $nodeTypeInfo ? \XF::app()->router('public')->buildLink($nodeTypeInfo['public_route'], $this) : '';
                         $title = $node->title;
                     }
                     else
@@ -529,8 +529,8 @@ class Search extends XFCP_Search
     protected function getSearchDebugRequestStateSnapshot(): array
     {
         $debug = [
-            'time' => round(microtime(true) - $this->app()->container('time.granular'), 4),
-            'queries' => $this->db()->getQueryCount(),
+            'time' => round(microtime(true) - \XF::app()->container('time.granular'), 4),
+            'queries' => \XF::db()->getQueryCount(),
             'memory' => round(memory_get_peak_usage() / 1024 / 1024, 2)
         ];
 

@@ -17,7 +17,7 @@ class SearchPatchFirst extends XFCP_SearchPatchFirst
         // XF bug: https://xenforo.com/community/threads/crafted-post-search-query-can-skip-post-gettypepermissionconstraints.213723/
         // rewrite searches which target the parent content into a child content search with a type constraint
         // this covers member searches, but also constructed searches
-        $searcher = $this->app()->search();
+        $searcher = \XF::app()->search();
         assert($searcher instanceof ExtendedSearcher);
 
         $searchType = $data['search_type'];
@@ -28,7 +28,7 @@ class SearchPatchFirst extends XFCP_SearchPatchFirst
             // XF does falsy check on getGroupByType result :(
             if (!$handler->getGroupByType())
             {
-                $searchRepo = $this->repository('XF:Search');
+                $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
                 assert($searchRepo instanceof SearchRepo);
                 $firstChildType = $searchRepo->getChildContentTypeForContainerType($searchType);
                 if ($firstChildType !== null && $firstChildType !== $searchType)

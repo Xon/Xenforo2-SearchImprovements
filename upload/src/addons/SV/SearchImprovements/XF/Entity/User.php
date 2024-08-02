@@ -37,7 +37,7 @@ class User extends XFCP_User
             return false;
         }
 
-        $searcher = $this->app()->search();
+        $searcher = \XF::app()->search();
         if (!$searcher->isRelevanceSupported())
         {
             return false;

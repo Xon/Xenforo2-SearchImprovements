@@ -19,7 +19,7 @@ class SearchPatch extends XFCP_SearchPatch
         $handler = $this->getContentHandler();
         if ($handler !== null && !$handler->getGroupByType())
         {
-            $searchRepo = $this->repository('XF:Search');
+            $searchRepo = \SV\StandardLib\Helper::repository(\XF\Repository\Search::class);
             assert($searchRepo instanceof SearchRepo);
 
             $searchType = $this->search_type;

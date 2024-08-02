@@ -51,7 +51,7 @@ class MySqlFt extends XFCP_MySqlFt
         }
         $query->setMetadataConstraints($constraints);
 
-        $db = $this->db();
+        $db = \XF::db();
         $wasLoggingQueries = false;
         $logSearchDebugInfo = (Globals::$capturedSearchDebugInfo ?? null) !== null;
         if ($logSearchDebugInfo)

@@ -23,7 +23,7 @@ class SearchPatch extends XFCP_SearchPatch
             $length = mb_strlen((string)$query->getKeywords());
             if ($length > 0)
             {
-                $structure = $this->em->getEntityStructure('XF:Search');
+                $structure = \SV\StandardLib\Helper::getEntityStructure(\XF\Entity\Search::class);
                 $maxLength = $structure->columns['search_query']['maxLength'] ?? -1;
                 if ($maxLength > 0 && $length > $maxLength)
                 {
@@ -45,7 +45,7 @@ class SearchPatch extends XFCP_SearchPatch
 
             if ($search === null)
             {
-                $search = \XF::em()->create('XF:Search');
+                $search = \SV\StandardLib\Helper::createEntity(\XF\Entity\Search::class);
                 assert($search instanceof SearchEntity);
                 $search->setupFromQuery($query, $constraints);
                 $search->user_id = \XF::visitor()->user_id;
