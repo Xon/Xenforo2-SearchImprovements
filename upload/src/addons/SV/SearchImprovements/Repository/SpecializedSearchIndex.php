@@ -195,7 +195,7 @@ class SpecializedSearchIndex extends Repository
     public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = false, ?array &$esQuery = null): \XF\ResultSet
     {
         $types = $query->getTypes();
-        if (!is_array($types) && count($types) !== 1)
+        if (!is_array($types) || count($types) !== 1)
         {
             throw new \LogicException('Specialized search indexes only support a single type');
         }
