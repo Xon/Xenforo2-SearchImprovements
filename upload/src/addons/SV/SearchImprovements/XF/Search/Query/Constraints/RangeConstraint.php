@@ -82,7 +82,7 @@ class RangeConstraint extends AbstractConstraint
                 $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d ", $this->values);
                 break;
             case self::MATCH_BETWEEN:
-                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} >= %d AND {$this->source}.{$this->key} <= %d ", $this->values);
+                $sqlConstraint = new SqlConstraint("{$this->source}.{$this->key} <= %d AND {$this->source}.{$this->key} >= %d ", $this->values);
                 break;
         }
 
