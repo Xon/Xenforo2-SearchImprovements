@@ -197,7 +197,7 @@ class SpecializedSearchIndex extends Repository
         $types = $query->getTypes();
         if (!is_array($types) || count($types) !== 1)
         {
-            throw new \LogicException('Specialized search indexes only support a single type');
+            throw new \LogicException('Specialized search indexes only support a single type, got:'.var_export($types, true));
         }
         $contentType = $query->getHandlerType() ?? '';
         if (strlen($contentType) === 0)
