@@ -110,6 +110,21 @@ class Setup extends AbstractSetup
         return $applied;
     }
 
+    public function postInstall(array &$stateChanges): void
+    {
+        parent::postInstall($stateChanges);
+
+        $this->checkElasticSearchOptimizableState();
+    }
+
+    public function postUpgrade($previousVersion, array &$stateChanges): void
+    {
+        $previousVersion = (int)$previousVersion;
+        parent::postUpgrade($previousVersion, $stateChanges);
+
+        $this->checkElasticSearchOptimizableState();
+    }
+
     protected function getTables(): array
     {
         return [
