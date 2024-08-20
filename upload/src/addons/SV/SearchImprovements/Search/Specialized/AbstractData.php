@@ -6,8 +6,13 @@
 namespace SV\SearchImprovements\Search\Specialized;
 
 use SV\SearchImprovements\Search\MetadataStructureEx;
+use XF\Mvc\Entity\Entity;
 use XF\Search\MetadataStructure;
 
+/**
+ * @template T of Entity
+ * @extends \XF\Search\Data\AbstractData<T>
+ */
 abstract class AbstractData extends \XF\Search\Data\AbstractData implements SpecializedData
 {
     public function getMetadataStructure(): array
