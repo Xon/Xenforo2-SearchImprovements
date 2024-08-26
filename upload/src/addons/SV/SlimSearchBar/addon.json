@@ -1,0 +1,22 @@
+{
+    "legacy_addon_id": "",
+    "title": "Slim search-bar",
+    "description": "Now with 50% less \"search\" in the search bar",
+    "version_id": 1000000,
+    "version_string": "1.0.0",
+    "dev": "Atelier Aphelion",
+    "dev_url": "https://atelieraphelion.com",
+    "faq_url": "",
+    "support_url": "https://xenforo.com/community/resources/search-improvements.6838/",
+    "extra_urls": {
+        "License": "https://atelieraphelion.com/products/search-improvements.120/copyright",
+        "Add-on site": "https://atelieraphelion.com/products/search-improvements.120/"
+    },
+    "require": {
+        "XF": [
+            "2.2.0",
+            "XenForo 2.2.0+"
+        ]
+    },
+    "icon": "fa-search"
+}

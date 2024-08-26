@@ -1,0 +1,9 @@
+{
+    "template": "PAGE_CONTAINER",
+    "description": "Reduce the 'search' wordcount in the search bar",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "#(<form action=\"{{ link\\('search/search'\\) }}\".*?data-xf-init=\"quick-search\">.*?)(<h3 class=\"menu-header\">{{ phrase\\('search'\\) }}</h3>)(.*?)(<xf:if is=\"\\$searchConstraints\">.*?</xf:if>)(.*?)(<xf:button type=\"submit\" class=\"button--primary\" icon=\"search\" />)#si",
+    "replace": "$1$3<div class=\"inputGroup inputGroup--joined\">$4<xf:button type=\"submit\" class=\"button--iconOnly\" fa=\"search\" title=\"{{ phrase('search') }}\" /></div>$5"
+}
