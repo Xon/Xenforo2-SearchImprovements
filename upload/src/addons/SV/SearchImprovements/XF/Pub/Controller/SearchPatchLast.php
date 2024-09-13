@@ -46,13 +46,13 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $query = $this->prepareSearchQuery($searchData, $constraints);
         if ($query->getErrors())
         {
-            return $this->error($query->getErrors());
+            return $this->error($query->getErrors(), 400);
         }
         /** @var ExtendedSearcher $searcher */
         $searcher = \XF::app()->search();
         if ($searcher->isQueryEmpty($query, $error))
         {
-            return $this->error($error);
+            return $this->error($error, 400);
         }
 
         return $this->runSearch($query, $constraints);
