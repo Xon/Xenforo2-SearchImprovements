@@ -84,6 +84,14 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         return $search;
     }
 
+    /**
+     * Used as a hook for getting cached search results
+     */
+    protected function svGetCachedSearch(int $searchId): ?\XF\Entity\Search
+    {
+        return Helper::find(\XF\Entity\Search::class, $searchId);
+    }
+
     public function actionResults(ParameterBag $params)
     {
         // Re-do searches from the query data, as this gives saner experiences
@@ -94,7 +102,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         // existence + ownership checks
         $visitorId = (int)$visitor->user_id;
         $searchId = (int)$params->get('search_id');
-        $search = Helper::find(\XF\Entity\Search::class, $searchId);
+        $search = $this->svGetCachedSearch($searchId);
         if ($search === null || $search->user_id !== $visitorId)
         {
             // search has expired, or the cached search is owned by someone else
