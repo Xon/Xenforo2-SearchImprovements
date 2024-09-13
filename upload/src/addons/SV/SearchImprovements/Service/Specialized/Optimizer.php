@@ -8,6 +8,10 @@ namespace SV\SearchImprovements\Service\Specialized;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
 use SV\StandardLib\Helper;
+use XF\App;
+use XFES\Elasticsearch\Api;
+use XFES\Elasticsearch\Exception as ElasticSearchException;
+use XFES\Elasticsearch\RequestException as ElasticSearchRequestException;
 
 /**
  * @Extends \XFES\Service\Optimizer
@@ -25,7 +29,7 @@ class Optimizer extends \XFES\Service\Optimizer
         return $this;
     }
 
-    public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
+    public function __construct(App $app, string $singleType, Api $es)
     {
         $this->singleType = $singleType;
         parent::__construct($app, $es);
@@ -202,11 +206,11 @@ class Optimizer extends \XFES\Service\Optimizer
         {
             $config = $this->es->getIndexInfo();
         }
-        catch (\XFES\Elasticsearch\RequestException $e)
+        catch (ElasticSearchRequestException $e)
         {
             return true;
         }
-        catch (\XFES\Elasticsearch\Exception $e)
+        catch (ElasticSearchException $e)
         {
             return false;
         }

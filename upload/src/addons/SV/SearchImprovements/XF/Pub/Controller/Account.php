@@ -5,7 +5,9 @@
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
+use SV\SearchImprovements\XF\Entity\User as ExtendedUserEntity;
 use XF\Entity\User;
+use XF\Mvc\FormAction;
 
 /**
  * @Extends \XF\Pub\Controller\Account
@@ -14,13 +16,13 @@ class Account extends XFCP_Account
 {
     /**
      * @param User $visitor
-     * @return \XF\Mvc\FormAction
+     * @return FormAction
      */
     protected function preferencesSaveProcess(User $visitor)
     {
         $form = parent::preferencesSaveProcess($visitor);
 
-        /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+        /** @var ExtendedUserEntity $visitor */
         $visitor = \XF::visitor();
         if ($visitor->hasOption('svSearchOptions') && $visitor->canChangeSearchOptions())
         {

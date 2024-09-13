@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\Search;
 
 use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use XF\Search\Query\MetadataConstraint;
+use XFES\Elasticsearch\Api;
 
 trait MetadataSearchEnhancements
 {
@@ -30,7 +31,7 @@ trait MetadataSearchEnhancements
         $this->applyMetadataConstraint($metadata, $filters, $filtersNot);
     }
 
-    public function es(): \XFES\Elasticsearch\Api
+    public function es(): Api
     {
         return $this->es;
     }

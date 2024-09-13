@@ -9,7 +9,6 @@ use SV\StandardLib\Helper;
 use XF\Entity\Search as SearchEntity;
 use XF\PrintableException;
 use XF\Search\Query\KeywordQuery;
-use function assert;
 use function is_callable;
 
 class SearchPatch extends XFCP_SearchPatch
@@ -47,8 +46,8 @@ class SearchPatch extends XFCP_SearchPatch
 
             if ($search === null)
             {
+                /** @var ExtendedSearchEntity $search */
                 $search = Helper::createEntity(SearchEntity::class);
-                assert($search instanceof ExtendedSearchEntity);
                 $search->setupFromQuery($query, $constraints);
                 $search->user_id = \XF::visitor()->user_id;
                 $search->save();

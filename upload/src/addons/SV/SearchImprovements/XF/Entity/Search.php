@@ -4,11 +4,20 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use SV\RedisCache\Repository\Redis as RedisRepo;
 use SV\SearchImprovements\Globals;
-use SV\SearchImprovements\XF\Entity\Search as SearchEntity;
-use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
+use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
+use XF\Entity\Node as NodeEntity;
+use XF\Entity\User as UserEntity;
+use XF\InputFilterer;
+use XF\Phrase;
+use XF\PreEscaped;
+use XF\Repository\Node as NodeRepo;
+use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Structure;
+use XF\Repository\User as UserRepo;
+use XF\Search\Data\AbstractData;
 use XF\Util\Arr;
 use function array_diff;
 use function array_key_exists;
@@ -26,8 +35,8 @@ use function microtime;
 use function round;
 
 /**
- * @property array|null $sv_debug_info
- * @property-read array<string,\XF\Phrase> $sv_structured_query
+ * @property array|null                $sv_debug_info
+ * @property-read array<string,Phrase> $sv_structured_query
  */
 class Search extends XFCP_Search
 {
@@ -73,7 +82,7 @@ class Search extends XFCP_Search
         'nodes',
     ];
 
-    /** @var \XF\InputFilterer */
+    /** @var InputFilterer */
     protected $inputFilterer;
 
     public function __construct(Manager $em, Structure $structure, array $values = [], array $relations = [])
@@ -90,15 +99,15 @@ class Search extends XFCP_Search
 
     protected function getContainerContentType(): ?string
     {
-        $searchRepo = Helper::repository(\XF\Repository\Search::class);
-        assert($searchRepo instanceof SearchRepo);
+        /** @var ExtendedSearchRepo $searchRepo */
+        $searchRepo = Helper::repository(SearchRepo::class);
         return $searchRepo->getContainerTypeForContentType($this->search_type);
     }
 
     /** @noinspection PhpMissingReturnTypeInspection */
     protected function formatConstraintValue(string $key, $value)
     {
-        if ($value instanceof \XF\Phrase)
+        if ($value instanceof Phrase)
         {
             return $value->render('raw');
         }
@@ -126,20 +135,20 @@ class Search extends XFCP_Search
             }
 
             $templater = \XF::app()->templater();
-            $userRepo = Helper::repository(\XF\Repository\User::class);
+            $userRepo = Helper::repository(UserRepo::class);
+            /** @var UserEntity[] $users */
             $users = $userRepo->getUsersByNames($usernames, $notFound);
 
             $formattedUsernames = [];
             foreach ($users as $user)
             {
-                assert($user instanceof \XF\Entity\User);
                 $username = $user->username;
                 if (!in_array($user->user_state, ['valid', 'email_confirm', 'email_confirm_edit', 'email_bounce'], true))
                 {
                     $user = null;
                 }
 
-                $formattedUsernames[] = new \XF\PreEscaped($templater->func('username_link', [
+                $formattedUsernames[] = new PreEscaped($templater->func('username_link', [
                     $user, false, [
                         'username' => $username
                     ]
@@ -147,7 +156,7 @@ class Search extends XFCP_Search
             }
             foreach ($notFound as $username)
             {
-                $formattedUsernames[] = new \XF\PreEscaped($templater->func('username_link', [
+                $formattedUsernames[] = new PreEscaped($templater->func('username_link', [
                     null, false, [
                         'username' => $username
                     ],
@@ -165,14 +174,14 @@ class Search extends XFCP_Search
     /**
      * @param string           $key
      * @param array|string|int $value
-     * @return \XF\Phrase|null
+     * @return Phrase|null
      */
-    protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
+    protected function getSpecializedSearchConstraintPhrase(string $key, $value): ?Phrase
     {
         if ($key === 'thread' && is_numeric($value))
         {
             $thread = Helper::find(\XF\Entity\Thread::class, (int)$value);
-            if (($thread instanceof \XF\Entity\Thread) && $thread->canView())
+            if ($thread !== null && $thread->canView())
             {
                 return \XF::phrase('svSearchConstraint.thread_with_title', [
                     'url'   => \XF::app()->router('public')->buildLink('threads', $thread),
@@ -201,8 +210,8 @@ class Search extends XFCP_Search
     {
         if (is_array($value) && $key === 'nodes')
         {
-            $nodeRepo = Helper::repository(\XF\Repository\Node::class);
-            $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable();
+            $nodeRepo = Helper::repository(NodeRepo::class);
+            $nodes = $nodeRepo->getFullNodeListCached('search')->filterViewable()->toArray();
             foreach ($value as $id)
             {
                 $id = (int)$id;
@@ -211,7 +220,7 @@ class Search extends XFCP_Search
                     continue;
                 }
 
-                /** @var \XF\Entity\Node|null $node */
+                /** @var NodeEntity|null $node */
                 $node = $nodes[$id] ?? null;
                 if ($node !== null)
                 {
@@ -243,9 +252,9 @@ class Search extends XFCP_Search
     /**
      * @param string           $key
      * @param array|string|int $value
-     * @return \XF\Phrase|null
+     * @return Phrase|null
      */
-    protected function getSearchConstraintPhrase(string $key, $value): ?\XF\Phrase
+    protected function getSearchConstraintPhrase(string $key, $value): ?Phrase
     {
         if (in_array($key, $this->svIgnoreConstraint, true))
         {
@@ -272,7 +281,7 @@ class Search extends XFCP_Search
         ]);
     }
 
-    protected function getSearchOrderPhrase(string $searchOrder): ?\XF\Phrase
+    protected function getSearchOrderPhrase(string $searchOrder): ?Phrase
     {
         $phraseKey = 'svSearchOrder.' . $searchOrder;
         $phrase = \XF::language()->getPhraseText($phraseKey);
@@ -401,7 +410,7 @@ class Search extends XFCP_Search
         $this->extractStructuredSearchConstraint($query, $searchConstraints, '');
         foreach ($query as &$queryPhrase)
         {
-            if ($queryPhrase instanceof \XF\Phrase)
+            if ($queryPhrase instanceof Phrase)
             {
                 $queryPhrase = $queryPhrase->render('raw');
             }
@@ -504,7 +513,7 @@ class Search extends XFCP_Search
         return $query;
     }
 
-    public function getContentHandler(): ?\XF\Search\Data\AbstractData
+    public function getContentHandler(): ?AbstractData
     {
         if ($this->search_type === '')
         {
@@ -561,7 +570,7 @@ class Search extends XFCP_Search
         return $debug;
     }
 
-    protected function getSearchDebugSummary(SearchEntity $search): array
+    protected function getSearchDebugSummary(ExtendedSearchEntity $search): array
     {
         $arr = [
             'summary' => [],

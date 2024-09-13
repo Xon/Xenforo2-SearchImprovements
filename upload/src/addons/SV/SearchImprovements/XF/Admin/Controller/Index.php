@@ -3,9 +3,13 @@
 namespace SV\SearchImprovements\XF\Admin\Controller;
 
 use SV\SearchImprovements\Repository\Search as SearchRepo;
+use SV\SearchImprovements\XFES\Elasticsearch\Api as ExtendedApi;
 use SV\StandardLib\Helper;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
+use XFES\Elasticsearch\Exception as ElasticSearchException;
+use XFES\Service\Configurer as ConfigurerService;
+use XFES\Service\Stats as StatsService;
 
 /**
  * @Extends \XF\Admin\Controller\Index
@@ -22,11 +26,11 @@ class Index extends XFCP_Index
         if ($reply instanceof ViewReply && SearchRepo::get()->isUsingElasticSearch())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
-            $configurer = Helper::service(\XFES\Service\Configurer ::class, null);
+            $configurer = Helper::service(ConfigurerService ::class, null);
 
             if ($configurer->hasActiveConfig() && $configurer->isEnabled())
             {
-                /** @var \SV\SearchImprovements\XFES\Elasticsearch\Api $es */
+                /** @var ExtendedApi $es */
                 $es = $configurer->getEsApi();
                 try
                 {
@@ -38,12 +42,12 @@ class Index extends XFCP_Index
 
                         if ($es->indexExists())
                         {
-                            $service = Helper::service(\XFES\Service\Stats::class, $es);
+                            $service = Helper::service(StatsService::class, $es);
                             $esStats = $service->getStats();
                         }
                     }
                 }
-                catch (\XFES\Elasticsearch\Exception $e)
+                catch (ElasticSearchException $e)
                 {
                 }
             }

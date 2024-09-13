@@ -2,9 +2,10 @@
 
 namespace SV\SearchImprovements\XF\Entity\XF21;
 
-use SV\SearchImprovements\XF\Entity\Search;
+use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Entity\XFCP_SearchPatch;
-use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
+use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
 use function assert;
 
@@ -19,14 +20,14 @@ class SearchPatch extends XFCP_SearchPatch
     {
         parent::setupFromQuery($query, $constraints);
 
-        /** @var Search $this */
+        /** @var ExtendedSearchEntity $this */
         // smooth over differences between member search & normal search
         // XF does falsy check on getGroupByType result :(
         $handler = $this->getContentHandler();
         if ($handler !== null && !$handler->getGroupByType())
         {
-            $searchRepo = Helper::repository(\XF\Repository\Search::class);
-            assert($searchRepo instanceof SearchRepo);
+            /** @var ExtendedSearchRepo $searchRepo */
+            $searchRepo = Helper::repository(SearchRepo::class);
 
             $searchType = $this->search_type;
             $firstChildType = $searchRepo->getChildContentTypeForContainerType($searchType);

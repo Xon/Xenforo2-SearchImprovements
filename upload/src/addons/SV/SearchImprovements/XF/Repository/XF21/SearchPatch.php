@@ -53,8 +53,8 @@ class SearchPatch extends XFCP_SearchPatch
 
             if ($search === null)
             {
+                /** @var ExtendedSearchEntity $search */
                 $search = Helper::createEntity(SearchEntity::class);
-                assert($search instanceof ExtendedSearchEntity);
                 $search->setupFromQuery($query, $constraints);
                 $search->user_id = \XF::visitor()->user_id;
                 $search->save();

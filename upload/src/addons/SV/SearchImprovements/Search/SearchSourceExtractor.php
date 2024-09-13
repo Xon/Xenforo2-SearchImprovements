@@ -2,9 +2,12 @@
 
 namespace SV\SearchImprovements\Search;
 
-abstract class SearchSourceExtractor extends \XF\Search\Search
+use XF\Search\Search;
+use XF\Search\Source\AbstractSource;
+
+abstract class SearchSourceExtractor extends Search
 {
-    public static function getSource(\XF\Search\Search $search): \XF\Search\Source\AbstractSource
+    public static function getSource(Search $search): AbstractSource
     {
         return $search->source;
     }

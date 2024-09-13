@@ -10,12 +10,14 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
 use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
+use XF\Mvc\Entity\Structure;
+use XF\Repository\Tag as TagRepo;
+use XF\Repository\User as UserRepo;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
 use XFES\Search\Source\Elasticsearch as ElasticsearchSource;
 use function array_filter;
 use function array_key_exists;
-use function assert;
 use function count;
 use function gettype;
 use function implode;
@@ -53,9 +55,7 @@ class Search extends Repository
             return true;
         }
 
-        $tagRepo = Helper::repository(\XF\Repository\Tag::class);
-        assert($tagRepo instanceof \XF\Repository\Tag);
-
+        $tagRepo = Helper::repository(TagRepo::class);
         foreach ($types as $type)
         {
             $tagHandler = $tagRepo->getTagHandler($type, false);
@@ -78,7 +78,7 @@ class Search extends Repository
         return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && $this->isUsingElasticSearch();
     }
 
-    public function addContainerIndexableField(\XF\Mvc\Entity\Structure $structure, string $field): void
+    public function addContainerIndexableField(Structure $structure, string $field): void
     {
         if (!array_key_exists('XF:IndexableContainer', $structure->behaviors))
         {
@@ -286,7 +286,7 @@ class Search extends Repository
             return false;
         }
 
-        $userRepo = Helper::repository(\XF\Repository\User::class);
+        $userRepo = Helper::repository(UserRepo::class);
         $matchedUsers = $userRepo->getUsersByNames($users, $notFound);
         if (count($notFound) !== 0)
         {
@@ -321,10 +321,9 @@ class Search extends Repository
         }
 
         $source = SearchSourceExtractor::getSource($search);
-        assert($source instanceof ElasticsearchSource);
 
         /** @noinspection PhpDeprecationInspection */
-        if ($source->getEsApi()->isSingleTypeIndex())
+        if ($source instanceof ElasticsearchSource && $source->getEsApi()->isSingleTypeIndex())
         {
             return $contentType . '-' . $id;
         }

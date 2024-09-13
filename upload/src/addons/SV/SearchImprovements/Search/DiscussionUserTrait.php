@@ -2,6 +2,8 @@
 
 namespace SV\SearchImprovements\Search;
 
+use XF\Mvc\Entity\Entity;
+
 /**
  * @deprecated
  */
@@ -12,7 +14,7 @@ trait DiscussionUserTrait
     /**
      * @deprecated
      */
-    protected function populateDiscussionUserMetaData(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
+    protected function populateDiscussionUserMetaData(Entity $entity, array &$metaData): void
     {
         $this->populateDiscussionMetaData($entity, $metaData);
     }

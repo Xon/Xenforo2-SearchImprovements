@@ -3,8 +3,11 @@
 namespace SV\SearchImprovements\XFES\Service;
 
 use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
+use SV\SearchImprovements\XFES\Repository\IndexFailed as ExtendedIndexFailedRepo;
+use SV\StandardLib\Helper;
 use XF\App;
 use XFES\Elasticsearch\Api as EsApi;
+use XFES\Repository\IndexFailed as IndexFailedRepo;
 use function microtime;
 
 /**
@@ -57,8 +60,8 @@ class RetryFailed extends XFCP_RetryFailed
 
     protected function svSpecializedRetry(string $type, ?float $maxRunTime = null)
     {
-        /** @var \SV\SearchImprovements\XFES\Repository\IndexFailed $indexFailedRepo */
-        $indexFailedRepo = \SV\StandardLib\Helper::repository(\XFES\Repository\IndexFailed::class);
+        /** @var ExtendedIndexFailedRepo $indexFailedRepo */
+        $indexFailedRepo = Helper::repository(IndexFailedRepo::class);
 
         $es = $this->es;
         $this->es = SpecializedSearchIndexRepo::get()->getIndexApi($type);

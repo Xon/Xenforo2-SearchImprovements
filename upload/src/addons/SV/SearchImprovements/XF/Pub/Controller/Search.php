@@ -5,7 +5,10 @@
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
-use SV\SearchImprovements\XF\Repository\Search as SearchRepo;
+use SV\SearchImprovements\XF\Entity\User as ExtendedUserEntity;
+use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
+use XF\Phrase;
+use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
 use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
@@ -24,6 +27,7 @@ class Search extends XFCP_Search
     /** @var string|null */
     protected $shimOrder = null;
 
+    /** @noinspection PhpFullyQualifiedNameUsageInspection */
     public function preDispatch($action, ParameterBag $params)
     {
         /** @var \SV\SearchImprovements\XF\Search\SearchPatch $search */
@@ -45,7 +49,7 @@ class Search extends XFCP_Search
             $input = $reply->getParam('input');
             if (empty($input['order']))
             {
-                /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+                /** @var ExtendedUserEntity $visitor */
                 $visitor = \XF::visitor();
                 $userSearchOrder = $visitor->getDefaultSearchOrder();
                 if ($userSearchOrder !== '')
@@ -61,8 +65,8 @@ class Search extends XFCP_Search
             $contentType = (string)$reply->getParam('type');
             if ($contentType !== '')
             {
-                $searchRepo = Helper::repository(\XF\Repository\Search::class);
-                assert($searchRepo instanceof SearchRepo);
+                /** @var ExtendedSearchRepo $searchRepo */
+                $searchRepo = Helper::repository(SearchRepo::class);
                 $reply->setParam('contentType', $contentType);
                 $reply->setParam('containerType', $searchRepo->getContainerTypeForContentType($contentType));
             }
@@ -76,7 +80,7 @@ class Search extends XFCP_Search
      */
     public function actionSearch()
     {
-        /** @var \SV\SearchImprovements\XF\Entity\User $visitor */
+        /** @var ExtendedUserEntity $visitor */
         $visitor = \XF::visitor();
         $userSearchOrder = $visitor->getDefaultSearchOrder();
         if ($userSearchOrder !== '')
@@ -169,7 +173,7 @@ class Search extends XFCP_Search
         if ($reply instanceof MessageReply)
         {
             $phrase = $reply->getMessage();
-            if ($phrase instanceof \XF\Phrase && $phrase->getName() === 'no_results_found')
+            if ($phrase instanceof Phrase && $phrase->getName() === 'no_results_found')
             {
                 $emptySearch = $validSearch;
                 if ($emptySearch === null)
@@ -214,8 +218,7 @@ class Search extends XFCP_Search
         }
         if ((\XF::config('svForceSearchQueryNonEmptyOnDisplay') ?? true)  && $reply instanceof ViewReply && ($search = $reply->getParam('search')))
         {
-            assert($search instanceof SearchEntity);
-            if ($search->search_query === '')
+            if ($search instanceof SearchEntity && $search->search_query === '')
             {
                 $search->setReadOnly(false);
                 $search->search_query = '*';

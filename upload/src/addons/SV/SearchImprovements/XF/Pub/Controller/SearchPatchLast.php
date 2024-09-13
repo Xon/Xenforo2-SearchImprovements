@@ -3,10 +3,11 @@
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
 use SV\SearchImprovements\XF\Search\Search as ExtendedSearcher;
+use SV\StandardLib\Helper;
 use XF\Entity\User as UserEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
-use XF\Mvc\Reply\Exception;
+use XF\Mvc\Reply\Exception as ReplyException;
 use function array_key_exists;
 use function assert;
 use function is_array;
@@ -47,8 +48,8 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         {
             return $this->error($query->getErrors());
         }
+        /** @var ExtendedSearcher $searcher */
         $searcher = \XF::app()->search();
-        assert($searcher instanceof ExtendedSearcher);
         if ($searcher->isQueryEmpty($query, $error))
         {
             return $this->error($error);
@@ -93,8 +94,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         // existence + ownership checks
         $visitorId = (int)$visitor->user_id;
         $searchId = (int)$params->get('search_id');
-        /** @var \XF\Entity\Search|null $search */
-        $search = \SV\StandardLib\Helper::find(\XF\Entity\Search::class, $searchId);
+        $search = Helper::find(\XF\Entity\Search::class, $searchId);
         if ($search === null || $search->user_id !== $visitorId)
         {
             // search has expired, or the cached search is owned by someone else
@@ -147,7 +147,11 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         return parent::actionResults($params);
     }
 
-    /** @noinspection PhpMissingReturnTypeInspection */
+    /**
+     * XF2.3+
+     * @noinspection PhpMissingReturnTypeInspection
+     * @noinspection PhpUndefinedMethodInspection
+     * */
     protected function convertShortSearchNames(array $input)
     {
         $output = parent::convertShortSearchNames($input);
@@ -167,7 +171,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
     /**
      * @return AbstractReply
-     * @throws Exception
+     * @throws ReplyException
      * @noinspection PhpMissingReturnTypeInspection
      * @noinspection PhpMissingParentCallCommonInspection
      */
@@ -182,8 +186,8 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         /** @var UserEntity $user */
         $user = $this->assertRecordExists('XF:User', $userId, null, 'requested_member_not_found');
 
+        /** @var ExtendedSearcher $searcher */
         $searcher = \XF::app()->search();
-        assert($searcher instanceof ExtendedSearcher);
 
         // map old XF member search to standard search arguments
         $input = $this->filter([

@@ -2,6 +2,8 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
+use XF\Behavior\IndexableContainer;
+
 /**
  * @Extends \NF\Tickets\Entity\TicketParticipant
  */
@@ -25,7 +27,7 @@ class TicketParticipant extends XFCP_TicketParticipant
             $ticket = $this->Ticket;
             if ($ticket !== null)
             {
-                /** @var \XF\Behavior\IndexableContainer $indexableContainer */
+                /** @var IndexableContainer $indexableContainer */
                 $indexableContainer = $ticket->getBehavior('XF:IndexableContainer');
                 if ($indexableContainer !== null)
                 {

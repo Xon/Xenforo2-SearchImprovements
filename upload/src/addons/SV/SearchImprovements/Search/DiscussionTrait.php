@@ -10,6 +10,7 @@ use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use SV\SearchImprovements\Search\Features\SearchOrder;
+use XF\Mvc\Entity\Entity;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\SqlOrder;
 use function array_filter;
@@ -44,7 +45,7 @@ trait DiscussionTrait
         return $this->svDiscussionEntityClass;
     }
 
-    protected function populateDiscussionMetaData(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
+    protected function populateDiscussionMetaData(Entity $entity, array &$metaData): void
     {
         $repo = SearchRepo::get();
         if (!$repo->isUsingElasticSearch())
@@ -70,9 +71,7 @@ trait DiscussionTrait
 
                 return $userIds;
             });
-            assert(is_array($userIds));
-
-            if (count($userIds) !== 0)
+            if (is_array($userIds) && count($userIds) !== 0)
             {
                 $metaData['discussion_user'] = $userIds;
             }
@@ -80,15 +79,14 @@ trait DiscussionTrait
 
         if ($entity instanceof ISearchableReplyCount)
         {
-            $replyCount = EntityGetterCache::getCachedValue($entity, '_svGetReplyCountForSearch', function () use ($entity): int {
+            $replyCount = (int)EntityGetterCache::getCachedValue($entity, '_svGetReplyCountForSearch', function () use ($entity): int {
                 return $entity->getReplyCountForSearch();
             });
-            assert(is_int($replyCount));
             $metaData['replies'] = $replyCount;
         }
     }
 
-    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
+    protected function setupDiscussionUserMetadata(Entity $entity, array &$metaData): void
     {
 
     }
@@ -118,6 +116,7 @@ trait DiscussionTrait
     /**
      * @param string|SqlOrder $order
      * @return SearchOrder|SqlOrder|string|null
+     * @noinspection PhpReturnDocTypeMismatchInspection
      */
     public function getTypeOrder($order)
     {

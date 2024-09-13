@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\Listener;
 
+use XF\Entity\Search as SearchEntity;
 use XF\Mvc\RouteBuiltLink;
 use XF\Mvc\Router;
 use function strtolower;
@@ -62,7 +63,7 @@ abstract class LinkBuilder
      */
     public static function fixQueryString(string &$prefix, array &$route, string &$action, &$data, array &$params, Router $router, bool &$suppressDefaultCallback)
     {
-        if ($data instanceof \XF\Entity\Search)
+        if ($data instanceof SearchEntity)
         {
             $params['q'] = $data->search_query;
             $params['t'] = $data->search_type;

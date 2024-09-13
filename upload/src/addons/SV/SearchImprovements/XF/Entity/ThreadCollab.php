@@ -2,6 +2,8 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
+use XF\Behavior\IndexableContainer;
+
 class ThreadCollab extends XFCP_ThreadCollab
 {
     public function rebuildCollaborativeThreadCounter()
@@ -11,7 +13,7 @@ class ThreadCollab extends XFCP_ThreadCollab
 
         if ($this->hasOption('svReindexThreadForCollaborators') && $this->getOption('svReindexThreadForCollaborators'))
         {
-            /** @var \XF\Behavior\IndexableContainer $indexableContainer */
+            /** @var IndexableContainer $indexableContainer */
             $indexableContainer = $this->getBehavior('XF:IndexableContainer');
             if ($indexableContainer !== null)
             {

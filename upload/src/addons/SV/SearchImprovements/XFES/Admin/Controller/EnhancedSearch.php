@@ -8,6 +8,7 @@ use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
+use SV\SearchImprovements\XFES\Elasticsearch\Api as ExtendedApi;
 use SV\StandardLib\Helper;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply;
@@ -15,7 +16,10 @@ use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Data\AbstractData;
 use XFES\Elasticsearch\Api as EsApi;
+use XFES\Elasticsearch\Exception as ElasticSearchException;
 use XFES\Service\Analyzer;
+use XFES\Service\Configurer as ConfigurerService;
+use XFES\Service\Optimizer as OptimizerService;
 use XFES\Service\Stats as StatsService;
 use function strlen;
 
@@ -27,6 +31,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     /** @var string */
     protected $svShimContentType = '';
 
+    /** @noinspection PhpFullyQualifiedNameUsageInspection */
     public function preDispatch($action, ParameterBag $params)
     {
         parent::preDispatch($action, $params);
@@ -74,7 +79,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             return $this->redirect($this->buildLink('enhanced-search'));
         }
-        /** @var \SV\SearchImprovements\XFES\Elasticsearch\Api $defaultEs */
+        /** @var ExtendedApi $defaultEs */
         $defaultEs = $configurer->getEsApi();
         $esClusterStatus = [];
         $hasTestError = null;
@@ -92,7 +97,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                     $esClusterStatus = $defaultEs->getClusterInfo();
                 }
             }
-            catch (\XFES\Elasticsearch\Exception $e) {}
+            catch (ElasticSearchException $e) {}
         }
 
         $contentType = (string)$params->get('content_type');
@@ -143,7 +148,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                         }
                     }
                 }
-                catch (\XFES\Elasticsearch\Exception $e)
+                catch (ElasticSearchException $e)
                 {
                 }
             }
@@ -178,7 +183,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
     /**
      * @param array|null $config
-     * @return \XFES\Service\Configurer|SpecializedConfigurer
+     * @return ConfigurerService|SpecializedConfigurer
      */
     protected function getConfigurer(?array $config = null)
     {
@@ -192,7 +197,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
     /**
      * @param EsApi|null $es
-     * @return \XFES\Service\Optimizer|SpecializedOptimizer
+     * @return OptimizerService|SpecializedOptimizer
      */
     protected function getOptimizer(?EsApi $es = null)
     {

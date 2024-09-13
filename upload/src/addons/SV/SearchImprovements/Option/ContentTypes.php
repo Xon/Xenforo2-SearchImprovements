@@ -2,19 +2,15 @@
 
 namespace SV\SearchImprovements\Option;
 
+use XF\Entity\Option as OptionEntity;
 use XF\Option\AbstractOption;
 
 use function class_exists;
 use function count, floatval;
 
-/**
- * Class ContentTypes
- *
- * @package SV\SearchImprovements\Option
- */
 class ContentTypes extends AbstractOption
 {
-    public static function renderOption(\XF\Entity\Option $option, array $htmlParams): string
+    public static function renderOption(OptionEntity $option, array $htmlParams): string
     {
         $choices = [];
 

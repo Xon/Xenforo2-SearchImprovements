@@ -10,6 +10,7 @@ namespace SV\SearchImprovements\XFES\Service;
  */
 class Optimizer extends XFCP_Optimizer
 {
+    /** @noinspection PhpFullyQualifiedNameUsageInspection */
     public function getExpectedMappingConfig()
     {
         /** @var \SV\SearchImprovements\XF\Search\SearchPatch $search */

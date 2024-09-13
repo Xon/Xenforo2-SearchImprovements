@@ -4,6 +4,8 @@ namespace SV\SearchImprovements\Service\Specialized;
 
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\StandardLib\Helper;
+use XF\App;
+use XFES\Elasticsearch\Api;
 use function array_values, array_merge, array_key_exists, is_array, array_replace;
 
 /**
@@ -31,7 +33,7 @@ class Analyzer extends \XFES\Service\Analyzer
     /** @var string */
     protected $singleType;
 
-    public function __construct(\XF\App $app, string $singleType, \XFES\Elasticsearch\Api $es)
+    public function __construct(App $app, string $singleType, Api $es)
     {
         $this->singleType = $singleType;
         parent::__construct($app, $es);

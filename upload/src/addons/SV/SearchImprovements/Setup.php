@@ -10,11 +10,6 @@ use XF\AddOn\StepRunnerUpgradeTrait;
 use XF\Db\Schema\Alter;
 use XF\Entity\User;
 
-/**
- * Class Setup
- *
- * @package SV\ReportImprovements
- */
 class Setup extends AbstractSetup
 {
     use InstallerHelper;

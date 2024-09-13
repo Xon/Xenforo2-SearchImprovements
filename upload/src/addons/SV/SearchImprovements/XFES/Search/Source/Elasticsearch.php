@@ -17,9 +17,7 @@ use function class_exists;
 use function is_callable;
 
 /**
- * Class Elasticsearch
- *
- * @package SV\WordCountSearch\XFES\Search\Source
+ * @extends  \XFES\Search\Source\Elasticsearch
  */
 class Elasticsearch extends XFCP_Elasticsearch
 {

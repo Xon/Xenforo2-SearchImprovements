@@ -48,8 +48,7 @@ class Search extends XFCP_Search
             if ($handler !== null)
             {
                 $childTypes = $handler->getSearchableContentTypes();
-                assert(is_array($childTypes));
-                if (count($childTypes) > 1 && in_array($containerContentType, $childTypes, true))
+                if (is_array($childTypes) && count($childTypes) > 1 && in_array($containerContentType, $childTypes, true))
                 {
                     $childTypes = array_diff($childTypes, [$containerContentType]);
                     if (count($childTypes) === 0)

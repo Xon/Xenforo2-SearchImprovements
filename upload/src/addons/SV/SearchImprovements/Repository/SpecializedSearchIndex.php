@@ -10,8 +10,10 @@ use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\XFES\Elasticsearch\Api;
 use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Repository;
+use XF\ResultSet;
 use XF\Search\Data\AbstractData;
 use XF\Search\Search as XenForoSearch;
+use XFES\Listener as XFESListener;
 use function strlen, strtolower, class_exists, is_array, count, max;
 
 class SpecializedSearchIndex extends Repository
@@ -51,7 +53,7 @@ class SpecializedSearchIndex extends Repository
         $config['index'] = $config['index'] . '_' . $contentType;
 
         /** @var Api $api */
-        $api = \XFES\Listener::getElasticsearchApi($config);
+        $api = XFESListener::getElasticsearchApi($config);
 
         return $api;
     }
@@ -192,7 +194,7 @@ class SpecializedSearchIndex extends Repository
         return $this->getQuery($search, $handler);
     }
 
-    public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = false, ?array &$esQuery = null): \XF\ResultSet
+    public function executeSearch(SpecializedQuery $query, int $maxResults = 0, bool $applyVisitorPermissions = false, ?array &$esQuery = null): ResultSet
     {
         $types = $query->getTypes() ?? [];
         if (!is_array($types) || count($types) > 1)

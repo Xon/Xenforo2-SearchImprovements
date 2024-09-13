@@ -10,8 +10,11 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\PermissionConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\TypeConstraint;
 use SV\StandardLib\Helper;
+use XF\Http\Request;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
+use XF\Search\Query\Query;
+use XF\Search\Query\TableReference;
 use function count;
 use function is_array;
 
@@ -36,7 +39,7 @@ class Message extends XFCP_Message
         $this->setupDiscussionMetadataStructure($structure);
     }
 
-    public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType): array
+    public function getTypePermissionConstraints(Query $query, $isOnlyType): array
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
         $repo = SearchRepo::get();
@@ -93,7 +96,7 @@ class Message extends XFCP_Message
         return $constraints;
     }
 
-    public function applyTypeConstraintsFromInput(\XF\Search\Query\Query $query, \XF\Http\Request $request, array &$urlConstraints)
+    public function applyTypeConstraintsFromInput(Query $query, Request $request, array &$urlConstraints)
     {
         $constraints = $request->filter([
             'c.participants' => 'str',
@@ -119,7 +122,7 @@ class Message extends XFCP_Message
     /** @noinspection PhpMissingReturnTypeInspection */
     protected function getTicketQueryTableReference()
     {
-        return new \XF\Search\Query\TableReference(
+        return new TableReference(
             'ticket',
             'xf_nf_tickets_ticket',
             'ticket.ticket_id = search_index.discussion_id'

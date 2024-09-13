@@ -14,14 +14,17 @@ use SV\SearchImprovements\XF\Search\Query\Constraints\OrConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\PermissionConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\TypeConstraint;
 use SV\StandardLib\Helper;
+use XF\Entity\Thread as ThreadEntity;
+use XF\Mvc\Entity\Entity;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\MetadataConstraint;
+use XF\Search\Query\Query;
 use function count;
 use function is_array;
 
 class Post extends XFCP_Post
 {
-    protected static $svDiscussionEntity = \XF\Entity\Thread::class;
+    protected static $svDiscussionEntity = ThreadEntity::class;
     use DiscussionTrait;
 
     protected function getMetaData(\XF\Entity\Post $entity)
@@ -33,9 +36,9 @@ class Post extends XFCP_Post
         return $metaData;
     }
 
-    protected function setupDiscussionUserMetadata(\XF\Mvc\Entity\Entity $entity, array &$metaData): void
+    protected function setupDiscussionUserMetadata(Entity $entity, array &$metaData): void
     {
-        /** @var \XF\Entity\Thread $entity */
+        /** @var ThreadEntity $entity */
         if (Helper::isAddOnActive('SV/ViewStickyThreads'))
         {
             if ($entity->sticky ?? false)
@@ -60,7 +63,7 @@ class Post extends XFCP_Post
         }
     }
 
-    public function getTypePermissionConstraints(\XF\Search\Query\Query $query, $isOnlyType)
+    public function getTypePermissionConstraints(Query $query, $isOnlyType)
     {
         $constraints = parent::getTypePermissionConstraints($query, $isOnlyType) ?? [];
         // These are only meaningful with ElasticSearch+XenForo Enhanced Search

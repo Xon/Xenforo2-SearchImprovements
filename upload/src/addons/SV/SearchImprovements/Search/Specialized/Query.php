@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\Search\Specialized;
 
 use XF\Search\Query\SqlConstraint;
+use XF\Search\Search;
 use function trim, strlen;
 
 /**
@@ -36,7 +37,7 @@ class Query extends \XF\Search\Query\Query
     protected $matchQueryType = 'best_fields';//'most_fields'
 
 
-    public function __construct(\XF\Search\Search $search, \XF\Search\Data\AbstractData $handler)
+    public function __construct(Search $search, \XF\Search\Data\AbstractData $handler)
     {
         parent::__construct($search);
 
