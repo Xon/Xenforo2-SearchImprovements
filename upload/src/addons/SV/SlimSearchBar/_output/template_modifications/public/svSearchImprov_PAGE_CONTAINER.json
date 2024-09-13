@@ -4,6 +4,6 @@
     "execution_order": 10,
     "enabled": true,
     "action": "preg_replace",
-    "find": "#(<form action=\"{{ link\\('search/search'\\) }}\".*?data-xf-init=\"quick-search\">.*?)(<h3 class=\"menu-header\">{{ phrase\\('search'\\) }}</h3>)(.*?)(<xf:if is=\"\\$searchConstraints\">.*?</xf:if>)(.*?)(<xf:button type=\"submit\" class=\"button--primary\" icon=\"search\" />)#si",
-    "replace": "$1$3<div class=\"inputGroup inputGroup--joined\">$4<xf:button type=\"submit\" class=\"button--iconOnly\" fa=\"search\" title=\"{{ phrase('search') }}\" /></div>$5"
+    "find": "#(<form action=\"{{ link\\('search/search'\\) }}\".*?data-xf-init=\"quick-search\">.*?)(<h3 class=\"menu-header\">{{ phrase\\('search'\\) }}</h3>)(.*?<xf:if is=\"\\$searchConstraints\">.*?)(\\s+</div>\\s*<xf:else\\s*/>)(.*?)(\\s+</xf:if>.*?)(<xf:button type=\"submit\" class=\"button--primary\" icon=\"search\" />)#si",
+    "replace": "$1$3\n<xf:button type=\"submit\" class=\"button--iconOnly\" fa=\"search\" title=\"{{ phrase('search') }}\" />\n$4\n<div class=\"inputGroup inputGroup--joined\">$5\n<xf:button type=\"submit\" class=\"button--iconOnly\" fa=\"search\" title=\"{{ phrase('search') }}\" />\n</div>\n$6"
 }
