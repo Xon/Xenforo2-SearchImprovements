@@ -120,6 +120,13 @@ class Setup extends AbstractSetup
         $this->checkElasticSearchOptimizableState();
     }
 
+    public function postRebuild(): void
+    {
+        parent::postRebuild();
+
+        $this->checkElasticSearchOptimizableState();
+    }
+
     protected function getTables(): array
     {
         return [
