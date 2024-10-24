@@ -4,6 +4,7 @@ namespace SV\SearchImprovements\XF\Search\Query\Constraints;
 
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\MetadataConstraint;
+use XF\Search\Query\SqlConstraint;
 use XFES\Search\Source\Elasticsearch;
 use function count;
 
@@ -31,10 +32,13 @@ class TypeConstraint extends AbstractConstraint
         ];
     }
 
-    public function asSqlConstraint()
+    /**
+     * @return SqlConstraint[]
+     */
+    public function asSqlConstraint(): array
     {
         // TODO: Implement asSqlConstraint() method.
-        return null;
+        return [];
     }
 
     /**

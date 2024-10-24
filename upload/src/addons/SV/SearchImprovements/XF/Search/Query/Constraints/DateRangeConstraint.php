@@ -60,9 +60,9 @@ class DateRangeConstraint extends RangeConstraint
     }
 
     /**
-     * @return null|SqlConstraint|SqlConstraint[]
+     * @return SqlConstraint[]
      */
-    public function asSqlConstraint()
+    public function asSqlConstraint(): array
     {
         if ($this->neverHandling === self::NEVER_IS_NA)
         {
@@ -115,15 +115,17 @@ class DateRangeConstraint extends RangeConstraint
                 break;
         }
 
-        if ($sqlConstraint !== null && count($this->tableReferences) !== 0)
+        if ($sqlConstraint === null)
         {
-            foreach ($this->tableReferences as $tableReference)
-            {
-                $sqlConstraint->addTable($tableReference);
-            }
+            return [];
         }
 
-        return $sqlConstraint;
+        foreach ($this->tableReferences as $tableReference)
+        {
+            $sqlConstraint->addTable($tableReference);
+        }
+
+        return [$sqlConstraint];
     }
 
     /**

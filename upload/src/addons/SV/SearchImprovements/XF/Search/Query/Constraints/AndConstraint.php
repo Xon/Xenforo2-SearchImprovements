@@ -28,12 +28,12 @@ class AndConstraint extends AbstractConstraint
     }
 
     /**
-     * @return null|SqlConstraint
+     * @return SqlConstraint[]
      */
-    public function asSqlConstraint(): ?SqlConstraint
+    public function asSqlConstraint(): array
     {
         // TODO: Implement asSqlConstraint() method.
-        return null;
+        return [];
     }
 
     /**

@@ -68,9 +68,9 @@ class RangeConstraint extends AbstractConstraint
     }
 
     /**
-     * @return null|SqlConstraint|SqlConstraint[]
+     * @return SqlConstraint[]
      */
-    public function asSqlConstraint()
+    public function asSqlConstraint(): array
     {
         $sqlConstraint = null;
         switch ($this->matchType)
@@ -86,15 +86,17 @@ class RangeConstraint extends AbstractConstraint
                 break;
         }
 
-        if ($sqlConstraint !== null && count($this->tableReferences) !== 0)
+        if ($sqlConstraint === null)
         {
-            foreach ($this->tableReferences as $tableReference)
-            {
-                $sqlConstraint->addTable($tableReference);
-            }
+            return [];
         }
 
-        return $sqlConstraint;
+        foreach ($this->tableReferences as $tableReference)
+        {
+            $sqlConstraint->addTable($tableReference);
+        }
+
+        return [$sqlConstraint];
     }
 
     /**

@@ -38,16 +38,8 @@ class MySqlFt extends XFCP_MySqlFt
             if ($constraint instanceof AbstractConstraint)
             {
                 unset($constraints[$key]);
-                $sqlConstraint = $constraint->asSqlConstraint();
-                if (is_array($sqlConstraint))
-                {
-                    $sqlConstraints = $sqlConstraint;
-                    foreach ($sqlConstraints as $sqlConstraint)
-                    {
-                        $query->withSql($sqlConstraint);
-                    }
-                }
-                else if ($sqlConstraint instanceof SqlConstraint)
+                $sqlConstraints = $constraint->asSqlConstraint();
+                foreach ($sqlConstraints as $sqlConstraint)
                 {
                     $query->withSql($sqlConstraint);
                 }

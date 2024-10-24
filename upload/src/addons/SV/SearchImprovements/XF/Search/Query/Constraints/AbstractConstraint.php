@@ -69,9 +69,9 @@ abstract class AbstractConstraint extends MetadataConstraint
     }
 
     /**
-     * @return null|SqlConstraint|SqlConstraint[]
+     * @return SqlConstraint[]
      */
-    abstract public function asSqlConstraint();
+    abstract public function asSqlConstraint(): array;
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
