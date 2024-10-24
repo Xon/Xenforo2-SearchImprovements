@@ -9,6 +9,7 @@ use function count;
 
 class NotConstraint extends AbstractConstraint
 {
+    public const MATCH_NOT = -46;
     public const MATCH_SV_NOT = 'svNOT';
 
     public function __construct(?MetadataConstraint $constraint)
@@ -19,7 +20,8 @@ class NotConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_SV_NOT => self::MATCH_SV_NOT,
+            self::MATCH_NOT => self::MATCH_NOT,
+            self::MATCH_SV_NOT => self::MATCH_NOT,
         ];
     }
 

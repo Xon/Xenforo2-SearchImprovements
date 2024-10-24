@@ -13,17 +13,19 @@ use function count;
  */
 class PermissionConstraint extends AbstractConstraint
 {
+    public const MATCH_PERM = -44;
     public const MATCH_SV_PERM = 'svPerm';
 
     public function __construct(?MetadataConstraint $constraint)
     {
-        parent::__construct('', $constraint, self::MATCH_SV_PERM);
+        parent::__construct('', $constraint, self::MATCH_PERM);
     }
 
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_SV_PERM => self::MATCH_SV_PERM,
+            self::MATCH_PERM => self::MATCH_PERM,
+            self::MATCH_SV_PERM => self::MATCH_PERM,
         ];
     }
 

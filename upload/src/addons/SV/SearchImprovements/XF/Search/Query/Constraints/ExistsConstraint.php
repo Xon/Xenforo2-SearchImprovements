@@ -7,6 +7,7 @@ use XFES\Search\Source\Elasticsearch;
 
 class ExistsConstraint extends AbstractConstraint
 {
+    public const MATCH_EXISTS = -47;
     public const MATCH_SV_EXISTS = 'svEXISTS';
 
     /** @noinspection PhpMissingParentConstructorInspection */
@@ -14,13 +15,14 @@ class ExistsConstraint extends AbstractConstraint
     {
         $this->key = $key;
         $this->values = [];
-        $this->setMatchType(self::MATCH_SV_EXISTS);
+        $this->setMatchType(self::MATCH_EXISTS);
     }
 
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_SV_EXISTS => self::MATCH_SV_EXISTS,
+            self::MATCH_EXISTS => self::MATCH_EXISTS,
+            self::MATCH_SV_EXISTS => self::MATCH_EXISTS,
         ];
     }
 

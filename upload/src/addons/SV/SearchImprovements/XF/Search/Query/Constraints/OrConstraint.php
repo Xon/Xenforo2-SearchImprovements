@@ -10,17 +10,19 @@ use function count;
 
 class OrConstraint extends AbstractConstraint
 {
+    public const MATCH_OR = -45;
     public const MATCH_SV_OR = 'svOR';
 
     public function __construct(?MetadataConstraint ...$constraints)
     {
-        parent::__construct('', $constraints, self::MATCH_SV_OR);
+        parent::__construct('', $constraints, self::MATCH_OR);
     }
 
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_SV_OR => self::MATCH_SV_OR,
+            self::MATCH_OR => self::MATCH_OR,
+            self::MATCH_SV_OR => self::MATCH_OR,
         ];
     }
 

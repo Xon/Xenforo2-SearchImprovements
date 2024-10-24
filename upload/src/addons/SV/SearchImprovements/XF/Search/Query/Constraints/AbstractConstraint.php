@@ -46,6 +46,9 @@ abstract class AbstractConstraint extends MetadataConstraint
         $this->values = $values;
     }
 
+    /**
+     * @return array<int|string, int>
+     */
     abstract protected function getAllowedMatchTypes(): array;
 
     /**

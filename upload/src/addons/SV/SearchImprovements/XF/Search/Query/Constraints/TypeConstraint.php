@@ -9,6 +9,7 @@ use function count;
 
 class TypeConstraint extends AbstractConstraint
 {
+    public const MATCH_TYPE = -43;
     public const MATCH_SV_TYPE = 'svTYPE';
 
     /**
@@ -18,14 +19,15 @@ class TypeConstraint extends AbstractConstraint
 
     public function __construct(?string ...$contentTypes)
     {
-        parent::__construct('', $contentTypes, self::MATCH_SV_TYPE);
+        parent::__construct('', $contentTypes, self::MATCH_TYPE);
     }
 
 
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_SV_TYPE => self::MATCH_SV_TYPE,
+            self::MATCH_TYPE => self::MATCH_TYPE,
+            self::MATCH_SV_TYPE => self::MATCH_TYPE,
         ];
     }
 
