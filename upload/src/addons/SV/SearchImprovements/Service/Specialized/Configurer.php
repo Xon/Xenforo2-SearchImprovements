@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\Service\Specialized;
 
 use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
+use SV\SearchImprovements\Search\Specialized\AbstractData;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\StandardLib\Helper;
@@ -16,11 +17,14 @@ class Configurer extends \XFES\Service\Configurer
 {
     /** @var string */
     protected $singleType;
+    /** @var AbstractData|null */
+    protected $searchHandler;
 
-    public function __construct(App $app, string $singleType, $config = null)
+    public function __construct(App $app, string $singleType, $config = null, ?AbstractData $searchHandler = null)
     {
         $this->app = $app;
         $this->singleType = $singleType;
+        $this->searchHandler = $searchHandler;
         $config = $config ?? [];
         if (is_array($config))
         {
@@ -55,17 +59,17 @@ class Configurer extends \XFES\Service\Configurer
 
     public function getAnalyzerConfig(): array
     {
-        return Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es)->getCurrentConfig();
+        return Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler)->getCurrentConfig();
     }
 
     public function initializeIndex(array $analyzerConfig)
     {
         $this->purgeIndex();
 
-        $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es);
+        $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler);
         $analyzerDsl = $analyzer->getAnalyzerFromConfig($analyzerConfig);
 
-        $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es);
+        $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es, $this->searchHandler);
         $optimizer->optimize($analyzerDsl);
     }
 }

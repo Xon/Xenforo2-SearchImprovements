@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use SV\SearchImprovements\Search\Specialized\AbstractData;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\StandardLib\Helper;
 use XF\App;
@@ -32,10 +33,13 @@ class Analyzer extends \XFES\Service\Analyzer
     protected $maxNgramSize = 32;
     /** @var string */
     protected $singleType;
+    /** @var AbstractData|null */
+    protected $searchHandler;
 
-    public function __construct(App $app, string $singleType, Api $es)
+    public function __construct(App $app, string $singleType, Api $es, ?AbstractData $searchHandler = null)
     {
         $this->singleType = $singleType;
+        $this->searchHandler = $searchHandler;
         parent::__construct($app, $es);
 
         if ($this->getEsApi()->majorVersion() < 7)
@@ -182,7 +186,7 @@ class Analyzer extends \XFES\Service\Analyzer
 
         if (!$this->es->indexExists())
         {
-            $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es);
+            $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es, $this->searchHandler);
             $optimizer->optimize($settings, true);
 
             return;

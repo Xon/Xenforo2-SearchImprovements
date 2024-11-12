@@ -30,6 +30,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 {
     /** @var string */
     protected $svShimContentType = '';
+    /** @var AbstractData|null */
+    protected $svSearchHandler = null;
 
     /** @noinspection PhpFullyQualifiedNameUsageInspection */
     public function preDispatch($action, ParameterBag $params)
@@ -40,17 +42,22 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $search = \XF::app()->search();
         $search->specializedIndexProxying = false;
 
-        $contentType = $params->get('content_type');
-        if ($contentType)
-        {
-            $this->assertValidSpecializedContentType($contentType);
-            $this->request()->set('content_type', $contentType);
-        }
-
-        $contentType = $this->filter('content_type', 'str');
+        $contentType = (string)$params->get('content_type');
         if ($contentType !== '')
         {
-            $this->assertValidSpecializedContentType($contentType);
+            $this->svSearchHandler = $this->assertValidSpecializedContentType($contentType);
+            $contentType = $this->svSearchHandler->getContentType();
+            $this->request()->set('content_type', $contentType);
+        }
+        else
+        {
+            $contentType = $this->filter('content_type', 'str');
+        }
+
+        if ($contentType !== '')
+        {
+            $this->svSearchHandler = $this->assertValidSpecializedContentType($contentType);
+            $contentType = $this->svSearchHandler->getContentType();
             $this->svShimContentType = $contentType;
             LinkBuilder::$contentType = $contentType;
         }
@@ -73,18 +80,25 @@ class EnhancedSearch extends XFCP_EnhancedSearch
 
     public function actionIndexes(ParameterBag $params): AbstractReply
     {
+        $this->svSearchHandler = null;
         $this->svShimContentType = '';
         $configurer = $this->getConfigurer();
         if (!$configurer->isEnabled() || !$configurer->hasActiveConfig())
         {
             return $this->redirect($this->buildLink('enhanced-search'));
         }
+        $contentType = (string)$params->get('content_type');
+        if (strlen($contentType) !== 0)
+        {
+            return $this->actionSpecialized($params);
+        }
+
+        $this->setSectionContext('svSearchImprovements_xfes_indexes');
+
         /** @var ExtendedApi $defaultEs */
         $defaultEs = $configurer->getEsApi();
         $esClusterStatus = [];
-        $hasTestError = null;
-        $version = null;
-        $testError = null;
+        $defaultIndex = $testError = null;
         if ($configurer->hasActiveConfig())
         {
             try
@@ -98,71 +112,20 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                 }
             }
             catch (ElasticSearchException $e) {}
-        }
 
-        $contentType = (string)$params->get('content_type');
-        if (strlen($contentType) !== 0)
+            $defaultIndex = $this->analyzeIndex('', '');
+            $defaultIndex['phrase'] = \XF::phraseDeferred('svSearchImprovements_default_index');
+        }
+        $indexes = [ '' => $defaultIndex];
+        try
         {
-            return $this->actionSpecialized($params);
+            $indexes = $this->analyzeIndexes($indexes);
         }
-
-        $this->setSectionContext('svSearchImprovements_xfes_indexes');
-
-        $phrases = \XF::app()->getContentTypePhrases(true, 'specialized_search_handler_class');
-
-        $definitions = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
-        $definitions = ['' => ''] + $definitions;
-        $indexes = [];
-        foreach ($definitions as $contentType => $definition)
+        finally
         {
-            $this->svShimContentType = $contentType;
-            $stats = null;
-            $isOptimizable = false;
-            $configurer = $this->getConfigurer();
-
-            if ($configurer->hasActiveConfig())
-            {
-                $es = $configurer->getEsApi();
-
-                try
-                {
-                    if ($contentType !== '')
-                    {
-                        $version = $es->version();
-                        $hasTestError = $es->test($testError);
-                    }
-
-                    if ($version && $hasTestError)
-                    {
-                        if ($es->indexExists())
-                        {
-                            $isOptimizable = $this->getOptimizer($es)->isOptimizable();
-
-                            /** @var StatsService $statsService */
-                            $statsService = Helper::service(StatsService::class, $es);
-                            $stats = $statsService->getStats();
-                        }
-                        else
-                        {
-                            $isOptimizable = true;
-                        }
-                    }
-                }
-                catch (ElasticSearchException $e)
-                {
-                }
-            }
-
-            $indexes[$contentType] = [
-                'phrase'        => $phrases[$contentType] ?? $contentType,
-                'version'       => $version,
-                'testError'     => $testError,
-                'stats'         => $stats,
-                'isOptimizable' => $isOptimizable,
-            ];
+            $this->svSearchHandler = null;
+            $this->svShimContentType = '';
         }
-        $indexes['']['phrase'] = \XF::phraseDeferred('svSearchImprovements_default_index');
-        $this->svShimContentType = '';
 
         $viewParams = [
             'es' => $defaultEs,
@@ -173,6 +136,74 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         ];
 
         return $this->view('', 'svSearchImprovements_xfes_indexes', $viewParams);
+    }
+
+    protected function analyzeIndexes(array $indexes): array
+    {
+        $phrases = \XF::app()->getContentTypePhrases(true, 'specialized_search_handler_class');
+
+        $definitions = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
+        foreach ($definitions as $contentType => $definition)
+        {
+            $descriptor = $this->analyzeIndex($contentType, $definition);
+            $id = $descriptor['id'];
+            $descriptor['phrase'] = $descriptor['phrase'] ?? $phrases[$id] ?? $phrases[$contentType] ?? $contentType;
+            $indexes[$id] = $descriptor;
+        }
+
+        return $indexes;
+    }
+
+    /**
+     * @param string        $contentType
+     * @param mixed $definition
+     * @return array|null
+     * @noinspection PhpUnusedParameterInspection
+     * @noinspection PhpMissingParamTypeInspection
+     */
+    protected function analyzeIndex(string $contentType, $definition): ?array
+    {
+        $this->svSearchHandler = null;
+        $this->svShimContentType = $contentType;
+        $version = $testError = $stats = null;
+        $isOptimizable = false;
+        $configurer = $this->getConfigurer();
+
+        if ($configurer->hasActiveConfig())
+        {
+            $es = $configurer->getEsApi();
+
+            try
+            {
+                $version = $es->version();
+                $hasTestError = $es->test($testError);
+
+                if ($version && $hasTestError)
+                {
+                    if ($es->indexExists())
+                    {
+                        $isOptimizable = $this->getOptimizer($es)->isOptimizable();
+
+                        /** @var StatsService $statsService */
+                        $statsService = Helper::service(StatsService::class, $es);
+                        $stats = $statsService->getStats();
+                    }
+                    else
+                    {
+                        $isOptimizable = true;
+                    }
+                }
+            }
+            catch (ElasticSearchException $e) {}
+        }
+
+        return [
+            'id'            => $contentType,
+            'version'       => $version,
+            'testError'     => $testError,
+            'stats'         => $stats,
+            'isOptimizable' => $isOptimizable,
+        ];
     }
 
     /** @noinspection PhpUnusedParameterInspection */
@@ -189,7 +220,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     {
         if ($this->svShimContentType !== '')
         {
-            return Helper::service(SpecializedConfigurer::class, $this->svShimContentType, $config);
+            return Helper::service(SpecializedConfigurer::class, $this->svShimContentType, $config, $this->svSearchHandler);
         }
 
         return parent::getConfigurer($config);
@@ -205,7 +236,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
 
-            return Helper::service(SpecializedOptimizer::class, $this->svShimContentType, $es);
+            return Helper::service(SpecializedOptimizer::class, $this->svShimContentType, $es, $this->svSearchHandler);
         }
 
         return parent::getOptimizer($es);
@@ -221,7 +252,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         {
             $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
 
-            return Helper::service(SpecializedAnalyzer::class, $this->svShimContentType, $es);
+            return Helper::service(SpecializedAnalyzer::class, $this->svShimContentType, $es, $this->svSearchHandler);
         }
 
         return parent::getAnalyzer($es);

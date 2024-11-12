@@ -12,6 +12,7 @@ use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use XF\Mvc\Entity\Entity;
 use XF\Search\Data\AbstractData;
 use XF\Search\Source\AbstractSource;
+use function array_key_exists;
 use function is_array, in_array, class_exists;
 
 /**
@@ -19,7 +20,7 @@ use function is_array, in_array, class_exists;
  */
 class SearchPatch extends XFCP_SearchPatch
 {
-    /** @var string|null */
+    /** @var array|null */
     public $specializedTypeFilter = null;
     /** @var bool */
     public $specializedIndexProxying = false;
@@ -50,9 +51,9 @@ class SearchPatch extends XFCP_SearchPatch
      */
     public function isValidContentType($type)
     {
-        if ($this->specializedTypeFilter !== null)
+        if (is_array($this->specializedTypeFilter))
         {
-            return $this->specializedTypeFilter === $type &&
+            return array_key_exists($type, $this->specializedTypeFilter) &&
                    isset($this->additionalTypes[$type]) &&
                    class_exists($this->additionalTypes[$type]);
         }

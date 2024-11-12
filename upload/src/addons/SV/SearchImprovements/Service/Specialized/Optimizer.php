@@ -5,13 +5,17 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use SV\SearchImprovements\Search\Specialized\AbstractData;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
+use SV\SearchImprovements\XF\Search\SearchPatch;
 use SV\StandardLib\Helper;
 use XF\App;
+use XF\Search\MetadataStructure;
 use XFES\Elasticsearch\Api;
 use XFES\Elasticsearch\Exception as ElasticSearchException;
 use XFES\Elasticsearch\RequestException as ElasticSearchRequestException;
+use function is_callable;
 
 /**
  * @Extends \XFES\Service\Optimizer
@@ -20,6 +24,8 @@ class Optimizer extends \XFES\Service\Optimizer
 {
     /** @var string */
     protected $singleType;
+    /** @var AbstractData|null */
+    protected $searchHandler;
     /** @var bool  */
     protected $ngramStripeWhiteSpace = true;
 
@@ -29,19 +35,20 @@ class Optimizer extends \XFES\Service\Optimizer
         return $this;
     }
 
-    public function __construct(App $app, string $singleType, Api $es)
+    public function __construct(App $app, string $singleType, Api $es, ?AbstractData $searchHandler = null)
     {
         $this->singleType = $singleType;
+        $this->searchHandler = $searchHandler;
         parent::__construct($app, $es);
     }
 
     public function optimize(array $settings = [], $updateConfig = false)
     {
-        $configurer = Helper::service(SpecializedConfigurer::class, $this->singleType, $this->es);
+        $configurer = Helper::service(SpecializedConfigurer::class, $this->singleType, $this->es, $this->searchHandler);
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
-            $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es);
+            $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler);
             // seed config from the main index
             if (!$this->es->indexExists())
             {
@@ -109,20 +116,39 @@ class Optimizer extends \XFES\Service\Optimizer
         return $mapping;
     }
 
-    public function getExpectedMappingConfig(): array
+    protected function getTypeHandlerAndMapping(): array
     {
-        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-        \XF::app()->search()->specializedTypeFilter = $this->singleType;
+        /** @var SearchPatch $search */
+        $search = \XF::app()->search();
+        $typeHandler = $this->searchHandler;
+        if ($typeHandler !== null && is_callable([$typeHandler, 'getSpecializedTypeFilter']))
+        {
+            $search->specializedTypeFilter = $typeHandler->getSpecializedTypeFilter();
+        }
+        else
+        {
+            $search->specializedTypeFilter = [$this->singleType => true];
+            $typeHandler = \XF::app()->search()->getValidHandlers()[$this->singleType] ?? null;
+        }
         try
         {
-            $typeHandler = \XF::app()->search()->getValidHandlers()[$this->singleType] ?? null;
             $expectedMapping = parent::getExpectedMappingConfig();
         }
         finally
         {
-            \XF::app()->search()->specializedTypeFilter = null;
+            $search->specializedTypeFilter = null;
         }
 
+        return [$typeHandler, $expectedMapping];
+    }
+
+    public function getExpectedMappingConfig(): array
+    {
+        /**
+         * @var $typeHandler ?AbstractData
+         * @var $expectedMapping array
+         */
+        [$typeHandler, $expectedMapping] = $this->getTypeHandlerAndMapping();
 
         if ($this->es->majorVersion() >= 5)
         {
