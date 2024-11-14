@@ -6,6 +6,7 @@ use SV\RedisCache\Repository\Redis as RedisRepo;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
+use XF\Entity\ConversationMaster as ConversationMasterEntity;
 use XF\Entity\Node as NodeEntity;
 use XF\Entity\User as UserEntity;
 use XF\InputFilterer;
@@ -190,6 +191,20 @@ class Search extends XFCP_Search
             }
 
             return \XF::phrase('svSearchConstraint.thread_no_title');
+        }
+
+        if ($key === 'conversation' && is_numeric($value))
+        {
+            $conversation = Helper::find(ConversationMasterEntity::class, (int)$value);
+            if ($conversation !== null && $conversation->canView())
+            {
+                return \XF::phrase(\XF::$versionId >= 2030000 ? 'svSearchConstraint.direct_message_with_title' : 'svSearchConstraint.conversation_with_title', [
+                    'url'   => \XF::app()->router('public')->buildLink('conversation', $conversation),
+                    'title' => $conversation->title,
+                ]);
+            }
+
+            return \XF::phrase(\XF::$versionId >= 2030000 ? 'svSearchConstraint.direct_message_no_title' :'svSearchConstraint.conversation_no_title');
         }
 
         if ($key === 'replies_upper' && $value === '0')
