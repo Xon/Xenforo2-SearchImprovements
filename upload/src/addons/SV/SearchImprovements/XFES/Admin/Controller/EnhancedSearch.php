@@ -113,6 +113,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
             }
             catch (ElasticSearchException $e) {}
 
+            $this->svSearchHandler = null;
+            $this->svShimContentType = '';
             $defaultIndex = $this->analyzeIndex('', '');
             $defaultIndex['phrase'] = \XF::phraseDeferred('svSearchImprovements_default_index');
         }
@@ -145,6 +147,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         $definitions = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
         foreach ($definitions as $contentType => $definition)
         {
+            $this->svSearchHandler = null;
+            $this->svShimContentType = $contentType;
             $descriptor = $this->analyzeIndex($contentType, $definition);
             $id = $descriptor['id'];
             $descriptor['phrase'] = $descriptor['phrase'] ?? $phrases[$id] ?? $phrases[$contentType] ?? $contentType;
@@ -163,8 +167,6 @@ class EnhancedSearch extends XFCP_EnhancedSearch
      */
     protected function analyzeIndex(string $contentType, $definition): ?array
     {
-        $this->svSearchHandler = null;
-        $this->svShimContentType = $contentType;
         $version = $testError = $stats = null;
         $isOptimizable = false;
         $configurer = $this->getConfigurer();

@@ -27,7 +27,9 @@ class Optimizer extends \XFES\Service\Optimizer
     /** @var AbstractData|null */
     protected $searchHandler;
     /** @var bool  */
-    protected $ngramStripeWhiteSpace = true;
+    protected    $ngramStripeWhiteSpace = true;
+    /** @var bool */
+    protected    $isSimpleTypeMapping = true;
 
     protected function ngramStripWhiteSpace(bool $value = true): self
     {
@@ -91,6 +93,11 @@ class Optimizer extends \XFES\Service\Optimizer
 
     protected function getBaseMapping(): array
     {
+        if (!$this->isSimpleTypeMapping)
+        {
+            return parent::getBaseMapping();
+        }
+
         $version = $this->es->majorVersion();
         //$textType = ($version >= 5 ? 'text' : 'string');
         $mapping = [
@@ -130,6 +137,7 @@ class Optimizer extends \XFES\Service\Optimizer
             $search->specializedTypeFilter = [$this->singleType => true];
             $typeHandler = \XF::app()->search()->getValidHandlers()[$this->singleType] ?? null;
         }
+        $this->isSimpleTypeMapping = $typeHandler !== null ? $typeHandler->isSimpleTypeMapping() : true;
         try
         {
             $expectedMapping = parent::getExpectedMappingConfig();
@@ -150,6 +158,19 @@ class Optimizer extends \XFES\Service\Optimizer
          */
         [$typeHandler, $expectedMapping] = $this->getTypeHandlerAndMapping();
 
+        if ($typeHandler !== null)
+        {
+            if (!$this->isSimpleTypeMapping)
+            {
+                return $expectedMapping;
+            }
+            $mdConfig = $typeHandler->getMetadataStructure();
+        }
+        else
+        {
+            $mdConfig = [];
+        }
+
         if ($this->es->majorVersion() >= 5)
         {
             $textType = 'text';
@@ -160,9 +181,6 @@ class Optimizer extends \XFES\Service\Optimizer
             $textType = 'string';
             $keywordType = 'string';
         }
-
-        $mdConfig = $typeHandler !== null ? $typeHandler->getMetadataStructure() : [];
-
         $apply = function (array &$properties) use ($textType, $keywordType, $mdConfig) {
             foreach ($properties as $key => &$mdColumn)
             {

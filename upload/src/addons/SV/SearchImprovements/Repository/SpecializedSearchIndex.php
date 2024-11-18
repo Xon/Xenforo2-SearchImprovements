@@ -28,13 +28,13 @@ class SpecializedSearchIndex extends Repository
         return Helper::repository(self::class);
     }
 
-    public function getIndexApi(string $contentType, array $config = []): Api
+    /**
+     * @param string|array<string> $contentType
+     * @param array  $config
+     * @return Api
+     */
+    public function getIndexApi($contentType, array $config = [], bool $allowDefaultIndex = false): Api
     {
-        if (strlen($contentType) === 0)
-        {
-            throw new \LogicException('Expected content type');
-        }
-
         $config = (\XF::app()->options()->xfesConfig ?? []) + $config;
 
         if (strlen($config['index'] ?? '') === 0)
@@ -45,12 +45,37 @@ class SpecializedSearchIndex extends Repository
                 $config['index'] = strtolower($xfConfig['db']['dbname']);
             }
         }
-        if (strlen($config['index'] ?? '') === 0)
+
+        $defaultIndex = $config['index'] ?? '';
+        if (strlen($defaultIndex) === 0)
         {
             throw new \LogicException('ElasticSearch index name can not be derived');
         }
 
-        $config['index'] = $config['index'] . '_' . $contentType;
+        $prefix = $defaultIndex . '_';
+        if (is_array($contentType))
+        {
+            $index = [];
+            foreach ($contentType as $fragment)
+            {
+                if (!$allowDefaultIndex && strlen($fragment) === 0)
+                {
+                    throw new \LogicException('Expected content type');
+                }
+                $index[] = $fragment !== '' ? $prefix . $fragment : $defaultIndex;
+            }
+            $index = array_unique($index);
+            $indexName = implode(',', $index);
+        }
+        else
+        {
+            if (!$allowDefaultIndex && strlen($contentType) === 0)
+            {
+                throw new \LogicException('Expected content type');
+            }
+            $indexName = $contentType !== '' ? $prefix . $contentType : $defaultIndex;
+        }
+        $config['index'] = $indexName;
 
         /** @var Api $api */
         $api = XFESListener::getElasticsearchApi($config);

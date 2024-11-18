@@ -23,6 +23,11 @@ abstract class AbstractData extends \XF\Search\Data\AbstractData implements Spec
         return $structure->getFields();
     }
 
+    public function isSimpleTypeMapping(): bool
+    {
+        return true;
+    }
+
     public function canReassignContent(): bool
     {
         return false;
