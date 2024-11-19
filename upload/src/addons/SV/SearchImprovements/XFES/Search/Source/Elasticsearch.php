@@ -326,6 +326,12 @@ class Elasticsearch extends XFCP_Elasticsearch
         $logSearchDebugInfo = (Globals::$capturedSearchDebugInfo ?? null) !== null;
         if ($logSearchDebugInfo)
         {
+            $index = explode(',', $this->es->getConfig()['index'] ?? '');
+            if (count($index) > 1)
+            {
+                Globals::$capturedSearchDebugInfo['index'] = $index;
+            }
+
             Globals::$capturedSearchDebugInfo['es_dsl'] = $dsl;
         }
 
