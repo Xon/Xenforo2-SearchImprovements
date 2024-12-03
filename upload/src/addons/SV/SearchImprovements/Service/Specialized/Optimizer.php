@@ -41,7 +41,7 @@ class Optimizer extends \XFES\Service\Optimizer
     {
         $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($singleType);
 
-        return Helper::service(self::class, \XF::app(), $singleType, $es, $searchHandler);
+        return Helper::service(self::class, $singleType, $es, $searchHandler);
     }
 
     public function __construct(App $app, string $singleType, Api $es, ?AbstractData $searchHandler = null)

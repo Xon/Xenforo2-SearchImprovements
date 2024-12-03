@@ -22,7 +22,7 @@ class Configurer extends \XFES\Service\Configurer
 
     public static function get(string $singleType, $config = null, ?AbstractData $searchHandler = null): self
     {
-        return Helper::service(self::class, \XF::app(), $singleType, $config, $searchHandler);
+        return Helper::service(self::class, $singleType, $config, $searchHandler);
     }
 
     public function __construct(App $app, string $singleType, $config = null, ?AbstractData $searchHandler = null)
