@@ -196,7 +196,7 @@ class Source extends Elasticsearch
         {
             throw new \LogicException('Specialized index requires an explicit type to truncate');
         }
-        $optimizer = Helper::service(SpecializedOptimizer::class, $type, $this->es);
+        $optimizer = SpecializedOptimizer::get($type, $this->es);
         $optimizer->optimize([], true);
     }
 }

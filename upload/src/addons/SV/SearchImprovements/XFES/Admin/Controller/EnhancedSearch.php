@@ -236,9 +236,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     {
         if ($this->svShimContentType !== '')
         {
-            $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
-
-            return Helper::service(SpecializedOptimizer::class, $this->svShimContentType, $es, $this->svSearchHandler);
+            return SpecializedOptimizer::get($this->svShimContentType, $es, $this->svSearchHandler);
         }
 
         return parent::getOptimizer($es);
@@ -252,9 +250,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     {
         if ($this->svShimContentType !== '')
         {
-            $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($this->svShimContentType);
-
-            return Helper::service(SpecializedAnalyzer::class, $this->svShimContentType, $es, $this->svSearchHandler);
+            return SpecializedAnalyzer::get($this->svShimContentType, $es, $this->svSearchHandler);
         }
 
         return parent::getAnalyzer($es);

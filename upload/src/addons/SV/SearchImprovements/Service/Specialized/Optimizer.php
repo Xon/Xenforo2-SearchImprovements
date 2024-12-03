@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\Service\Specialized;
 
+use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Search\Specialized\AbstractData;
 use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
@@ -37,6 +38,13 @@ class Optimizer extends \XFES\Service\Optimizer
         return $this;
     }
 
+    public static function get(string $singleType, ?Api $es = null, ?AbstractData $searchHandler = null): self
+    {
+        $es = $es ?? SpecializedSearchIndexRepo::get()->getIndexApi($singleType);
+
+        return Helper::service(self::class, \XF::app(), $singleType, $es, $searchHandler);
+    }
+
     public function __construct(App $app, string $singleType, Api $es, ?AbstractData $searchHandler = null)
     {
         $this->singleType = $singleType;
@@ -46,11 +54,11 @@ class Optimizer extends \XFES\Service\Optimizer
 
     public function optimize(array $settings = [], $updateConfig = false)
     {
-        $configurer = Helper::service(SpecializedConfigurer::class, $this->singleType, $this->es, $this->searchHandler);
+        $configurer = SpecializedConfigurer::get($this->singleType, $this->es, $this->searchHandler);
         if (!$settings)
         {
             $analyzerConfig = $configurer->getAnalyzerConfig();
-            $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler);
+            $analyzer = SpecializedAnalyzer::get($this->singleType, $this->es, $this->searchHandler);
             // seed config from the main index
             if (!$this->es->indexExists())
             {

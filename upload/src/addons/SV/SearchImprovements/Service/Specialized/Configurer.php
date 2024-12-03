@@ -20,6 +20,11 @@ class Configurer extends \XFES\Service\Configurer
     /** @var AbstractData|null */
     protected $searchHandler;
 
+    public static function get(string $singleType, $config = null, ?AbstractData $searchHandler = null): self
+    {
+        return Helper::service(self::class, \XF::app(), $singleType, $config, $searchHandler);
+    }
+
     public function __construct(App $app, string $singleType, $config = null, ?AbstractData $searchHandler = null)
     {
         $this->app = $app;
@@ -34,7 +39,7 @@ class Configurer extends \XFES\Service\Configurer
         parent::__construct($app, $config);
     }
 
-    public function purgeIndex()
+    public function purgeIndex(): void
     {
         if ($this->es->indexExists())
         {
@@ -59,17 +64,17 @@ class Configurer extends \XFES\Service\Configurer
 
     public function getAnalyzerConfig(): array
     {
-        return Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler)->getCurrentConfig();
+        return SpecializedAnalyzer::get($this->singleType, $this->es, $this->searchHandler)->getCurrentConfig();
     }
 
-    public function initializeIndex(array $analyzerConfig)
+    public function initializeIndex(array $analyzerConfig): void
     {
         $this->purgeIndex();
 
-        $analyzer = Helper::service(SpecializedAnalyzer::class, $this->singleType, $this->es, $this->searchHandler);
+        $analyzer = SpecializedAnalyzer::get($this->singleType, $this->es, $this->searchHandler);
         $analyzerDsl = $analyzer->getAnalyzerFromConfig($analyzerConfig);
 
-        $optimizer = Helper::service(SpecializedOptimizer::class, $this->singleType, $this->es, $this->searchHandler);
+        $optimizer = SpecializedOptimizer::get($this->singleType, $this->es, $this->searchHandler);
         $optimizer->optimize($analyzerDsl);
     }
 }
