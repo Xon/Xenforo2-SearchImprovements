@@ -5,10 +5,8 @@ namespace SV\SearchImprovements\XF\Search\Source\XF22;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use XF\Search\Query\KeywordQuery;
-use XF\Search\Query\SqlConstraint;
 use SV\SearchImprovements\XF\Search\Source\XFCP_MySqlFt;
 use function end;
-use function is_array;
 
 class MySqlFt extends XFCP_MySqlFt
 {

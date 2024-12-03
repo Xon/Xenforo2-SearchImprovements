@@ -4,7 +4,6 @@ namespace SV\SearchImprovements\Util;
 
 use function array_key_exists;
 use function array_shift;
-use function assert;
 use function count;
 use function explode;
 use function is_array;

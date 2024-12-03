@@ -9,7 +9,6 @@ use SV\StandardLib\Helper;
 use XF\Entity\Search as SearchEntity;
 use XF\PrintableException;
 use XF\Search\Query\Query;
-use function assert;
 use function is_callable;
 
 class SearchPatch extends XFCP_SearchPatch

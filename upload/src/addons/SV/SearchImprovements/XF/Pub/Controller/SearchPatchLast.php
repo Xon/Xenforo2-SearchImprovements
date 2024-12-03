@@ -9,7 +9,6 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception as ReplyException;
 use function array_key_exists;
-use function assert;
 use function is_array;
 use function is_callable;
 use function ksort;

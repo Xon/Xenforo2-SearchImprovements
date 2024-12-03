@@ -8,7 +8,6 @@ use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
 use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
 use XF\Search\Query\KeywordQuery;
-use function assert;
 
 class SearchPatch extends XFCP_SearchPatch
 {

@@ -12,7 +12,6 @@ use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigure
 use SV\SearchImprovements\XF\Search\SearchPatch;
 use SV\StandardLib\Helper;
 use XF\App;
-use XF\Search\MetadataStructure;
 use XFES\Elasticsearch\Api;
 use XFES\Elasticsearch\Exception as ElasticSearchException;
 use XFES\Elasticsearch\RequestException as ElasticSearchRequestException;

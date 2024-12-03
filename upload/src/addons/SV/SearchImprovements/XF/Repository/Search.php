@@ -3,7 +3,6 @@
 namespace SV\SearchImprovements\XF\Repository;
 
 use function array_diff;
-use function assert;
 use function count;
 use function in_array;
 use function is_array;

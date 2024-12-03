@@ -7,7 +7,6 @@ use SV\SearchImprovements\XF\Entity\XFCP_SearchPatch;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
 use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
-use function assert;
 
 class SearchPatch extends XFCP_SearchPatch
 {

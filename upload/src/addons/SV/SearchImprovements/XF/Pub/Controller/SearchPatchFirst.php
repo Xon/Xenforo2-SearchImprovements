@@ -6,7 +6,6 @@ use SV\SearchImprovements\XF\Search\Search as ExtendedSearcher;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
 use SV\StandardLib\Helper;
 use XF\Repository\Search as SearchRepo;
-use function assert;
 use function in_array;
 
 /**

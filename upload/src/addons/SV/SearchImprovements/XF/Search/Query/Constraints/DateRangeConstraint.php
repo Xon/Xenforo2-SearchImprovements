@@ -6,7 +6,6 @@ use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use XF\Search\Query\SqlConstraint;
 use XF\Search\Query\TableReference;
 use XFES\Search\Source\Elasticsearch;
-use function count;
 
 class DateRangeConstraint extends RangeConstraint
 {

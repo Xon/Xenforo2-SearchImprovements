@@ -8,7 +8,6 @@ namespace SV\SearchImprovements\Search\Specialized;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
-use SV\StandardLib\Helper;
 use XF\Search\IndexRecord;
 use XF\Search\Query;
 use XFES\Search\Source\Elasticsearch;

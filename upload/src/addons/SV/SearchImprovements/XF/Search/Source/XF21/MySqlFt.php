@@ -9,9 +9,7 @@ use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
 use SV\SearchImprovements\XF\Search\Source\XFCP_MySqlFt;
 use XF\Search\Query\Query;
-use XF\Search\Query\SqlConstraint;
 use function end;
-use function is_array;
 
 /**
  * XF2.1 support

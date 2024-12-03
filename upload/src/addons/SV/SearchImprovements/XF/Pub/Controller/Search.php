@@ -16,7 +16,6 @@ use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\View as ViewReply;
 use XF\Search\Query\Query;
-use function assert;
 use function strlen;
 
 /**
