@@ -14,6 +14,7 @@ use XF\Search\Query\MetadataConstraint;
 use XFES\Elasticsearch\Exception as EsException;
 use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge;
 use function class_exists;
+use function explode;
 use function is_callable;
 
 /**
