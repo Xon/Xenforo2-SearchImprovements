@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\Search\Specialized;
 
+use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
@@ -84,9 +85,14 @@ class Source extends Elasticsearch
 
     protected function getSearchSortDsl(Query\Query $query): array
     {
-        if ($query->getOrder() === '_score')
+        $order = $query->getOrder();
+        if ($order === '_score')
         {
             return [];
+        }
+        else if ($order instanceof SearchOrder)
+        {
+            return $order->fields;
         }
 
         return parent::getSearchSortDsl($query);
