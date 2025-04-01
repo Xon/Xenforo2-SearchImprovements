@@ -19,7 +19,7 @@ class Query extends \XF\Search\Query\Query
     /** @var bool  */
     protected $withPrefixPreferred = false;
     /** @var ?float */
-    protected $prefixMatchBoost = 2.5;
+    protected $prefixMatchBoost = 1.5;
     /** @var bool */
     protected $withNgram = false;
     /** @var bool */
