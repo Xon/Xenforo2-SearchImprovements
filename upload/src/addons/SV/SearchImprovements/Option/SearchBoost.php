@@ -48,8 +48,8 @@ abstract class SearchBoost extends AbstractOption
             $choices[] = [
                 'phraseName' => \XF::phrase('svSearchImprov_search_boost_key.' . $key),
                 'key'        => $key,
-                'value'      => $value === 1 ? ($default ?? 1) : $value,
-                'selected'   => $value !== 1,
+                'value'      => $value === $default ? ($default ?? 1) : $value,
+                'selected'   => $value !== $default,
             ];
         }
 
