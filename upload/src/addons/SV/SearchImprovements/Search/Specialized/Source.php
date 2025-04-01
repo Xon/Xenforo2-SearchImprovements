@@ -6,6 +6,7 @@
 namespace SV\SearchImprovements\Search\Specialized;
 
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
+use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use XF\Search\IndexRecord;
@@ -16,6 +17,7 @@ use function min, strlen, count;
 class Source extends Elasticsearch
 {
     use MetadataSearchEnhancements;
+    use ExecuteSearchWrapper;
 
     protected function getDocument(IndexRecord $record): array
     {
