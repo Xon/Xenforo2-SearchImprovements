@@ -6,6 +6,7 @@
 		<xf:option checked="{{ $choice.selected }}"
 				   name="{$inputName}[{$choice.key}][checked]"
 				   label="{$choice.phraseName}"
+				   hint="{{ phrase('svSearchImprov_search_boost_default', {'value': $choice.default}) }}"
 				   value="1"
 				   data-hide="true">
 			<xf:dependent>

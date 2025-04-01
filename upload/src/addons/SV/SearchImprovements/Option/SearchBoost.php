@@ -13,7 +13,7 @@ abstract class SearchBoost extends AbstractOption
         'ngram' => 1,
         'prefix' => 1.5,
         'prefix_default' => 1,
-        'prefix_exact' => 1,
+        'prefix_exact' => 1.1,
     ];
 
     /**
@@ -44,12 +44,14 @@ abstract class SearchBoost extends AbstractOption
 
         foreach (self::DEFAULT as $key => $default)
         {
-            $value = $optionValue[$key] ?? $default ?? 1;
+            $default = $default ?? 1;
+            $value = $optionValue[$key] ?? $default;
             $choices[] = [
                 'phraseName' => \XF::phrase('svSearchImprov_search_boost_key.' . $key),
                 'key'        => $key,
-                'value'      => $value === $default ? ($default ?? 1) : $value,
+                'value'      => $value === $default ? $default : $value,
                 'selected'   => $value !== $default,
+                'default'    => $default,
             ];
         }
 
@@ -76,10 +78,6 @@ abstract class SearchBoost extends AbstractOption
                 {
                     $v = 0;
                 }
-            }
-            else
-            {
-                $v = 1;
             }
 
             if (self::DEFAULT[$k] !== $v)
