@@ -77,7 +77,7 @@ public function setupMetadataStructure(MetadataStructure $structure)
 ```php
 $repo = SpecializedSearchIndex::get();
 $query = $repo->getQueryForSpecializedSearch('myContentType');
-$query->matchQuery($q, ['myField'])
+$query->matchText($q, ['myField'])
       ->withNgram()
       ->withExact();
 $myEntities = $repo->executeSearch($query, $maxResults)->getResultsData();
