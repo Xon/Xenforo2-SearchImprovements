@@ -81,7 +81,7 @@ class Source extends Elasticsearch
                 {
                     $functions[] = $function;
                 }
-                else if ($function instanceof \Closure)
+                else if ($function instanceof Closure)
                 {
                     $functions[] = $function($query, $this->es);
                 }
@@ -188,6 +188,7 @@ class Source extends Elasticsearch
         return min(10000, $fetchResults);
     }
 
+    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
     protected function getSearchSortDsl(Query $query): array
     {
         $order = $query->getOrder();
@@ -199,10 +200,11 @@ class Source extends Elasticsearch
         {
             return $order->fields;
         }
+
         else if (
             \XF::$versionId < 2020000
-            ? $order === 'relevance' && $query->getParsedKeywords()
-            :  $order === 'relevance' || $order instanceof FunctionOrder
+                ? $order === 'relevance' && $query->getParsedKeywords()
+                : $order === 'relevance' || $order instanceof FunctionOrder
         )
         {
 
@@ -231,89 +233,119 @@ class Source extends Elasticsearch
         $fuzziness = $query->fuzzyMatching();
 
         $dsl = [];
-        foreach($query->textMatches() as $textMatch)
+
+        $textMatches = $query->textMatches();
+        if (count($textMatches) === 0)
+        {
+            return ['match_all' => (object)[]];
+        }
+        foreach ($textMatches as $textMatch)
         {
             [$text, $simpleFieldList, $fieldBoost] = $textMatch;
             // generate actual search field list
             $fields = [];
             foreach ($simpleFieldList as $field)
             {
-                $fields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
-                if ($withNgram)
+                if ($fieldBoost !== '^0')
+                {
+                    $fields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
+                }
+                if ($withNgram && $ngramBoost !== '^0')
                 {
                     $esField = $field . '.ngram';
                     $fields[] = $ngramBoost === '^1' ? $esField : $esField . $ngramBoost;
                 }
-                if ($withExact)
+                if ($withExact && $exactBoost !== '^0')
                 {
                     $esField = $field . '.exact';
                     $fields[] = $exactBoost === '^1' ? $esField : $esField . $exactBoost;
                 }
             }
 
+            $matchFragments = [];
+
             // multi-match creates multiple match statements and bolts them together depending on the 'type' field
             // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#
-            $queryDsl = [
-                'type'     => $multiMatchType,
-                'query'    => $text,
-                'fields'   => $fields,
-                'operator' => 'or',
-                //'operator' => count($fields) === 1 ? 'and' : 'or',
-            ];
-            if (strlen($fuzziness) !== 0)
+            if (count($fields) !== 0)
             {
-                $queryDsl['fuzziness'] = $fuzziness;
-                $queryDsl['max_expansions'] = min($maxResults, 50);
+                $fuzzyMatch = [
+                    'type'     => $multiMatchType,
+                    'query'    => $text,
+                    'fields'   => $fields,
+                    'operator' => 'or',
+                    //'operator' => count($fields) === 1 ? 'and' : 'or',
+                ];
+                if (strlen($fuzziness) !== 0)
+                {
+                    $fuzzyMatch['fuzziness'] = $fuzziness;
+                    $fuzzyMatch['max_expansions'] = min($maxResults, 50);
+                }
+
+                $matchFragments[] = $fuzzyMatch;
             }
 
-            if ($withPrefixPreferred)
+            $prefixMatchBoost = $query->prefixMatchBoost();
+            if ($withPrefixPreferred && $prefixMatchBoost !== 0)
             {
-                $prefixMatchBoost = $query->prefixMatchBoost();
                 $fieldBoost = $query->prefixDefaultFieldBoost();
                 $exactBoost = $query->prefixExactFieldBoost();
 
                 $prefixFields = [];
                 foreach ($simpleFieldList as $field)
                 {
-                    $prefixFields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
-                    if ($withExact)
+                    if ($fieldBoost !== '^0')
+                    {
+                        $prefixFields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
+                    }
+                    if ($withExact && $exactBoost !== '^0')
                     {
                         $esField = $field . '.exact';
                         $prefixFields[] = $exactBoost === '^1' ? $esField : $esField . $exactBoost;
                     }
                 }
 
-                $prefixMatch = [
-                    'type'     => 'phrase_prefix',
-                    'query'    => $text,
-                    'fields'   => $prefixFields,
-                    'operator' => 'or',
-                    //'operator' => count($fields) === 1 ? 'and' : 'or',
-                ];
-                if ($prefixMatchBoost !== null && $prefixMatchBoost !== 1)
+                if (count($prefixFields) !== 0)
                 {
-                    $prefixMatch['boost'] = $prefixMatchBoost;
+                    $prefixMatch = [
+                        'type'     => 'phrase_prefix',
+                        'query'    => $text,
+                        'fields'   => $prefixFields,
+                        'operator' => 'or',
+                        //'operator' => count($fields) === 1 ? 'and' : 'or',
+                    ];
+                    if ($prefixMatchBoost !== null && $prefixMatchBoost !== 1)
+                    {
+                        $prefixMatch['boost'] = $prefixMatchBoost;
+                    }
+
+                    $matchFragments[] = $prefixMatch;
+                }
+            }
+
+            if (count($matchFragments) > 1)
+            {
+                $should = [];
+                foreach ($matchFragments as $fragment)
+                {
+                    $should[] = ['multi_match' => $fragment];
                 }
 
                 $dsl[] = [
                     'bool' => [
-                        'should'               => [
-                            ['multi_match' => $queryDsl],
-                            ['multi_match' => $prefixMatch],
-                        ],
+                        'should'               => $should,
                         'minimum_should_match' => 1,
                     ]
                 ];
             }
-            else
+            else if (count($matchFragments) === 1)
             {
-                $dsl[] = ['multi_match' => $queryDsl];
+                $dsl[] = ['multi_match' => reset($matchFragments)];
             }
         }
 
         if (count($dsl) === 0)
         {
-            return ['match_all' => (object)[]];
+            return ['match_none' => (object)[]];
         }
         if (count($dsl) === 1)
         {

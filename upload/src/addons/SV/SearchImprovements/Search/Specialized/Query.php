@@ -168,7 +168,10 @@ class Query extends \XF\Search\Query\Query
         return $this->withPrefixPreferred;
     }
 
-    public function prefixMatchBoost(): ?float
+    /**
+     * @return float|int|null
+     */
+    public function prefixMatchBoost()
     {
         return $this->prefixMatchBoost;
     }

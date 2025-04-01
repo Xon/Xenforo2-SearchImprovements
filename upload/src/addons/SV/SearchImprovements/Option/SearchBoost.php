@@ -72,9 +72,9 @@ abstract class SearchBoost extends AbstractOption
             {
                 /** @noinspection PhpWrongStringConcatenationInspection */
                 $v = strval($value['value']) + 0;
-                if ($v === 1 || $v <= 0)
+                if ($v < 0)
                 {
-                    $v = 1;
+                    $v = 0;
                 }
             }
             else
