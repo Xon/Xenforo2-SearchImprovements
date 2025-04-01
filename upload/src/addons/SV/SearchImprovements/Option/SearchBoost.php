@@ -7,22 +7,17 @@ use XF\Option\AbstractOption;
 
 abstract class SearchBoost extends AbstractOption
 {
-    public const SHAPE = [
-        'default' => 'float|int|null',
-        'exact' => 'float|int|null',
-        'ngram' => 'float|int|null',
-        'prefix' => 'float|int|null',
-    ];
-
     public const DEFAULT = [
         'default' => 1.5,
         'exact' => 2,
         'ngram' => 1,
         'prefix' => 1.5,
+        'prefix_default' => 1,
+        'prefix_exact' => 1,
     ];
 
     /**
-     * @return array{default:float|int, exact:float|int, ngram:float|int, prefix:float|int}
+     * @return array{default:float|int, exact:float|int, ngram:float|int, prefix:float|int, prefix_default:float|int, prefix_exact:float|int}
      */
     public static function get($boosts): array
     {

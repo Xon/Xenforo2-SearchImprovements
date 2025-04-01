@@ -223,7 +223,6 @@ class Source extends Elasticsearch
     protected function getSpecializedSearchQueryDsl(SpecializedQuery $query, int $maxResults, array &$filters, array &$filtersNot): array
     {
         $withPrefixPreferred = $query->isWithPrefixPreferred();
-        $prefixMatchBoost = $query->prefixMatchBoost();
         $withNgram = $query->isWithNgram();
         $ngramBoost = $query->ngramBoost();
         $withExact = $query->isWithExact();
@@ -237,10 +236,8 @@ class Source extends Elasticsearch
             [$text, $simpleFieldList, $fieldBoost] = $textMatch;
             // generate actual search field list
             $fields = [];
-            $prefixFields = [];
             foreach ($simpleFieldList as $field)
             {
-                $prefixFields[] = $field;
                 $fields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
                 if ($withNgram)
                 {
@@ -251,7 +248,6 @@ class Source extends Elasticsearch
                 {
                     $esField = $field . '.exact';
                     $fields[] = $exactBoost === '^1' ? $esField : $esField . $exactBoost;
-                    $prefixFields[] = $esField;
                 }
             }
 
@@ -272,6 +268,21 @@ class Source extends Elasticsearch
 
             if ($withPrefixPreferred)
             {
+                $prefixMatchBoost = $query->prefixMatchBoost();
+                $fieldBoost = $query->prefixDefaultFieldBoost();
+                $exactBoost = $query->prefixExactFieldBoost();
+
+                $prefixFields = [];
+                foreach ($simpleFieldList as $field)
+                {
+                    $prefixFields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
+                    if ($withExact)
+                    {
+                        $esField = $field . '.exact';
+                        $prefixFields[] = $exactBoost === '^1' ? $esField : $esField . $exactBoost;
+                    }
+                }
+
                 $prefixMatch = [
                     'type'     => 'phrase_prefix',
                     'query'    => $text,

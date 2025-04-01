@@ -24,12 +24,16 @@ class Query extends \XF\Search\Query\Query
     protected $withNgram = false;
     /** @var bool */
     protected $withExact = false;
-    /** @var float|int */
-    protected $defaultFieldBoost = 1.5;
     /** @var string|float|int */
-    protected $exactBoost = 2;
+    protected $defaultFieldBoost = '^1.5';
     /** @var string|float|int */
-    protected $ngramBoost = 0;
+    protected $exactBoost = '^2';
+    /** @var string|float|int */
+    protected $ngramBoost = '^1';
+    /** @var string|float|int */
+    protected $prefixDefaultFieldBoost = '^1';
+    /** @var string|float|int */
+    protected $prefixExactFieldBoost = '^1';
     /**  @var string */
     protected $fuzziness = '';
     //protected $fuzziness = 'AUTO:0,2';
@@ -137,14 +141,24 @@ class Query extends \XF\Search\Query\Query
     /**
      * @param bool           $withPrefixPreferred
      * @param float|int|null $prefixMatchBoost
+     * @param float|int|string|null $prefixDefaultFieldBoost
+     * @param float|int|string|null $prefixExactFieldBoost
      * @return static
      */
-    public function withPrefixPreferred(bool $withPrefixPreferred = true, $prefixMatchBoost = null): self
+    public function withPrefixPreferred(bool $withPrefixPreferred = true, $prefixMatchBoost = null, $prefixDefaultFieldBoost = null, $prefixExactFieldBoost = null): self
     {
         $this->withPrefixPreferred = $withPrefixPreferred;
         if ($prefixMatchBoost !== null)
         {
             $this->prefixMatchBoost = $prefixMatchBoost;
+        }
+        if ($prefixDefaultFieldBoost !== null)
+        {
+            $this->prefixDefaultFieldBoost = is_string($prefixDefaultFieldBoost) ? $prefixDefaultFieldBoost : '^'.$prefixDefaultFieldBoost;
+        }
+        if ($prefixExactFieldBoost !== null)
+        {
+            $this->prefixExactFieldBoost = is_string($prefixExactFieldBoost) ? $prefixExactFieldBoost : '^'.$prefixExactFieldBoost;
         }
         return $this;
     }
@@ -157,6 +171,16 @@ class Query extends \XF\Search\Query\Query
     public function prefixMatchBoost(): ?float
     {
         return $this->prefixMatchBoost;
+    }
+
+    public function prefixDefaultFieldBoost(): string
+    {
+        return $this->prefixDefaultFieldBoost;
+    }
+
+    public function prefixExactFieldBoost(): string
+    {
+        return $this->prefixExactFieldBoost;
     }
 
     /**
