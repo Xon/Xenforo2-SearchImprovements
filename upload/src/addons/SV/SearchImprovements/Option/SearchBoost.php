@@ -8,12 +8,12 @@ use XF\Option\AbstractOption;
 abstract class SearchBoost extends AbstractOption
 {
     public const DEFAULT = [
-        'default' => 1.5,
-        'exact' => 2,
-        'ngram' => 1,
+        'default' => 1,
+        'exact' => 1.2,
+        'ngram' => 0.5,
         'prefix' => 1.5,
         'prefix_default' => 1,
-        'prefix_exact' => 1.1,
+        'prefix_exact' => 1.2,
     ];
 
     /**
