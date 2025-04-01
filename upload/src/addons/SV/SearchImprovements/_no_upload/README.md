@@ -74,12 +74,34 @@ public function setupMetadataStructure(MetadataStructure $structure)
 ```
 
 ## Specialized index usage example
+
+Search field boost config option:
+```json
+{
+    "edit_format": "callback",
+    "edit_format_params": "SV\\SearchImprovements\\Option\\SearchBoost::renderOption",
+    "data_type": "array",
+    "sub_options": [
+        "*"
+    ],
+    "validation_class": "SV\\SearchImprovements\\Option\\SearchBoost",
+    "validation_method": "verifyOption",
+    "advanced": false,
+    "default_value": "[]",
+    "relations": {
+        "MyOptions": 99
+    }
+}
+```
+
 ```php
+$boosts = SearchBoost::get($options->mySearchOptions_boosts ?? null);
+
 $repo = SpecializedSearchIndex::get();
 $query = $repo->getQueryForSpecializedSearch('myContentType');
-$query->matchText($q, ['myField'])
-      ->withNgram()
-      ->withExact();
+$query->matchText($q, ['myField'], $boosts['default'] ?? 1)
+      ->withNgram(true, $boosts['ngram'] ?? 1)
+      ->withExact(true, $boosts['exact'] ?? 1);
 $myEntities = $repo->executeSearch($query, $maxResults)->getResultsData();
 ```
   

@@ -240,18 +240,17 @@ class Source extends Elasticsearch
             $prefixFields = [];
             foreach ($simpleFieldList as $field)
             {
-                $esField = $field . $fieldBoost;
-                $fields[] = $esField;
-                $prefixFields[] = $esField;
+                $prefixFields[] = $field;
+                $fields[] = $fieldBoost === '^1' ? $field : $field . $fieldBoost;
                 if ($withNgram)
                 {
-                    $esField = $field . '.ngram' . $ngramBoost;
-                    $fields[] = $esField;
+                    $esField = $field . '.ngram';
+                    $fields[] = $ngramBoost === '^1' ? $esField : $esField . $ngramBoost;
                 }
                 if ($withExact)
                 {
-                    $esField = $field . '.exact' . $exactBoost;
-                    $fields[] = $esField;
+                    $esField = $field . '.exact';
+                    $fields[] = $exactBoost === '^1' ? $esField : $esField . $exactBoost;
                     $prefixFields[] = $esField;
                 }
             }
@@ -280,7 +279,7 @@ class Source extends Elasticsearch
                     'operator' => 'or',
                     //'operator' => count($fields) === 1 ? 'and' : 'or',
                 ];
-                if ($prefixMatchBoost !== null)
+                if ($prefixMatchBoost !== null && $prefixMatchBoost !== 1)
                 {
                     $prefixMatch['boost'] = $prefixMatchBoost;
                 }

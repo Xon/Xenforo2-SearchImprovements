@@ -18,18 +18,18 @@ class Query extends \XF\Search\Query\Query
     protected $textMatches = [];
     /** @var bool  */
     protected $withPrefixPreferred = false;
-    /** @var ?float */
+    /** @var float|int */
     protected $prefixMatchBoost = 1.5;
     /** @var bool */
     protected $withNgram = false;
     /** @var bool */
     protected $withExact = false;
-    /** @var string */
-    protected $defaultFieldBoost = '^1.5';
-    /** @var string */
-    protected $exactBoost = '^2';
-    /** @var string */
-    protected $ngramBoost = '';
+    /** @var float|int */
+    protected $defaultFieldBoost = 1.5;
+    /** @var string|float|int */
+    protected $exactBoost = 2;
+    /** @var string|float|int */
+    protected $ngramBoost = 0;
     /**  @var string */
     protected $fuzziness = '';
     //protected $fuzziness = 'AUTO:0,2';
@@ -57,15 +57,24 @@ class Query extends \XF\Search\Query\Query
      *
      * @param string      $text
      * @param array       $fields
-     * @param string|null $boost
+     * @param string|int|float|null $boost
      * @return $this
      */
-    public function matchText(string $text, array $fields, ?string $boost = null): self
+    public function matchText(string $text, array $fields, $boost = null): self
     {
         $text = trim($text);
         if (strlen($text) !== 0)
         {
-            $this->textMatches[] = [$text, $fields, $boost ?? $this->defaultFieldBoost];
+            if ($boost === null)
+            {
+                $boost = $this->defaultFieldBoost;
+            }
+            if (!is_string($boost))
+            {
+                $boost = '^'.$boost;
+            }
+
+            $this->textMatches[] = [$text, $fields, $boost];
         }
 
         return $this;
@@ -125,7 +134,12 @@ class Query extends \XF\Search\Query\Query
         throw new \LogicException('Not supported');
     }
 
-    public function withPrefixPreferred(bool $withPrefixPreferred = true, ?float $prefixMatchBoost = null): self
+    /**
+     * @param bool           $withPrefixPreferred
+     * @param float|int|null $prefixMatchBoost
+     * @return static
+     */
+    public function withPrefixPreferred(bool $withPrefixPreferred = true, $prefixMatchBoost = null): self
     {
         $this->withPrefixPreferred = $withPrefixPreferred;
         if ($prefixMatchBoost !== null)
@@ -145,12 +159,17 @@ class Query extends \XF\Search\Query\Query
         return $this->prefixMatchBoost;
     }
 
-    public function withNgram(bool $withNgram = true, ?string $boost = null): self
+    /**
+     * @param bool        $withNgram
+     * @param float|int|string|null $boost
+     * @return static
+     */
+    public function withNgram(bool $withNgram = true, $boost = null): self
     {
         $this->withNgram = $withNgram;
         if ($boost !== null)
         {
-            $this->ngramBoost = $boost;
+            $this->ngramBoost = is_string($boost) ? $boost : '^'.$boost;
         }
         return $this;
     }
@@ -165,12 +184,17 @@ class Query extends \XF\Search\Query\Query
         return $this->ngramBoost;
     }
 
-    public function withExact(bool $withExact = true, ?string $boost = null): self
+    /**
+     * @param bool                  $withExact
+     * @param float|int|string|null $boost
+     * @return static
+     */
+    public function withExact(bool $withExact = true, $boost = null): self
     {
         $this->withExact = $withExact;
         if ($boost !== null)
         {
-            $this->exactBoost = $boost;
+            $this->exactBoost = is_string($boost) ? $boost : '^'.$boost;
         }
         return $this;
     }
