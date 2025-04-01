@@ -73,6 +73,7 @@ class Elasticsearch extends XFCP_Elasticsearch
     }
 
     /**
+     * XF2.2+
      * @param \XF\Search\Query\KeywordQuery $query
      * @param int                           $maxResults
      * @return array

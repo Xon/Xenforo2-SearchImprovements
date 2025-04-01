@@ -7,6 +7,7 @@ use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Util\Arr;
 use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
+use SV\SearchImprovements\XFES\Elasticsearch\Api;
 use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Repository;
@@ -22,6 +23,7 @@ use function count;
 use function gettype;
 use function implode;
 use function is_array;
+use function is_callable;
 use function is_string;
 use function preg_split;
 
@@ -322,8 +324,9 @@ class Search extends Repository
 
         $source = SearchSourceExtractor::getSource($search);
 
+        $es = is_callable([$source, 'es']) ? $source->es() : null;
         /** @noinspection PhpDeprecationInspection */
-        if ($source instanceof ElasticsearchSource && $source->getEsApi()->isSingleTypeIndex())
+        if ($es !== null && $es->isSingleTypeIndex())
         {
             return $contentType . '-' . $id;
         }

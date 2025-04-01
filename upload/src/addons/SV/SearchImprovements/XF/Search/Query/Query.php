@@ -5,7 +5,9 @@
 
 namespace SV\SearchImprovements\XF\Search\Query;
 
+use SV\SearchImprovements\Search\Features\SearchOrder;
 use XF\Search\Query\MetadataConstraint;
+use XF\Search\Query\SqlOrder;
 
 /**
  * XF2.0/XF2.1 only, as XF2.2+ instead use specialized instances
@@ -40,5 +42,15 @@ class Query extends XFCP_Query
     public function setMetadataConstraints(array $metadataConstraints): void
     {
         $this->metadataConstraints = $metadataConstraints;
+    }
+
+    public function hasQueryConstraints()
+    {
+        if ($this->order instanceof SearchOrder && $this->order->xfesOnly())
+        {
+            return false;
+        }
+
+        return parent::hasQueryConstraints();
     }
 }

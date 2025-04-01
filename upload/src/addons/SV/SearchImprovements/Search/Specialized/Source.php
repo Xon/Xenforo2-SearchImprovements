@@ -5,14 +5,17 @@
 
 namespace SV\SearchImprovements\Search\Specialized;
 
+use Closure;
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
 use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use XF\Search\IndexRecord;
-use XF\Search\Query;
+use XF\Search\Query\Query;
+use XFES\Elasticsearch\Api;
 use XFES\Search\Source\Elasticsearch;
+use XFES\Search\Query\FunctionOrder;
 use function min, strlen, count;
 
 class Source extends Elasticsearch
@@ -59,6 +62,96 @@ class Source extends Elasticsearch
         return $dsl;
     }
 
+    /**
+     * @param Query $query
+     * @param array $queryDsl
+     * @return array
+     */
+    protected function getSearchQueryFunctionScoreDsl(Query $query,array $queryDsl): array
+    {
+        $order = $query->getOrder();
+
+        if ($order instanceof SearchOrder)
+        {
+            $functions = [];
+            foreach ($order->getFunctions() as $function)
+            {
+                /** @var array|Closure(Query,Api):array $function */
+                if (is_array($function))
+                {
+                    $functions[] = $function;
+                }
+                else if ($function instanceof \Closure)
+                {
+                    $functions[] = $function($query, $this->es);
+                }
+            }
+
+            if (count($functions) === 0)
+            {
+                return $queryDsl;
+            }
+
+            return [
+                'function_score' => [
+                    'query' => $queryDsl,
+                    'functions' => $functions
+                ]
+            ];
+        }
+
+        if (\XF::$versionId < 2020000)
+        {
+            return $queryDsl;
+        }
+
+        return parent::getSearchQueryFunctionScoreDsl($query, $queryDsl);
+    }
+
+    /**
+     * XF2.1 support - TODO remove inlined function
+     *
+     * @param array $queryDsl
+     * @param array $filters
+     * @param array $filtersNot
+     * @return array
+     */
+    protected function getSearchQueryBoolDsl(
+        array $queryDsl,
+        array $filters,
+        array $filtersNot
+    ): array
+    {
+        if (\XF::$versionId >= 2020000)
+        {
+            return parent::getSearchQueryBoolDsl($queryDsl, $filters, $filtersNot);
+        }
+
+        if (!$filters && !$filtersNot)
+        {
+            return $queryDsl;
+        }
+
+        $bool = [];
+
+        if ($filters)
+        {
+            $bool['filter'] = $filters;
+        }
+
+        if ($filtersNot)
+        {
+            $bool['must_not'] = $filtersNot;
+        }
+
+        if ($queryDsl)
+        {
+            $bool['must'] = [$queryDsl];
+        }
+
+        return ['bool' => $bool];
+    }
+
     protected function getSpecializedCommonSearchDsl(SpecializedQuery $query, int $maxResults): array
     {
         $dsl = [];
@@ -83,7 +176,19 @@ class Source extends Elasticsearch
         return $dsl;
     }
 
-    protected function getSearchSortDsl(Query\Query $query): array
+    protected function getSearchSizeDsl(Query $query, $maxResults): int
+    {
+        $fetchResults = $maxResults;
+
+        if ($query->getGroupByType())
+        {
+            $fetchResults *= 4;
+        }
+
+        return min(10000, $fetchResults);
+    }
+
+    protected function getSearchSortDsl(Query $query): array
     {
         $order = $query->getOrder();
         if ($order === '_score')
@@ -94,8 +199,24 @@ class Source extends Elasticsearch
         {
             return $order->fields;
         }
+        else if (
+            \XF::$versionId < 2020000
+            ? $order === 'relevance' && $query->getParsedKeywords()
+            :  $order === 'relevance' || $order instanceof FunctionOrder
+        )
+        {
 
-        return parent::getSearchSortDsl($query);
+            return [
+                '_score',
+                ['date' => 'desc']
+            ];
+        }
+
+        return [
+            ['date' => 'desc']
+        ];
+
+        //return parent::getSearchSortDsl($query);
     }
 
     /** @noinspection PhpUnusedParameterInspection */

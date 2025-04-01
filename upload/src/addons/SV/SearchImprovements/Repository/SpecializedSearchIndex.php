@@ -244,7 +244,7 @@ class SpecializedSearchIndex extends Repository
             throw new \LogicException('Specialized search index source should be an instance of ' . SpecializedSource::class);
         }
         /** @var Api $es */
-        $es = $source->getEsApi();
+        $es = $source->es();
         if ($esQuery !== null)
         {
             $es->setLogQueries(true);

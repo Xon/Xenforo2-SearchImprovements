@@ -203,4 +203,9 @@ class Query extends \XF\Search\Query\Query
     {
         return $this->fuzziness;
     }
+
+    public function hasQueryConstraints(): bool
+    {
+        return false;
+    }
 }

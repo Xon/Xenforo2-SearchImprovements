@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Search\Query;
 
+use SV\SearchImprovements\Search\Features\SearchOrder;
 use XF\Search\Query\MetadataConstraint;
 
 /**
@@ -33,5 +34,15 @@ class KeywordQuery extends XFCP_KeywordQuery
     public function setMetadataConstraints(array $metadataConstraints): void
     {
         $this->metadataConstraints = $metadataConstraints;
+    }
+
+    public function hasQueryConstraints()
+    {
+        if ($this->order instanceof SearchOrder && $this->order->xfesOnly())
+        {
+            return false;
+        }
+
+        return parent::hasQueryConstraints();
     }
 }
