@@ -35,7 +35,8 @@ trait ExecuteSearchWrapper
         {
             foreach ($matches as $match)
             {
-                $contentType = $match['content_type'] ?? null;
+                // queries which have SQL constraints use numerical indexes, not strings
+                $contentType = $match['content_type'] ?? $match[0] ?? null;
                 if (!is_string($contentType))
                 {
                     throw new \LogicException('Unknown return contents from '.__METHOD__);
