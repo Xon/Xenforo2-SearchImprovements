@@ -34,6 +34,7 @@
 				</xf:formrow>
 				<xf:formrow label="{{ phrase('xfes_elasticsearch_server') }}">{$es.printableBaseUrl}</xf:formrow>
 
+				<xf:if is="$canViewServerInfo">
 				<xf:if is="$version">
 					<xf:formrow label="{{ phrase('xfes_version') }}">{$version}</xf:formrow>
 				</xf:if>
@@ -54,6 +55,7 @@
 					<xf:if is="$esClusterStatus.unassigned_shards">
 						<xf:formrow label="{{ phrase('sv_xfes_unassigned_shards') }}">{$esClusterStatus.unassigned_shards}</xf:formrow>
 					</xf:if>
+				</xf:if>
 				</xf:if>
 			</div>
 	</div>

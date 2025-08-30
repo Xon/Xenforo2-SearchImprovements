@@ -23,7 +23,7 @@ class Index extends XFCP_Index
     {
         $reply = parent::actionIndex();
 
-        if ($reply instanceof ViewReply && SearchRepo::get()->isUsingElasticSearch())
+        if ($reply instanceof ViewReply && SearchRepo::get()->isUsingElasticSearch() && SearchRepo::get()->canViewServerInfo())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             $configurer = Helper::service(ConfigurerService ::class, null);

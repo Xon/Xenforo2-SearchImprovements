@@ -333,4 +333,15 @@ class Search extends Repository
 
         return $id;
     }
+
+    public function canViewServerInfo(): bool
+    {
+        return false;
+        if (\XF::$versionId < 2030470)
+        {
+            return true;
+        }
+
+        return \XF::visitor()->hasAdminPermission('serverInfo');
+    }
 }

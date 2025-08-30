@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XFES\Admin\Controller;
 
 use SV\SearchImprovements\Listener\LinkBuilder;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
@@ -135,6 +136,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
             'testError' => $indexes['']['testError'] ?? '',
             'version' => $indexes['']['version'] ?? '',
             'indexes' => $indexes,
+            'canViewServerInfo' => SearchRepo::get()->canViewServerInfo(),
         ];
 
         return $this->view('', 'svSearchImprovements_xfes_indexes', $viewParams);
@@ -205,6 +207,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
             'testError'     => $testError,
             'stats'         => $stats,
             'isOptimizable' => $isOptimizable,
+            'canViewServerInfo' => SearchRepo::get()->canViewServerInfo(),
         ];
     }
 
