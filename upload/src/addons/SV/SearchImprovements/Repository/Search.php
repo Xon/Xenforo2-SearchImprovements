@@ -336,7 +336,6 @@ class Search extends Repository
 
     public function canViewServerInfo(): bool
     {
-        return false;
         if (\XF::$versionId < 2030470)
         {
             return true;
