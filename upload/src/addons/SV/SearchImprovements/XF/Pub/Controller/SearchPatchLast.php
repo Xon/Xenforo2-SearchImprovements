@@ -31,6 +31,10 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         parent::preDispatchController($action, $params);
     }
 
+    /**
+     * search has expired, or the cached search is owned by someone else
+     * Returns a 404 on error (matches XF behavior) as this prevents search bots being unhappy
+     */
     protected function svSearchFromQueryData(array $searchData): AbstractReply
     {
         // a search with no criteria or no keywords is likely from a search url with no query arguments
@@ -45,13 +49,13 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $query = $this->prepareSearchQuery($searchData, $constraints);
         if ($query->getErrors())
         {
-            return $this->error($query->getErrors(), 400);
+            return $this->error($query->getErrors(), 404);
         }
         /** @var ExtendedSearcher $searcher */
         $searcher = \XF::app()->search();
         if ($searcher->isQueryEmpty($query, $error))
         {
-            return $this->error($error, 400);
+            return $this->error($error, 404);
         }
 
         return $this->runSearch($query, $constraints);
@@ -104,7 +108,6 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $search = $this->svGetCachedSearch($searchId);
         if ($search === null || $search->user_id !== $visitorId)
         {
-            // search has expired, or the cached search is owned by someone else
             $searchData = $this->convertShortSearchInputNames();
             return $this->svSearchFromQueryData($searchData);
         }
