@@ -8,7 +8,7 @@ use XF\Option\AbstractOption;
 use function class_exists;
 use function count, floatval;
 
-class ContentTypes extends AbstractOption
+abstract class ContentTypes extends AbstractOption
 {
     public static function renderOption(OptionEntity $option, array $htmlParams): string
     {
@@ -16,16 +16,19 @@ class ContentTypes extends AbstractOption
 
         $app = \XF::app();
         $search = $app->search();
+        $optionValue = $option->option_value;
+        $contentTypes = \XF::app()->getContentTypeField('search_handler_class');
 
-        foreach ($app->getContentTypeField('search_handler_class') as $contentType => $handlerClass)
+        foreach ($contentTypes as $contentType => $handlerClass)
         {
             if ($search->isValidContentType($contentType) && class_exists($handlerClass))
             {
+                $value = $optionValue[$contentType] ?? null;
                 $choices[] = [
                     'phraseName'  => \XF::phrase($app->getContentTypePhraseName($contentType)),
                     'contentType' => $contentType,
-                    'value'       => $option->option_value[$contentType] ?? 1,
-                    'selected'    => isset($option->option_value[$contentType]),
+                    'value'       => $value ?? 1,
+                    'selected'    => $value !== null,
                 ];
             }
         }
