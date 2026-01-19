@@ -39,7 +39,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
     {
         // a search with no criteria or no keywords is likely from a search url with no query arguments
         // this can't be sanely re-run, so return a customized 'no results' page
-        if ($searchData['keywords'] === '' && $searchData['c'] === [])
+        if (($searchData['keywords'] ?? '') === '' && ($searchData['c'] ?? []) === [])
         {
             $reply = $this->message(\XF::phrase('no_results_found'));
             $reply->setPageParam('isExpiredSearch', true);
