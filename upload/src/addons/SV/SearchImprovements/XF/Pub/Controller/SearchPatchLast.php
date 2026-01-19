@@ -20,12 +20,15 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 {
     protected function preDispatchController($action, ParameterBag $params)
     {
-        // Various endpoints on the Search controller are missing canSearch checks
-        // https://xenforo.com/community/threads/in-xf-pub-controller-search-actionresults-is-missing-checks-from-actionsearch.209594/
-        $visitor = \XF::visitor();
-        if (!$visitor->canSearch($error))
+        if (\XF::$versionId < 2030800)
         {
-            throw $this->exception($this->noPermission($error));
+            // Various endpoints on the Search controller are missing canSearch checks
+            // https://xenforo.com/community/threads/in-xf-pub-controller-search-actionresults-is-missing-checks-from-actionsearch.209594/
+            $visitor = \XF::visitor();
+            if (!$visitor->canSearch($error))
+            {
+                throw $this->exception($this->noPermission($error));
+            }
         }
 
         parent::preDispatchController($action, $params);
