@@ -170,11 +170,11 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         $output = parent::convertShortSearchNames($input);
 
         // XF2.3.0 bug: https://xenforo.com/community/threads/searchcontroller-convertshortsearchnames-does-not-function-as-expected.223451/
-        if (array_key_exists('o', $output))
+        if (\XF::$versionId >= 2030870 && \XF::$versionId < 2030800 && array_key_exists('o', $output))
         {
             if (!array_key_exists('order', $output))
             {
-                $output['order'] = $output['o'] ?: null;
+                $output['order'] = $output['o'];
             }
             unset($output['o']);
         }
