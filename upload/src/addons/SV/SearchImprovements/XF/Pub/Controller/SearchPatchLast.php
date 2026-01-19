@@ -195,9 +195,12 @@ class SearchPatchLast extends XFCP_SearchPatchLast
             $this->assertNotEmbeddedImageRequest();
         }
 
-        $userId = $this->filter('user_id', 'uint');
-        /** @var UserEntity $user */
-        $user = $this->assertRecordExists('XF:User', $userId, null, 'requested_member_not_found');
+        $userId = (int)$this->filter('user_id', 'uint');
+        $user = $userId !== 0 ? Helper::find(UserEntity::class, $userId) : null;
+        if ($user === null)
+        {
+            throw $this->exception($this->notFound(\XF::phrase('requested_member_not_found')));
+        }
 
         /** @var ExtendedSearcher $searcher */
         $searcher = \XF::app()->search();
