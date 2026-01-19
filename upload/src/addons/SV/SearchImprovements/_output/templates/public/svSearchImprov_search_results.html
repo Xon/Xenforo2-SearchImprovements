@@ -16,7 +16,10 @@
 			</xf:if>
 		</xf:description>
 	</xf:if>
-	<xf:if is="$xf.options.svShowSearchDebugInfo === 'log_and_show' && $search.sv_debug_info">
+	<xf:if is="(
+			     ($xf.visitor.user_id && $xf.options.svShowSearchDebugInfo === 'log_and_show')
+	             || (!$xf.visitor.user_id && $xf.options.svShowSearchDebugInfo === 'log_and_show_all')
+	           ) &&  $search.sv_debug_info">
 		{{ dump($search.sv_debug_info) }}
 	</xf:if>
 </xf:if>

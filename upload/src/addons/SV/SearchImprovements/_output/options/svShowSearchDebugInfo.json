@@ -1,6 +1,6 @@
 {
     "edit_format": "radio",
-    "edit_format_params": "={{ phrase('svShowSearchDebugInfo_off') }}\nlog={{ phrase('svShowSearchDebugInfo_log') }}\nlog_and_show={{ phrase('svShowSearchDebugInfo_log_and_show') }}",
+    "edit_format_params": "={{ phrase('svShowSearchDebugInfo_off') }}\nlog={{ phrase('svShowSearchDebugInfo_log') }}\nlog_and_show={{ phrase('svShowSearchDebugInfo_log_and_show') }}\nlog_and_show_all={{ phrase('svShowSearchDebugInfo_log_and_show_all') }}",
     "data_type": "string",
     "sub_options": [],
     "validation_class": "",
