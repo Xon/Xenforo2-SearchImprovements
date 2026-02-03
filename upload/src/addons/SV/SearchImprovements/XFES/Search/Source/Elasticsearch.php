@@ -320,4 +320,31 @@ class Elasticsearch extends XFCP_Elasticsearch
             ]
         ];
     }
+
+    protected function getSqlResults(array $hits, Query $query, $maxResults)
+    {
+        $sort = $query->getOrder();
+        $sortName = $query->getOrderName();
+        if ($sort instanceof SearchOrder)
+        {
+            QueryEx::setSort($query, 'date', 'date');
+        }
+        try
+        {
+            return parent::getSqlResults($hits, $query, $maxResults);
+        }
+        finally
+        {
+            QueryEx::setSort($query, $sort, $sortName);
+        }
+    }
+}
+
+class QueryEx extends Query
+{
+    public static function setSort($query, $sort, $sortName)
+    {
+        $query->order = $sort;
+        $query->orderName = $sortName;
+    }
 }
