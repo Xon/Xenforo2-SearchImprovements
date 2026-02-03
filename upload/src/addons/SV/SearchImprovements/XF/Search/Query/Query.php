@@ -7,7 +7,6 @@ namespace SV\SearchImprovements\XF\Search\Query;
 
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use XF\Search\Query\MetadataConstraint;
-use XF\Search\Query\SqlOrder;
 
 /**
  * XF2.0/XF2.1 only, as XF2.2+ instead use specialized instances
