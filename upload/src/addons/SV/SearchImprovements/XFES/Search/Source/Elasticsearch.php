@@ -5,15 +5,21 @@
 
 namespace SV\SearchImprovements\XFES\Search\Source;
 
+use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
-use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\XF\Search\Query\KeywordQuery;
-use XF\Search\Query\Query;
 use XF\Search\Query\MetadataConstraint;
-use function array_fill_keys, array_key_exists, str_replace, count, floatval, is_array, array_merge;
+use XF\Search\Query\Query;
+use function array_fill_keys;
+use function array_key_exists;
+use function array_merge;
 use function class_exists;
+use function count;
+use function floatval;
+use function is_array;
 use function is_callable;
+use function str_replace;
 
 /**
  * @extends  \XFES\Search\Source\Elasticsearch
@@ -340,11 +346,3 @@ class Elasticsearch extends XFCP_Elasticsearch
     }
 }
 
-class QueryEx extends Query
-{
-    public static function setSort($query, $sort, $sortName)
-    {
-        $query->order = $sort;
-        $query->orderName = $sortName;
-    }
-}
