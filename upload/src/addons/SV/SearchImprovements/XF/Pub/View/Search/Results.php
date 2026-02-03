@@ -3,7 +3,6 @@
 namespace SV\SearchImprovements\XF\Pub\View\Search;
 
 use XF\Mvc\Renderer\Json as JsonRender;
-use function assert;
 use function is_callable;
 
 /**
@@ -13,25 +12,21 @@ class Results extends XFCP_Results
 {
     public function renderJson()
     {
+        /** @var JsonRender $jsonRender */
         $jsonRender = $this->renderer;
-        assert($jsonRender instanceof JsonRender);
 
-        if (is_callable([parent::class, 'renderJson']))
+        /** @noinspection PhpUndefinedMethodInspection */
+        $output = is_callable([parent::class, 'renderJson'])
+            ? parent::renderJson()
+            : ['status' => 'ok', 'html' => null];
+        If (($output['html'] ?? null) === null)
         {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $json = parent::renderJson();
-        }
-        else
-        {
-
             $htmlOutput = $jsonRender->getTemplate($this->getTemplateName(), $this->getParams())->render();
-            $json = [
-                'status' => 'ok',
-                'html' => $jsonRender->getHtmlOutputStructure($htmlOutput),
-            ];
+            $output['html'] = $jsonRender->getHtmlOutputStructure($htmlOutput);
         }
 
-        if (isset($json['html']['content']))
+        $content = $output['html']['content'] ?? null;
+        if ($content !== null)
         {
             $templater = $jsonRender->getTemplater();
             $escape = false;
@@ -42,10 +37,10 @@ class Results extends XFCP_Results
                     'description' => $pageDescription,
                 ]);
 
-                $json['html'] = $jsonRender->getHtmlOutputStructure($description . $json['html']['content']);
+                $output['html'] = $jsonRender->getHtmlOutputStructure($description . $content);
             }
         }
 
-        return $json;
+        return $output;
     }
 }
