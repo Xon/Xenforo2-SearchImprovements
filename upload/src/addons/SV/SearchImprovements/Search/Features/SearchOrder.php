@@ -20,7 +20,7 @@ class SearchOrder extends SqlOrder
 
     public function __construct(array $fields)
     {
-        parent::__construct('custom', null);
+        parent::__construct('search_index.hit_position', null);
 
         if (array_key_exists(0, $fields))
         {
