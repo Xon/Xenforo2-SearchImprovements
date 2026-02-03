@@ -25,7 +25,6 @@ use function array_key_exists;
 use function array_merge;
 use function array_merge_recursive;
 use function arsort;
-use function assert;
 use function count;
 use function in_array;
 use function is_array;
@@ -125,14 +124,18 @@ class Search extends XFCP_Search
 
         if (in_array($key, $this->svUserConstraint, true))
         {
-            if (!is_array($value))
+            if (is_array($value))
             {
-                assert(is_string($value));
+                $usernames = $value;
+            }
+            else if (is_string($value))
+            {
                 $usernames = Arr::stringToArray($value, '/,\s*/');
             }
             else
             {
-                $usernames = $value;
+                // unknown type, just bail
+                return '';
             }
 
             $templater = \XF::app()->templater();
