@@ -35,7 +35,7 @@ class RetryFailed extends XFCP_RetryFailed
         parent::retry($maxRunTime);
     }
 
-    protected function svAllSpecializedRetries(float &$maxRunTime = null)
+    protected function svAllSpecializedRetries(?float &$maxRunTime = null)
     {
         $specializedContentTypes = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
 
