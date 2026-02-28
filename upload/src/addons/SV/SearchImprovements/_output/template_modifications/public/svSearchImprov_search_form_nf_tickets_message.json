@@ -3,7 +3,7 @@
     "description": "Add range-search for reply count",
     "execution_order": 1,
     "enabled": true,
-    "action": "str_replace",
-    "find": "<xf:if is=\"$input.c.ticket\">",
+    "action": "preg_replace",
+    "find": "#<xf:if is=\"\\$input\\.c\\.(?:nfTickets)?\\.ticket\">#si",
     "replace": "<xf:macro name=\"svSearchImprov_macros::replies\" arg-input=\"{$input}\" />\n$0"
 }
