@@ -10,6 +10,8 @@ use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use SV\SearchImprovements\Search\Features\SearchOrder;
+use SV\SearchImprovements\Util\IndexHelper;
+use SV\SearchImprovements\XF\Admin\Controller\Index;
 use XF\Mvc\Entity\Entity;
 use XF\Search\MetadataStructure;
 use XF\Search\Query\SqlOrder;
@@ -46,8 +48,7 @@ trait DiscussionTrait
 
     protected function populateDiscussionMetaData(Entity $entity, array &$metaData): void
     {
-        $repo = SearchRepo::get();
-        if (!$repo->isUsingElasticSearch())
+        if (!IndexHelper::isUsingElasticSearch())
         {
             return;
         }
@@ -92,8 +93,7 @@ trait DiscussionTrait
 
     public function setupDiscussionMetadataStructure(MetadataStructure $structure): void
     {
-        $repo = SearchRepo::get();
-        if (!$repo->isUsingElasticSearch())
+        if (!IndexHelper::isUsingElasticSearch())
         {
             return;
         }
@@ -131,7 +131,7 @@ trait DiscussionTrait
     {
         $sorts = [];
 
-        if (SearchRepo::get()->isUsingElasticSearch())
+        if (IndexHelper::isUsingElasticSearch())
         {
             $class = $this->getSvDiscussionEntityClass();
             if (is_subclass_of($class, ISearchableReplyCount::class))

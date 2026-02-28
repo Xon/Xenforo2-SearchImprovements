@@ -8,6 +8,7 @@ namespace SV\SearchImprovements\NF\Tickets\Entity;
 use SV\SearchImprovements\Repository\Search as ExtendedSearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
+use SV\SearchImprovements\Util\IndexHelper;
 use XF\Mvc\Entity\Structure;
 use function array_column;
 
@@ -44,11 +45,10 @@ class Ticket extends XFCP_Ticket implements ISearchableDiscussionUser, ISearchab
     {
         $structure = parent::getStructure($structure);
 
-        $repo = ExtendedSearchRepo::get();
-        if ($repo->isUsingElasticSearch())
+        if (IndexHelper::isUsingElasticSearch())
         {
-            $repo->addContainerIndexableField($structure, 'user_id');
-            $repo->addContainerIndexableField($structure, 'reply_count');
+            IndexHelper::addContainerIndexableField($structure, 'user_id');
+            IndexHelper::addContainerIndexableField($structure, 'reply_count');
         }
 
         return $structure;

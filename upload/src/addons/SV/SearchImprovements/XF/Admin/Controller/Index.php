@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XF\Admin\Controller;
 
 use SV\SearchImprovements\Repository\Search as SearchRepo;
+use SV\SearchImprovements\Util\IndexHelper;
 use SV\SearchImprovements\XFES\Elasticsearch\Api as ExtendedApi;
 use SV\StandardLib\Helper;
 use XF\Mvc\Reply\AbstractReply;
@@ -23,7 +24,7 @@ class Index extends XFCP_Index
     {
         $reply = parent::actionIndex();
 
-        if ($reply instanceof ViewReply && SearchRepo::get()->isUsingElasticSearch() && SearchRepo::get()->canViewServerInfo())
+        if ($reply instanceof ViewReply && IndexHelper::isUsingElasticSearch() && SearchRepo::get()->canViewServerInfo())
         {
             $esTestError = $esStats = $esVersion = $esClusterStatus = null;
             $configurer = Helper::service(ConfigurerService ::class, null);

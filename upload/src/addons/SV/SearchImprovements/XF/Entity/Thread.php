@@ -7,6 +7,7 @@ namespace SV\SearchImprovements\XF\Entity;
 
 use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
+use SV\SearchImprovements\Util\IndexHelper;
 use SV\StandardLib\Helper;
 use XF\Mvc\Entity\Structure;
 use function array_column;
@@ -47,14 +48,13 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser
     {
         $structure = parent::getStructure($structure);
 
-        $repo = SearchRepo::get();
         if (isset($structure->behaviors['XF:IndexableContainer']))
         {
             $structure->options['svReindexThreadForCollaborators'] = false;
-            $repo->addContainerIndexableField($structure, 'user_id');
+            IndexHelper::addContainerIndexableField($structure, 'user_id');
             if (Helper::isAddOnActive('SV/ViewStickyThreads'))
             {
-                $repo->addContainerIndexableField($structure, 'sticky');
+                IndexHelper::addContainerIndexableField($structure, 'sticky');
             }
         }
     

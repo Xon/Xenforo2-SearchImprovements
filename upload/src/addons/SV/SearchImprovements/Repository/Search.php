@@ -2,9 +2,9 @@
 
 namespace SV\SearchImprovements\Repository;
 
-use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Util\Arr;
+use SV\SearchImprovements\Util\IndexHelper;
 use SV\SearchImprovements\XF\Search\Query\Constraints\DateRangeConstraint;
 use SV\SearchImprovements\XF\Search\Query\Constraints\RangeConstraint;
 use SV\StandardLib\Helper;
@@ -16,13 +16,9 @@ use XF\Repository\User as UserRepo;
 use XF\Search\Query\Query;
 use XF\Search\Query\TableReference;
 use function array_filter;
-use function array_key_exists;
 use function count;
-use function gettype;
 use function implode;
-use function is_array;
 use function is_callable;
-use function is_string;
 use function preg_split;
 
 class Search extends Repository
@@ -68,40 +64,27 @@ class Search extends Repository
         return false;
     }
 
+    /**
+     * @see IndexHelper::isUsingElasticSearch()
+     * @deprecated
+     */
     public function isUsingElasticSearch(): bool
     {
-        return Helper::isAddOnActive('XFES') && (\XF::options()->xfesEnabled ?? false);
+        return IndexHelper::isUsingElasticSearch();
     }
 
     public function isPushingViewOtherChecksIntoSearch(): bool
     {
-        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && $this->isUsingElasticSearch();
+        return (\XF::options()->svPushViewOtherCheckIntoXFES ?? false) && IndexHelper::isUsingElasticSearch();
     }
 
+    /**
+     * @see IndexHelper::addContainerIndexableField()
+     * @deprecated
+     */
     public function addContainerIndexableField(Structure $structure, string $field): void
     {
-        if (!array_key_exists('XF:IndexableContainer', $structure->behaviors))
-        {
-            return;
-        }
-        $container =& $structure->behaviors['XF:IndexableContainer'];
-
-        if (!array_key_exists('checkForUpdates', $container))
-        {
-            $container['checkForUpdates'] = [];
-        }
-        else if (is_string($container['checkForUpdates']))
-        {
-            $container['checkForUpdates'] = [$container['checkForUpdates']];
-        }
-        else if (!is_array($container['checkForUpdates']))
-        {
-            \XF::logException(new \LogicException('Unexpected type (' . gettype($container['checkForUpdates']) . ') for XF:IndexableContainer option checkForUpdates '));
-
-            return;
-        }
-
-        $container['checkForUpdates'][] = $field;
+        IndexHelper::addContainerIndexableField($structure, $field);
     }
 
     /**
@@ -130,8 +113,7 @@ class Search extends Repository
             $lowerConstraint = 0;
         }
 
-        $repo = SearchRepo::get();
-        $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
+        $source = IndexHelper::isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
         {
             $source = $tableRef[0]->getAlias();
@@ -227,8 +209,7 @@ class Search extends Repository
             $lowerConstraint = 0;
         }
 
-        $repo = SearchRepo::get();
-        $source = $repo->isUsingElasticSearch() ? 'search_index' : $sqlTable;
+        $source = IndexHelper::isUsingElasticSearch() ? 'search_index' : $sqlTable;
         if ($source === null)
         {
             $source = $tableRef[0]->getAlias();

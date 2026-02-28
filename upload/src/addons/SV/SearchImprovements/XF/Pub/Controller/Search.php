@@ -5,6 +5,7 @@
 
 namespace SV\SearchImprovements\XF\Pub\Controller;
 
+use SV\SearchImprovements\Util\IndexHelper;
 use SV\SearchImprovements\XF\Entity\User as ExtendedUserEntity;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
 use XF\Phrase;
@@ -58,7 +59,7 @@ class Search extends XFCP_Search
                 }
             }
             $reply->setParam('input', $input);
-            $reply->setParam('isUsingElasticSearch', \SV\SearchImprovements\Repository\Search::get()->isUsingElasticSearch());
+            $reply->setParam('isUsingElasticSearch', IndexHelper::isUsingElasticSearch());
 
             // get the container type for this type
             $contentType = (string)$reply->getParam('type');
