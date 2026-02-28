@@ -24,7 +24,7 @@ class Thread extends XFCP_Thread
     public function __construct($contentType, Search $searcher)
     {
         parent::__construct($contentType, $searcher);
-        $this->svIndexPrefixes = (bool)(\XF::options()->svPushThreadPrefixesIntoSearch ?? true);
+        $this->svIndexPrefixes = \XF::options()->svPushThreadPrefixesIntoSearch ?? true;
     }
 
     public function getIndexData(Entity $entity)
@@ -60,7 +60,7 @@ class Thread extends XFCP_Thread
             $prefixId = (int)$prefixId;
             $key = 'thread_prefix.' . $prefixId;
 
-            $phraseText = trim((string)$language->renderPhrase($key, [], 'raw', [
+            $phraseText = trim($language->renderPhrase($key, [], 'raw', [
                 'fallback' => null,
                 'nameOnInvalid' => false,
             ]));

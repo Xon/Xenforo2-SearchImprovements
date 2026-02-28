@@ -234,7 +234,7 @@ class SpecializedSearchIndex extends Repository
 
         if ($maxResults <= 0)
         {
-            $maxResults = max((int)\XF::options()->maximumSearchResults, 20);
+            $maxResults = max(\XF::options()->maximumSearchResults ?? 0, 20);
         }
 
         $search = $this->search($contentType);
