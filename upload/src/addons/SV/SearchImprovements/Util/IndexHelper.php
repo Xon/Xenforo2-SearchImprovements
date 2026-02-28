@@ -6,6 +6,9 @@ use XF\Mvc\Entity\Structure;
 
 abstract class IndexHelper
 {
+    /**
+     * @since 2.18.0
+     */
     public static function isUsingElasticSearch(): bool
     {
         if (!(\XF::options()->xfesEnabled ?? false))
@@ -18,6 +21,9 @@ abstract class IndexHelper
         return isset($addOns['XFES']);
     }
 
+    /**
+     * @since 2.18.0
+     */
     public static function addContainerIndexableField(Structure $structure, string $field): void
     {
         if (!array_key_exists('XF:IndexableContainer', $structure->behaviors))

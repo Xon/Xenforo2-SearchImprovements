@@ -66,7 +66,7 @@ class Search extends Repository
 
     /**
      * @see IndexHelper::isUsingElasticSearch()
-     * @deprecated
+     * @deprecated Since v2.18.0, use IndexHelper instead
      */
     public function isUsingElasticSearch(): bool
     {
@@ -80,7 +80,7 @@ class Search extends Repository
 
     /**
      * @see IndexHelper::addContainerIndexableField()
-     * @deprecated
+     * @deprecated Since v2.18.0, use IndexHelper instead
      */
     public function addContainerIndexableField(Structure $structure, string $field): void
     {
