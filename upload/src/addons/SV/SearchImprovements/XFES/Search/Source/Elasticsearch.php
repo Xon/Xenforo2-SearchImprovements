@@ -8,6 +8,7 @@ namespace SV\SearchImprovements\XFES\Search\Source;
 use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
+use SV\SearchImprovements\Util\IndexHelper;
 use SV\SearchImprovements\XF\Search\Query\KeywordQuery;
 use XF\Search\Query\MetadataConstraint;
 use XF\Search\Query\Query;
@@ -238,9 +239,8 @@ class Elasticsearch extends XFCP_Elasticsearch
      */
     protected function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
     {
-        /** @noinspection PhpIdempotentOperationInspection */
-        $weight = floatval($weight) + 0;
-        if ($weight == 1 || !$weight)
+        $weight = IndexHelper::asIntOrFloat($weight);
+        if ($weight === 1 || $weight === 0)
         {
             return [];
         }

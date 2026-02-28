@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\Option;
 
+use SV\SearchImprovements\Util\IndexHelper;
 use XF\Entity\Option as OptionEntity;
 use XF\Option\AbstractOption;
 use function class_exists;
@@ -52,9 +53,8 @@ abstract class ContentTypes extends AbstractOption
         {
             if (isset($contentTypes[$contentType]) && ($value['checked'] ?? false))
             {
-                /** @noinspection PhpIdempotentOperationInspection */
-                $value = floatval($value['value']) + 0;
-                if ($value == 1 || $value < 0)
+                $value = IndexHelper::asIntOrFloat($value['value']);
+                if ($value === 1 || $value < 0)
                 {
                     continue;
                 }

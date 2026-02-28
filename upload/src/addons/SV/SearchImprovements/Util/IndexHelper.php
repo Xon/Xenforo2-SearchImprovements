@@ -4,12 +4,25 @@ namespace SV\SearchImprovements\Util;
 
 use XF\Mvc\Entity\Structure;
 use function array_key_exists;
+use function floatval;
 use function gettype;
 use function is_array;
 use function is_string;
+use function strval;
 
 abstract class IndexHelper
 {
+    /**
+     * Con
+     * @param int|float|string $value
+     * @return int|float
+     */
+    public static function asIntOrFloat($value)
+    {
+        /** @noinspection PhpWrongStringConcatenationInspection */
+        return strval(floatval($value)) + 0;
+    }
+
     /**
      * @since 2.18.0
      */
