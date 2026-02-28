@@ -36,6 +36,7 @@ class KeywordQuery extends XFCP_KeywordQuery
         $this->metadataConstraints = $metadataConstraints;
     }
 
+    /** @noinspection PhpMissingReturnTypeInspection */
     public function hasQueryConstraints()
     {
         if ($this->order instanceof SearchOrder && $this->order->xfesOnly())

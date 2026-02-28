@@ -43,6 +43,7 @@ class Query extends XFCP_Query
         $this->metadataConstraints = $metadataConstraints;
     }
 
+    /** @noinspection PhpMissingReturnTypeInspection */
     public function hasQueryConstraints()
     {
         if ($this->order instanceof SearchOrder && $this->order->xfesOnly())

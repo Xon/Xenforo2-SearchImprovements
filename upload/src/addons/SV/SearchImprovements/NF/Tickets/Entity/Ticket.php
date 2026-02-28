@@ -5,7 +5,6 @@
 
 namespace SV\SearchImprovements\NF\Tickets\Entity;
 
-use SV\SearchImprovements\Repository\Search as ExtendedSearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Search\Features\ISearchableReplyCount;
 use SV\SearchImprovements\Util\IndexHelper;

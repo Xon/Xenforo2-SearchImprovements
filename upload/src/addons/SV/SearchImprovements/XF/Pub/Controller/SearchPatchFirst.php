@@ -13,6 +13,7 @@ use function in_array;
  */
 class SearchPatchFirst extends XFCP_SearchPatchFirst
 {
+    /** @noinspection PhpMissingReturnTypeInspection */
     protected function prepareSearchQuery(array $data, &$urlConstraints = [])
     {
         // XF bug: https://xenforo.com/community/threads/crafted-post-search-query-can-skip-post-gettypepermissionconstraints.213723/

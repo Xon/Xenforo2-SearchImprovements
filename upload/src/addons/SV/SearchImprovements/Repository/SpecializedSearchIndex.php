@@ -30,7 +30,8 @@ class SpecializedSearchIndex extends Repository
 
     /**
      * @param string|array<string> $contentType
-     * @param array  $config
+     * @param array                $config
+     * @param bool                 $allowDefaultIndex
      * @return Api
      */
     public function getIndexApi($contentType, array $config = [], bool $allowDefaultIndex = false): Api

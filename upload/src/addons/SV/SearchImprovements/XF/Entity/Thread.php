@@ -5,7 +5,6 @@
 
 namespace SV\SearchImprovements\XF\Entity;
 
-use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\Features\ISearchableDiscussionUser;
 use SV\SearchImprovements\Util\IndexHelper;
 use SV\StandardLib\Helper;
