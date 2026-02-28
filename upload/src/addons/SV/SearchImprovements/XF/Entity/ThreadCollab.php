@@ -11,14 +11,11 @@ class ThreadCollab extends XFCP_ThreadCollab
         /** @noinspection PhpUndefinedMethodInspection */
         parent::rebuildCollaborativeThreadCounter();
 
-        if ($this->hasOption('svReindexThreadForCollaborators') && $this->getOption('svReindexThreadForCollaborators'))
+        if ($this->hasOption('svReindexThreadForCollaborators') && $this->getOption('svReindexThreadForCollaborators') && $this->hasBehavior('XF:IndexableContainer'))
         {
             /** @var IndexableContainer $indexableContainer */
             $indexableContainer = $this->getBehavior('XF:IndexableContainer');
-            if ($indexableContainer !== null)
-            {
-                $indexableContainer->triggerReindex();
-            }
+            $indexableContainer->triggerReindex();
         }
     }
 }

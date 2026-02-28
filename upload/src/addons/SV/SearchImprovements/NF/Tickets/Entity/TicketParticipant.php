@@ -25,14 +25,11 @@ class TicketParticipant extends XFCP_TicketParticipant
     {
         \XF::runOnce('nfIndexTicket' . $this->ticket_id, function () {
             $ticket = $this->Ticket;
-            if ($ticket !== null)
+            if ($ticket !== null && $ticket->hasBehavior('XF:IndexableContainer'))
             {
                 /** @var IndexableContainer $indexableContainer */
                 $indexableContainer = $ticket->getBehavior('XF:IndexableContainer');
-                if ($indexableContainer !== null)
-                {
-                    $indexableContainer->triggerReindex();
-                }
+                $indexableContainer->triggerReindex();
             }
         });
     }
