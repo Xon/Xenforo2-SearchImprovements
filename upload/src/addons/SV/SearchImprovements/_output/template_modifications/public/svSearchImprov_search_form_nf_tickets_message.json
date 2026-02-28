@@ -5,5 +5,5 @@
     "enabled": true,
     "action": "str_replace",
     "find": "<xf:if is=\"$input.c.ticket\">",
-    "replace": "<xf:macro template=\"svSearchImprov_macros\" name=\"replies\" arg-input=\"{$input}\" />\n$0"
+    "replace": "<xf:macro name=\"svSearchImprov_macros::replies\" arg-input=\"{$input}\" />\n$0"
 }
