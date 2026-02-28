@@ -4,16 +4,20 @@ namespace SV\SearchImprovements\Option;
 
 use XF\Entity\Option as OptionEntity;
 use XF\Option\AbstractOption;
+use function array_key_exists;
+use function count;
+use function is_array;
+use function strval;
 
 abstract class SearchBoost extends AbstractOption
 {
     public const DEFAULT = [
-        'default' => 1,
-        'exact' => 3,
-        'ngram' => 0.5,
-        'prefix' => 1.5,
+        'default'        => 1,
+        'exact'          => 3,
+        'ngram'          => 0.5,
+        'prefix'         => 1.5,
         'prefix_default' => 1,
-        'prefix_exact' => 3,
+        'prefix_exact'   => 3,
     ];
 
     /**
@@ -30,6 +34,7 @@ abstract class SearchBoost extends AbstractOption
                     $boosts[$k] = $v;
                 }
             }
+
             return $boosts;
         }
 
@@ -57,7 +62,7 @@ abstract class SearchBoost extends AbstractOption
 
         return self::getTemplate('admin:svSearchImprov_option_template_search_boosts', $option, $htmlParams, [
             'choices'     => $choices,
-            'nextCounter' => count($choices)
+            'nextCounter' => count($choices),
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XFES\Elasticsearch;
 
 use function json_encode;
+use function strval;
 
 /**
  * @Extends \XFES\Elasticsearch\Api
@@ -12,7 +13,7 @@ class Api extends XFCP_Api
     /** @var array|null */
     protected $dslForError;
     /** @var array<array> */
-    protected $svQueries = [];
+    protected $svQueries    = [];
     protected $svLogQueries = false;
 
     public function setLogQueries(bool $logQueries): void

@@ -7,7 +7,9 @@ namespace SV\SearchImprovements\Search\Specialized;
 
 use XF\Search\Query\SqlConstraint;
 use XF\Search\Search;
-use function trim, strlen;
+use function is_string;
+use function strlen;
+use function trim;
 
 /**
  * @property $handler SpecializedData|\XF\Search\Data\AbstractData|null
@@ -16,7 +18,7 @@ class Query extends \XF\Search\Query\Query
 {
     /** @var array */
     protected $textMatches = [];
-    /** @var bool  */
+    /** @var bool */
     protected $withPrefixPreferred = false;
     /** @var float|int */
     protected $prefixMatchBoost = 1.5;
@@ -59,8 +61,8 @@ class Query extends \XF\Search\Query\Query
     /**
      * Preform a text match to compute sort scoring
      *
-     * @param string      $text
-     * @param array       $fields
+     * @param string                $text
+     * @param array                 $fields
      * @param string|int|float|null $boost
      * @return $this
      */
@@ -75,7 +77,7 @@ class Query extends \XF\Search\Query\Query
             }
             if (!is_string($boost))
             {
-                $boost = '^'.$boost;
+                $boost = '^' . $boost;
             }
 
             $this->textMatches[] = [$text, $fields, $boost];
@@ -139,8 +141,8 @@ class Query extends \XF\Search\Query\Query
     }
 
     /**
-     * @param bool           $withPrefixPreferred
-     * @param float|int|null $prefixMatchBoost
+     * @param bool                  $withPrefixPreferred
+     * @param float|int|null        $prefixMatchBoost
      * @param float|int|string|null $prefixDefaultFieldBoost
      * @param float|int|string|null $prefixExactFieldBoost
      * @return static
@@ -154,12 +156,13 @@ class Query extends \XF\Search\Query\Query
         }
         if ($prefixDefaultFieldBoost !== null)
         {
-            $this->prefixDefaultFieldBoost = is_string($prefixDefaultFieldBoost) ? $prefixDefaultFieldBoost : '^'.$prefixDefaultFieldBoost;
+            $this->prefixDefaultFieldBoost = is_string($prefixDefaultFieldBoost) ? $prefixDefaultFieldBoost : '^' . $prefixDefaultFieldBoost;
         }
         if ($prefixExactFieldBoost !== null)
         {
-            $this->prefixExactFieldBoost = is_string($prefixExactFieldBoost) ? $prefixExactFieldBoost : '^'.$prefixExactFieldBoost;
+            $this->prefixExactFieldBoost = is_string($prefixExactFieldBoost) ? $prefixExactFieldBoost : '^' . $prefixExactFieldBoost;
         }
+
         return $this;
     }
 
@@ -187,7 +190,7 @@ class Query extends \XF\Search\Query\Query
     }
 
     /**
-     * @param bool        $withNgram
+     * @param bool                  $withNgram
      * @param float|int|string|null $boost
      * @return static
      */
@@ -196,8 +199,9 @@ class Query extends \XF\Search\Query\Query
         $this->withNgram = $withNgram;
         if ($boost !== null)
         {
-            $this->ngramBoost = is_string($boost) ? $boost : '^'.$boost;
+            $this->ngramBoost = is_string($boost) ? $boost : '^' . $boost;
         }
+
         return $this;
     }
 
@@ -221,8 +225,9 @@ class Query extends \XF\Search\Query\Query
         $this->withExact = $withExact;
         if ($boost !== null)
         {
-            $this->exactBoost = is_string($boost) ? $boost : '^'.$boost;
+            $this->exactBoost = is_string($boost) ? $boost : '^' . $boost;
         }
+
         return $this;
     }
 

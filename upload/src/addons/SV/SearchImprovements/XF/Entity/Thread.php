@@ -56,7 +56,7 @@ class Thread extends XFCP_Thread implements ISearchableDiscussionUser
                 IndexHelper::addContainerIndexableField($structure, 'sticky');
             }
         }
-    
+
         return $structure;
     }
 }

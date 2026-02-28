@@ -8,6 +8,8 @@ namespace SV\SearchImprovements\XF\Search;
 use XF\Search\Query;
 use XF\Search\Query\KeywordQuery;
 use XF\Search\Source\AbstractSource;
+use function is_callable;
+use function strlen;
 
 /**
  * @Extends \XF\Search\Search
@@ -50,7 +52,7 @@ class Search extends XFCP_Search
         }
 
         // pre-XF2.1.8 support
-        if (!is_callable(parent::class.'::isQueryEmpty'))
+        if (!is_callable(parent::class . '::isQueryEmpty'))
         {
             return !strlen($query->getKeywords()) && !$query->getUserIds();
         }

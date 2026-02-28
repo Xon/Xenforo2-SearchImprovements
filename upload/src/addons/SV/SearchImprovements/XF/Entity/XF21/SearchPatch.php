@@ -5,8 +5,8 @@ namespace SV\SearchImprovements\XF\Entity\XF21;
 use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Entity\XFCP_SearchPatch;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
-use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
+use XF\Repository\Search as SearchRepo;
 
 class SearchPatch extends XFCP_SearchPatch
 {

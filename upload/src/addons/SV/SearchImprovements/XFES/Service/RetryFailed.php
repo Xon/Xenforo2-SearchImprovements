@@ -39,7 +39,7 @@ class RetryFailed extends XFCP_RetryFailed
     {
         $specializedContentTypes = SpecializedSearchIndexRepo::get()->getSearchHandlerDefinitions();
 
-        foreach($specializedContentTypes as $type => $handler)
+        foreach ($specializedContentTypes as $type => $handler)
         {
             $start = microtime(true);
 

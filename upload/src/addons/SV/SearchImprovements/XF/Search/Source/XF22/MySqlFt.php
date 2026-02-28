@@ -4,8 +4,8 @@ namespace SV\SearchImprovements\XF\Search\Source\XF22;
 
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Search\Query\Constraints\AbstractConstraint;
-use XF\Search\Query\KeywordQuery;
 use SV\SearchImprovements\XF\Search\Source\XFCP_MySqlFt;
+use XF\Search\Query\KeywordQuery;
 use function end;
 
 class MySqlFt extends XFCP_MySqlFt

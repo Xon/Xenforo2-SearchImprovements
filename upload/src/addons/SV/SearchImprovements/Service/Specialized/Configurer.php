@@ -49,9 +49,9 @@ class Configurer extends \XFES\Service\Configurer
                 $this->es->requestFromIndex('put', '_settings', [
                     'index' => [
                         'blocks' => [
-                            'read_only_allow_delete' => false
-                        ]
-                    ]
+                            'read_only_allow_delete' => false,
+                        ],
+                    ],
                 ]);
             }
             catch (\Exception $e)

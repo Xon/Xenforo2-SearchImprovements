@@ -3,6 +3,10 @@
 namespace SV\SearchImprovements\Util;
 
 use XF\Mvc\Entity\Structure;
+use function array_key_exists;
+use function gettype;
+use function is_array;
+use function is_string;
 
 abstract class IndexHelper
 {
@@ -17,6 +21,7 @@ abstract class IndexHelper
         }
 
         $addOns = \XF::app()->container('addon.cache');
+
         /** @noinspection SpellCheckingInspection */
         return isset($addOns['XFES']);
     }

@@ -2,10 +2,10 @@
 
 namespace SV\SearchImprovements\Search\Features;
 
+use Closure;
 use XF\Search\Query\Query;
 use XF\Search\Query\SqlOrder;
 use XFES\Elasticsearch\Api;
-use Closure;
 use function array_fill_keys;
 use function array_key_exists;
 use function count;

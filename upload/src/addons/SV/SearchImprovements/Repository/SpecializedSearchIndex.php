@@ -14,7 +14,15 @@ use XF\ResultSet;
 use XF\Search\Data\AbstractData;
 use XF\Search\Search as XenForoSearch;
 use XFES\Listener as XFESListener;
-use function strlen, strtolower, class_exists, is_array, count, max;
+use function array_unique;
+use function class_exists;
+use function count;
+use function implode;
+use function is_array;
+use function max;
+use function strlen;
+use function strtolower;
+use function var_export;
 
 class SpecializedSearchIndex extends Repository
 {
@@ -204,6 +212,7 @@ class SpecializedSearchIndex extends Repository
     protected function getQuery(XenForoSearch $search, SpecializedData $handler): SpecializedQuery
     {
         $extendClass = \XF::extendClass(SpecializedQuery::class);
+
         return new $extendClass($search, $handler);
     }
 
@@ -225,7 +234,7 @@ class SpecializedSearchIndex extends Repository
         $types = $query->getTypes() ?? [];
         if (!is_array($types) || count($types) > 1)
         {
-            throw new \LogicException('Specialized search indexes only support a single type, got:'.var_export($types, true));
+            throw new \LogicException('Specialized search indexes only support a single type, got:' . var_export($types, true));
         }
         $contentType = $query->getHandlerType() ?? '';
         if (strlen($contentType) === 0)

@@ -6,17 +6,21 @@
 namespace SV\SearchImprovements\Search\Specialized;
 
 use Closure;
+use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Features\SearchOrder;
 use SV\SearchImprovements\Search\MetadataSearchEnhancements;
-use SV\SearchImprovements\Search\ExecuteSearchWrapper;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use XF\Search\IndexRecord;
 use XF\Search\Query\Query;
 use XFES\Elasticsearch\Api;
-use XFES\Search\Source\Elasticsearch;
 use XFES\Search\Query\FunctionOrder;
-use function min, strlen, count;
+use XFES\Search\Source\Elasticsearch;
+use function count;
+use function is_array;
+use function min;
+use function reset;
+use function strlen;
 
 class Source extends Elasticsearch
 {
@@ -67,7 +71,7 @@ class Source extends Elasticsearch
      * @param array $queryDsl
      * @return array
      */
-    protected function getSearchQueryFunctionScoreDsl(Query $query,array $queryDsl): array
+    protected function getSearchQueryFunctionScoreDsl(Query $query, array $queryDsl): array
     {
         $order = $query->getOrder();
 
@@ -94,9 +98,9 @@ class Source extends Elasticsearch
 
             return [
                 'function_score' => [
-                    'query' => $queryDsl,
-                    'functions' => $functions
-                ]
+                    'query'     => $queryDsl,
+                    'functions' => $functions,
+                ],
             ];
         }
 
@@ -210,14 +214,13 @@ class Source extends Elasticsearch
 
             return [
                 '_score',
-                ['date' => 'desc']
+                ['date' => 'desc'],
             ];
         }
 
         return [
-            ['date' => 'desc']
+            ['date' => 'desc'],
         ];
-
         //return parent::getSearchSortDsl($query);
     }
 
@@ -334,7 +337,7 @@ class Source extends Elasticsearch
                     'bool' => [
                         'should'               => $should,
                         'minimum_should_match' => 1,
-                    ]
+                    ],
                 ];
             }
             else if (count($matchFragments) === 1)
@@ -354,9 +357,9 @@ class Source extends Elasticsearch
 
         return [
             'bool' => [
-                'should' => $dsl,
+                'should'               => $dsl,
                 'minimum_should_match' => 1,
-            ]
+            ],
         ];
     }
 

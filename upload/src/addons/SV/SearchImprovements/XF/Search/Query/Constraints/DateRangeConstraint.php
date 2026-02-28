@@ -9,7 +9,7 @@ use XFES\Search\Source\Elasticsearch;
 
 class DateRangeConstraint extends RangeConstraint
 {
-    public const NEVER_IS_NA = 0;
+    public const NEVER_IS_NA   = 0;
     public const NEVER_IS_ZERO = 1; // for elasictic search NEVER_IS_ZERO gets mapped to NEVER_IS_NULL
     public const NEVER_IS_NULL = 2;
     /** @var int */
@@ -150,25 +150,25 @@ class DateRangeConstraint extends RangeConstraint
             case self::MATCH_GREATER:
                 $filters[] = [
                     'bool' => [
-                        'should' => [
+                        'should'               => [
                             [
                                 'bool' => [
                                     'must_not' => [
                                         'exists' => [
                                             'field' => $key,
-                                        ]
+                                        ],
                                     ],
-                                ]
+                                ],
                             ],
                             [
                                 'range' => [
                                     $key => [
                                         'gte' => $values[0],
-                                    ]
-                                ]
-                            ]
+                                    ],
+                                ],
+                            ],
                         ],
-                        'minimum_should_match' => 1
+                        'minimum_should_match' => 1,
                     ],
                 ];
 

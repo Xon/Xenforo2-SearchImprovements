@@ -76,6 +76,7 @@ abstract class LinkBuilder
 
             // stop default build_callback usage, and use default XF processing
             $suppressDefaultCallback = true;
+
             return null;
         }
 

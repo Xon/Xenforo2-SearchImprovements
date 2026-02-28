@@ -7,7 +7,6 @@ use function strlen;
 
 /**
  * @Extends \XF\Entity\User
- *
  * @property UserOption Option
  */
 class User extends XFCP_User

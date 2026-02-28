@@ -12,8 +12,7 @@ class IndexableContainer extends XFCP_IndexableContainer
     {
         \XF::runOnce(
             'searchIndex-children-' . $this->contentType() . $this->entity->getEntityId(),
-            function()
-            {
+            function () {
                 parent::triggerReindex();
             }
         );

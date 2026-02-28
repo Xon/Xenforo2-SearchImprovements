@@ -80,6 +80,7 @@ class Elasticsearch extends XFCP_Elasticsearch
 
     /**
      * XF2.2+
+     *
      * @param \XF\Search\Query\KeywordQuery $query
      * @param int                           $maxResults
      * @return array
@@ -205,7 +206,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             foreach ($skipContentTypes as $type)
             {
                 $filtersNot[] = [
-                    'type' => ['value' => $type]
+                    'type' => ['value' => $type],
                 ];
             }
         }
@@ -249,7 +250,7 @@ class Elasticsearch extends XFCP_Elasticsearch
             [
                 'filter' => $term,
                 'weight' => (float)$weight,
-            ]
+            ],
         ];
     }
 
@@ -322,8 +323,8 @@ class Elasticsearch extends XFCP_Elasticsearch
         $dsl['query'] = [
             'function_score' => [
                 'query'     => $dsl['query'],
-                'functions' => $functions
-            ]
+                'functions' => $functions,
+            ],
         ];
     }
 

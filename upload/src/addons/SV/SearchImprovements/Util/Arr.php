@@ -94,6 +94,7 @@ abstract class Arr
         if (array_key_exists($key, $array))
         {
             $array[$key] = $value;
+
             return true;
         }
 
@@ -114,6 +115,7 @@ abstract class Arr
             if (count($subParts) === 0)
             {
                 $part = $value;
+
                 return true;
             }
         }
@@ -131,6 +133,7 @@ abstract class Arr
         if (array_key_exists($key, $array))
         {
             unset($array[$key]);
+
             return true;
         }
 
@@ -150,6 +153,7 @@ abstract class Arr
             if (count($subParts) === 0)
             {
                 unset($part[$key]);
+
                 return true;
             }
             $part = &$part[$key];
@@ -167,7 +171,7 @@ abstract class Arr
      */
     public static function setUrlConstraint(array &$array, string $key, $value): bool
     {
-        $key = preg_replace('/^c\./','', $key);
+        $key = preg_replace('/^c\./', '', $key);
 
         return static::setByPath($array, $key, $value);
     }
@@ -181,7 +185,7 @@ abstract class Arr
      */
     public static function unsetUrlConstraint(array &$array, string $key): bool
     {
-        $key = preg_replace('/^c\./','', $key);
+        $key = preg_replace('/^c\./', '', $key);
 
         return static::unsetByPath($array, $key);
     }

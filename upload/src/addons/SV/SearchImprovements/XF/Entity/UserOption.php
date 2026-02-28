@@ -9,7 +9,6 @@ use XF\Mvc\Entity\Structure;
 
 /**
  * @Extends \XF\Entity\UserOption
- *
  * @property string sv_default_search_order
  */
 class UserOption extends XFCP_UserOption

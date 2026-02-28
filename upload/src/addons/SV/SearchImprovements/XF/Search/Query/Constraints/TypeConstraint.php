@@ -10,7 +10,7 @@ use function count;
 
 class TypeConstraint extends AbstractConstraint
 {
-    public const MATCH_TYPE = -43;
+    public const MATCH_TYPE    = -43;
     public const MATCH_SV_TYPE = 'svTYPE';
 
     /**
@@ -27,7 +27,7 @@ class TypeConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_TYPE => self::MATCH_TYPE,
+            self::MATCH_TYPE    => self::MATCH_TYPE,
             self::MATCH_SV_TYPE => self::MATCH_TYPE,
         ];
     }
@@ -43,8 +43,8 @@ class TypeConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
@@ -67,12 +67,12 @@ class TypeConstraint extends AbstractConstraint
             foreach ($types as $type)
             {
                 $childFilters[] = [
-                    'type' => ['value' => $type]
+                    'type' => ['value' => $type],
                 ];
             }
             $filters[] = [
                 'bool' => [
-                    'should' => $childFilters,
+                    'should'               => $childFilters,
                     'minimum_should_match' => 1,
                 ],
             ];

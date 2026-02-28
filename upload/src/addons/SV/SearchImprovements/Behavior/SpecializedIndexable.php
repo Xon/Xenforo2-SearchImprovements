@@ -6,7 +6,9 @@
 namespace SV\SearchImprovements\Behavior;
 
 use XF\Behavior\Indexable;
-use function is_string, is_callable;
+use function is_array;
+use function is_callable;
+use function is_string;
 
 class SpecializedIndexable extends Indexable
 {
@@ -14,6 +16,7 @@ class SpecializedIndexable extends Indexable
     {
         $config = parent::getDefaultConfig();
         $config['content_type'] = null;
+
         return $config;
     }
 

@@ -6,17 +6,17 @@ use SV\RedisCache\Repository\Redis as RedisRepo;
 use SV\SearchImprovements\Globals;
 use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
+use SV\StandardLib\Helper;
 use XF\Entity\ConversationMaster as ConversationMasterEntity;
 use XF\Entity\Node as NodeEntity;
 use XF\Entity\User as UserEntity;
 use XF\InputFilterer;
+use XF\Mvc\Entity\Manager;
+use XF\Mvc\Entity\Structure;
 use XF\Phrase;
 use XF\PreEscaped;
 use XF\Repository\Node as NodeRepo;
 use XF\Repository\Search as SearchRepo;
-use SV\StandardLib\Helper;
-use XF\Mvc\Entity\Manager;
-use XF\Mvc\Entity\Structure;
 use XF\Repository\User as UserRepo;
 use XF\Search\Data\AbstractData;
 use XF\Util\Arr;
@@ -26,6 +26,7 @@ use function array_merge;
 use function array_merge_recursive;
 use function arsort;
 use function count;
+use function implode;
 use function in_array;
 use function is_array;
 use function is_numeric;
@@ -44,12 +45,14 @@ class Search extends XFCP_Search
      * Special case for items pulled to the very start of the search term results
      * Overrides the $svDateConstraint/$svUserConstraint sort order
      * The order of items in this list is used in sortSearchQueryForDisplay
+     *
      * @var string[]
      */
     protected $svSortFirst = [
     ];
     /**
      * The order of items in this list is used in sortSearchQueryForDisplay
+     *
      * @var string[]
      */
     protected $svDateConstraint = [
@@ -58,6 +61,7 @@ class Search extends XFCP_Search
     ];
     /**
      * The order of items in this list is used in sortSearchQueryForDisplay
+     *
      * @var string[]
      */
     protected $svUserConstraint = [
@@ -72,6 +76,7 @@ class Search extends XFCP_Search
      * Special case for items pulled to the very end of the search term results
      * Overrides the $svSortFirst/$svDateConstraint/$svUserConstraint sort order
      * The order of items in this list is used in sortSearchQueryForDisplay
+     *
      * @var string[]
      */
     protected $svSortLast = [
@@ -101,6 +106,7 @@ class Search extends XFCP_Search
     {
         /** @var ExtendedSearchRepo $searchRepo */
         $searchRepo = Helper::repository(SearchRepo::class);
+
         return $searchRepo->getContainerTypeForContentType($this->search_type);
     }
 
@@ -154,15 +160,15 @@ class Search extends XFCP_Search
 
                 $formattedUsernames[] = new PreEscaped($templater->func('username_link', [
                     $user, false, [
-                        'username' => $username
-                    ]
+                        'username' => $username,
+                    ],
                 ]));
             }
             foreach ($notFound as $username)
             {
                 $formattedUsernames[] = new PreEscaped($templater->func('username_link', [
                     null, false, [
-                        'username' => $username
+                        'username' => $username,
                     ],
                 ]));
             }
@@ -207,7 +213,7 @@ class Search extends XFCP_Search
                 ]);
             }
 
-            return \XF::phrase(\XF::$versionId >= 2030000 ? 'svSearchConstraint.direct_message_no_title' :'svSearchConstraint.conversation_no_title');
+            return \XF::phrase(\XF::$versionId >= 2030000 ? 'svSearchConstraint.direct_message_no_title' : 'svSearchConstraint.conversation_no_title');
         }
 
         if ($key === 'replies_upper' && $value === '0')
@@ -255,7 +261,7 @@ class Search extends XFCP_Search
                     }
 
                     $query[$key . '_' . $id] = \XF::phrase('svSearchConstraint.nodes', [
-                        'url' => $url,
+                        'url'  => $url,
                         'node' => $title,
                     ]);
                 }
@@ -487,8 +493,8 @@ class Search extends XFCP_Search
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase !== null)
         {
-            $query['search-order search-order--'.$this->search_order] = \XF::phrase('svSearchClauses.order_by', [
-                'order' => $phrase
+            $query['search-order search-order--' . $this->search_order] = \XF::phrase('svSearchClauses.order_by', [
+                'order' => $phrase,
             ])->render('raw');
         }
         if ($this->search_grouping)
@@ -496,7 +502,7 @@ class Search extends XFCP_Search
             $contentType = $this->getContainerContentType() ?? $this->search_type;
             $value = \XF::app()->getContentTypePhrase($contentType, true);
             $query['search-clause search-clause--group_by'] = \XF::phrase('svSearchClauses.group_by', [
-                'value' => $value
+                'value' => $value,
             ])->render('raw');
         }
 
@@ -517,7 +523,7 @@ class Search extends XFCP_Search
         {
             if (!array_key_exists($key, $structuredQuery))
             {
-                $query['svSearchConstraint.'.$key] = $value;
+                $query['svSearchConstraint.' . $key] = $value;
             }
         }
 
@@ -525,7 +531,7 @@ class Search extends XFCP_Search
         $phrase = $this->getSearchOrderPhrase($this->search_order);
         if ($phrase === null)
         {
-            $query['svSearchOrder.'.$this->search_order] = 'svSearchOrder.'.$this->search_order;
+            $query['svSearchOrder.' . $this->search_order] = 'svSearchOrder.' . $this->search_order;
         }
 
         return $query;
@@ -554,9 +560,9 @@ class Search extends XFCP_Search
     protected function getSearchDebugRequestStateSnapshot(): array
     {
         $debug = [
-            'time' => round(microtime(true) - \XF::app()->container('time.granular'), 4),
+            'time'    => round(microtime(true) - \XF::app()->container('time.granular'), 4),
             'queries' => \XF::db()->getQueryCount(),
-            'memory' => round(memory_get_peak_usage() / 1024 / 1024, 2)
+            'memory'  => round(memory_get_peak_usage() / 1024 / 1024, 2),
         ];
 
         if (Helper::isAddOnActive('SV/RedisCache'))

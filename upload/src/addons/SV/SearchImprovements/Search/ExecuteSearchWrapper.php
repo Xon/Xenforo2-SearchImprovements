@@ -39,7 +39,7 @@ trait ExecuteSearchWrapper
                 $contentType = $match['content_type'] ?? $match[0] ?? null;
                 if (!is_string($contentType))
                 {
-                    throw new \LogicException('Unknown return contents from '.__METHOD__);
+                    throw new \LogicException('Unknown return contents from ' . __METHOD__);
                 }
                 if (!isset(Globals::$capturedSearchDebugInfo['summary'][$contentType]['raw']))
                 {

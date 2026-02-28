@@ -19,7 +19,7 @@ class Results extends XFCP_Results
         $output = is_callable([parent::class, 'renderJson'])
             ? parent::renderJson()
             : ['status' => 'ok', 'html' => null];
-        If (($output['html'] ?? null) === null)
+        if (($output['html'] ?? null) === null)
         {
             $htmlOutput = $jsonRender->getTemplate($this->getTemplateName(), $this->getParams())->render();
             $output['html'] = $jsonRender->getHtmlOutputStructure($htmlOutput);

@@ -9,9 +9,11 @@ use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Exception as ReplyException;
 use function array_key_exists;
+use function count;
 use function is_array;
 use function is_callable;
 use function ksort;
+use function var_export;
 
 /**
  * @Extends \XF\Pub\Controller\Search
@@ -46,6 +48,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         {
             $reply = $this->message(\XF::phrase('no_results_found'));
             $reply->setPageParam('isExpiredSearch', true);
+
             return $reply;
         }
 
@@ -112,6 +115,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
         if ($search === null || $search->user_id !== $visitorId)
         {
             $searchData = $this->convertShortSearchInputNames();
+
             return $this->svSearchFromQueryData($searchData);
         }
         else if ($visitorId === 0)
@@ -142,12 +146,13 @@ class SearchPatchLast extends XFCP_SearchPatchLast
                 {
                     if (\XF::$developmentMode)
                     {
-                        \XF::logError('Rapid expired search record:'.\var_export($copy1, true). ','.\var_export($copy2, true));
+                        \XF::logError('Rapid expired search record:' . var_export($copy1, true) . ',' . var_export($copy2, true));
                     }
 
                     $session->remove('svExpiredSearchRedirect');
                     $reply = $this->message(\XF::phrase('no_results_found'));
                     $reply->setPageParam('isExpiredSearch', true);
+
                     return $reply;
                 }
                 $session->set('svExpiredSearchRedirect', \XF::$time);
@@ -162,6 +167,7 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
     /**
      * XF2.3+
+     *
      * @noinspection PhpMissingReturnTypeInspection
      * @noinspection PhpUndefinedMethodInspection
      * */
@@ -207,12 +213,12 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
         // map old XF member search to standard search arguments
         $input = $this->filter([
-            'type' => 'str',
-            'content' => 'str',
-            'before' => 'uint',
+            'type'        => 'str',
+            'content'     => 'str',
+            'before'      => 'uint',
             'thread_type' => 'str',
             // allow standard XF search arguments
-            'c' => 'array',
+            'c'           => 'array',
         ]);
 
         $input['c']['users'] = $user->username;
@@ -245,8 +251,8 @@ class SearchPatchLast extends XFCP_SearchPatchLast
 
         $searchData = [
             'search_type' => $contentFilter,
-            'c' => $input['c'],
-            'order' => 'date'
+            'c'           => $input['c'],
+            'order'       => 'date',
         ];
 
         return $this->redirect($this->buildLink('search/search', null, $searchData), '');

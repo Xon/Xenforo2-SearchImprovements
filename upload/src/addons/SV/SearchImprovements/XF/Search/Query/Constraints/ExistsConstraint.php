@@ -8,7 +8,7 @@ use XFES\Search\Source\Elasticsearch;
 
 class ExistsConstraint extends AbstractConstraint
 {
-    public const MATCH_EXISTS = -47;
+    public const MATCH_EXISTS    = -47;
     public const MATCH_SV_EXISTS = 'svEXISTS';
 
     /** @noinspection PhpMissingParentConstructorInspection */
@@ -22,7 +22,7 @@ class ExistsConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_EXISTS => self::MATCH_EXISTS,
+            self::MATCH_EXISTS    => self::MATCH_EXISTS,
             self::MATCH_SV_EXISTS => self::MATCH_EXISTS,
         ];
     }
@@ -38,8 +38,8 @@ class ExistsConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {

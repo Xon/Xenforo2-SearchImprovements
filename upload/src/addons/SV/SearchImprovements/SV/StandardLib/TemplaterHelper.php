@@ -4,7 +4,9 @@ namespace SV\SearchImprovements\SV\StandardLib;
 
 use SV\SearchImprovements\Util\Arr;
 use XF\Template\Templater as BaseTemplater;
+use function array_shift;
 use function explode;
+use function implode;
 
 /**
  * @Extends \SV\StandardLib\TemplaterHelper

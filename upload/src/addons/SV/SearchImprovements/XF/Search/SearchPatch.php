@@ -13,7 +13,9 @@ use XF\Mvc\Entity\Entity;
 use XF\Search\Data\AbstractData;
 use XF\Search\Source\AbstractSource;
 use function array_key_exists;
-use function is_array, in_array, class_exists;
+use function class_exists;
+use function in_array;
+use function is_array;
 
 /**
  * @Extends \XF\Search\Search
@@ -98,9 +100,9 @@ class SearchPatch extends XFCP_SearchPatch
     }
 
     /**
-     * @param string $contentType
+     * @param string      $contentType
      * @param Entity|null $entity
-     * @param bool $deleteIfNeeded
+     * @param bool        $deleteIfNeeded
      * @return bool
      * @throws \Exception
      */
@@ -113,6 +115,7 @@ class SearchPatch extends XFCP_SearchPatch
             {
                 /** @var AbstractData $handler */
                 $source = AbstractDataSourceExtractor::getSearcher($handler);
+
                 return $source->index($contentType, $entity, $deleteIfNeeded);
             }
         }
@@ -122,7 +125,7 @@ class SearchPatch extends XFCP_SearchPatch
 
     /**
      * @param string $contentType
-     * @param bool $del
+     * @param bool   $del
      * @return void
      * @throws \Exception
      */

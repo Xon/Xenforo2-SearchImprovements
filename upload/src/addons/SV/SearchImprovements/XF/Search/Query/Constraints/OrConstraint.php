@@ -11,7 +11,7 @@ use function count;
 
 class OrConstraint extends AbstractConstraint
 {
-    public const MATCH_OR = -45;
+    public const MATCH_OR    = -45;
     public const MATCH_SV_OR = 'svOR';
 
     public function __construct(?MetadataConstraint ...$constraints)
@@ -22,7 +22,7 @@ class OrConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_OR => self::MATCH_OR,
+            self::MATCH_OR    => self::MATCH_OR,
             self::MATCH_SV_OR => self::MATCH_OR,
         ];
     }
@@ -38,8 +38,8 @@ class OrConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
@@ -49,6 +49,7 @@ class OrConstraint extends AbstractConstraint
         {
             $filters = array_merge($filters, $childFilters);
             $childNotFilters = array_merge($filters, $childNotFilters);
+
             return;
         }
 

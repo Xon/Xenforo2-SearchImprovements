@@ -10,6 +10,7 @@ use XF\Entity\Search as SearchEntity;
 use XF\PrintableException;
 use XF\Search\Query\KeywordQuery;
 use function is_callable;
+use function mb_strlen;
 
 class SearchPatch extends XFCP_SearchPatch
 {

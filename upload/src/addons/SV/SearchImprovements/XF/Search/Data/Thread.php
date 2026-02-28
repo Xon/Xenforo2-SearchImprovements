@@ -11,7 +11,9 @@ use XF\Mvc\Entity\Entity;
 use XF\Search\IndexRecord;
 use XF\Search\MetadataStructure;
 use XF\Search\Search;
+use function count;
 use function implode;
+use function trim;
 
 class Thread extends XFCP_Thread
 {
@@ -55,13 +57,13 @@ class Thread extends XFCP_Thread
 
         $language = \XF::app()->language();
         $prefixes = [];
-        foreach ($prefixIds AS $prefixId)
+        foreach ($prefixIds as $prefixId)
         {
             $prefixId = (int)$prefixId;
             $key = 'thread_prefix.' . $prefixId;
 
             $phraseText = trim($language->renderPhrase($key, [], 'raw', [
-                'fallback' => null,
+                'fallback'      => null,
                 'nameOnInvalid' => false,
             ]));
             if ($phraseText !== '')
@@ -77,7 +79,7 @@ class Thread extends XFCP_Thread
 
             $metaData = $index->metadata;
             $autoCompleteTitle = $metaData['elasticess_title'] ?? null;
-            if ($autoCompleteTitle !==  null)
+            if ($autoCompleteTitle !== null)
             {
                 $metaData['elasticess_title'] .= $fragment;
                 $index->metadata = $metaData;

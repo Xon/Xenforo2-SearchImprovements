@@ -8,7 +8,11 @@ use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
 use SV\StandardLib\Helper;
 use XF\App;
 use XFES\Elasticsearch\Api;
-use function array_values, array_merge, array_key_exists, is_array, array_replace;
+use function array_key_exists;
+use function array_merge;
+use function array_replace;
+use function array_values;
+use function is_array;
 
 /**
  * @Extends \XFES\Service\Analyzer
@@ -17,7 +21,7 @@ class Analyzer extends \XFES\Service\Analyzer
 {
     /** @var array */
     protected $ngramDefault = [
-        'type' => 'edge_ngram',
+        'type'        => 'edge_ngram',
         'min_gram'    => 2,
         'max_gram'    => 20,
         'token_chars' => [
@@ -25,7 +29,7 @@ class Analyzer extends \XFES\Service\Analyzer
             'digit',
             'punctuation',
             'symbol',
-        ]
+        ],
     ];
 
     /** @var int */
@@ -56,7 +60,7 @@ class Analyzer extends \XFES\Service\Analyzer
         }
     }
 
-    public function getNgramDefault() : array
+    public function getNgramDefault(): array
     {
         return $this->ngramDefault;
     }
@@ -79,8 +83,8 @@ class Analyzer extends \XFES\Service\Analyzer
 
         // custom character filters (before tokenization)
         $result['analysis']['char_filter']['sv_strip_white_space'] = [
-            'type' => 'pattern_replace',
-            'pattern' => '\\s*',
+            'type'        => 'pattern_replace',
+            'pattern'     => '\\s*',
             'replacement' => '',
         ];
 
@@ -89,7 +93,7 @@ class Analyzer extends \XFES\Service\Analyzer
 
         // custom tokenizer
         $result['analysis']['tokenizer']['sv_keyword_ngram_tokenizer'] = [
-            'type' => 'ngram',
+            'type'        => 'ngram',
             'min_gram'    => $edgeNgram['min_gram'],
             'max_gram'    => $edgeNgram['max_gram'],
             'token_chars' => [
@@ -97,7 +101,7 @@ class Analyzer extends \XFES\Service\Analyzer
                 'digit',
                 'punctuation',
                 'symbol',
-            ]
+            ],
         ];
 
         // custom filters (after tokenization)
@@ -107,12 +111,12 @@ class Analyzer extends \XFES\Service\Analyzer
             'filter'    => $simpleFilter,
         ];
         $result['analysis']['analyzer']['sv_near_exact_no_whitespace'] = [
-            'type'      => 'custom',
+            'type'        => 'custom',
             'char_filter' => [
                 'sv_strip_white_space',
             ],
-            'tokenizer' => 'standard',
-            'filter'    => $simpleFilter,
+            'tokenizer'   => 'standard',
+            'filter'      => $simpleFilter,
         ];
         $result['analysis']['analyzer']['sv_keyword_ngram'] = [
             'type'      => 'custom',
@@ -120,12 +124,12 @@ class Analyzer extends \XFES\Service\Analyzer
             'filter'    => $simpleFilter,
         ];
         $result['analysis']['analyzer']['sv_keyword_ngram_no_whitespace'] = [
-            'type'      => 'custom',
+            'type'        => 'custom',
             'char_filter' => [
                 'sv_strip_white_space',
             ],
-            'tokenizer' => 'sv_keyword_ngram_tokenizer',
-            'filter'    => $simpleFilter,
+            'tokenizer'   => 'sv_keyword_ngram_tokenizer',
+            'filter'      => $simpleFilter,
         ];
         $result['analysis']['analyzer']['sv_text_edge_ngram'] = [
             'type'      => 'custom',
@@ -166,7 +170,7 @@ class Analyzer extends \XFES\Service\Analyzer
         return $currentConfig;
     }
 
-    public function getNgramFilter(array $ngramVars) : array
+    public function getNgramFilter(array $ngramVars): array
     {
         $defaultNgram = $this->getNgramDefault();
         $ngramVars = array_replace($defaultNgram, $ngramVars);

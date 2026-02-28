@@ -110,7 +110,7 @@ class Message extends XFCP_Message
             'c.participants', 'discussion_user'
         );
         if ($repo->applyRangeConstraint($query, $constraints, $urlConstraints,
-            'c.replies.lower', 'c.replies.upper','replies',
+            'c.replies.lower', 'c.replies.upper', 'replies',
             [$this->getTicketQueryTableReference()]))
         {
             $request->set('c.min_reply_count', 0);

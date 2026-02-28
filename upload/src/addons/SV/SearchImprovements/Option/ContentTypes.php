@@ -4,9 +4,9 @@ namespace SV\SearchImprovements\Option;
 
 use XF\Entity\Option as OptionEntity;
 use XF\Option\AbstractOption;
-
 use function class_exists;
-use function count, floatval;
+use function count;
+use function floatval;
 
 abstract class ContentTypes extends AbstractOption
 {
@@ -38,7 +38,7 @@ abstract class ContentTypes extends AbstractOption
             $option,
             $htmlParams, [
                 'choices'     => $choices,
-                'nextCounter' => count($choices)
+                'nextCounter' => count($choices),
             ]
         );
     }

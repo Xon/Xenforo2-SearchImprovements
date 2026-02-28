@@ -65,7 +65,7 @@ class Search extends Repository
     }
 
     /**
-     * @see IndexHelper::isUsingElasticSearch()
+     * @see        IndexHelper::isUsingElasticSearch()
      * @deprecated Since v2.18.0, use IndexHelper instead
      */
     public function isUsingElasticSearch(): bool
@@ -79,7 +79,7 @@ class Search extends Repository
     }
 
     /**
-     * @see IndexHelper::addContainerIndexableField()
+     * @see        IndexHelper::addContainerIndexableField()
      * @deprecated Since v2.18.0, use IndexHelper instead
      */
     public function addContainerIndexableField(Structure $structure, string $field): void
@@ -283,7 +283,7 @@ class Search extends Repository
     }
 
     /**
-     * @param string $contentType
+     * @param string     $contentType
      * @param string|int $id
      * @return string
      * @noinspection PhpDocMissingThrowsInspection

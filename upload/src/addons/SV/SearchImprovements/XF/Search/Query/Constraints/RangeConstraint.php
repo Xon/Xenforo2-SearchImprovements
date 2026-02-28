@@ -7,10 +7,11 @@ use XF\Search\Query\SqlConstraint;
 use XF\Search\Query\TableReference;
 use XFES\Search\Source\Elasticsearch;
 use function count;
+use function is_array;
 
 class RangeConstraint extends AbstractConstraint
 {
-    public const MATCH_LESSER = -42; // $a <= foo
+    public const MATCH_LESSER  = -42; // $a <= foo
     public const MATCH_GREATER = -41; // $b >= foo
     public const MATCH_BETWEEN = -40; // $b <= foo <= $a
 
@@ -56,13 +57,13 @@ class RangeConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            'LESSER' => self::MATCH_LESSER,
+            'LESSER'           => self::MATCH_LESSER,
             self::MATCH_LESSER => self::MATCH_LESSER,
 
-            'GREATER' => self::MATCH_GREATER,
+            'GREATER'           => self::MATCH_GREATER,
             self::MATCH_GREATER => self::MATCH_GREATER,
 
-            'BETWEEN' => self::MATCH_BETWEEN,
+            'BETWEEN'           => self::MATCH_BETWEEN,
             self::MATCH_BETWEEN => self::MATCH_BETWEEN,
         ];
     }
@@ -101,8 +102,8 @@ class RangeConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
@@ -116,8 +117,8 @@ class RangeConstraint extends AbstractConstraint
                     'range' => [
                         $key => [
                             'lte' => $values[0],
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
 
                 return;
@@ -126,8 +127,8 @@ class RangeConstraint extends AbstractConstraint
                     'range' => [
                         $key => [
                             'gte' => $values[0],
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
 
                 return;
@@ -137,8 +138,8 @@ class RangeConstraint extends AbstractConstraint
                         $key => [
                             'lte' => $values[0],
                             'gte' => $values[1],
-                        ]
-                    ]
+                        ],
+                    ],
                 ];
 
                 return;

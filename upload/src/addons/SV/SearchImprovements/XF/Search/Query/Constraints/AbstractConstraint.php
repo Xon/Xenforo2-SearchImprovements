@@ -62,6 +62,7 @@ abstract class AbstractConstraint extends MetadataConstraint
         if ($mappedType !== null)
         {
             $this->matchType = $mappedType;
+
             return;
         }
 
@@ -75,8 +76,8 @@ abstract class AbstractConstraint extends MetadataConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     abstract public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot);
 

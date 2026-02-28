@@ -8,14 +8,14 @@ namespace SV\SearchImprovements\XF\Pub\Controller;
 use SV\SearchImprovements\Util\IndexHelper;
 use SV\SearchImprovements\XF\Entity\User as ExtendedUserEntity;
 use SV\SearchImprovements\XF\Repository\Search as ExtendedSearchRepo;
-use XF\Phrase;
-use XF\Repository\Search as SearchRepo;
 use SV\StandardLib\Helper;
 use XF\Entity\Search as SearchEntity;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\AbstractReply;
 use XF\Mvc\Reply\Message as MessageReply;
 use XF\Mvc\Reply\View as ViewReply;
+use XF\Phrase;
+use XF\Repository\Search as SearchRepo;
 use XF\Search\Query\Query;
 use function strlen;
 
@@ -210,13 +210,13 @@ class Search extends XFCP_Search
                     'activeModType' => '',
 
                     'getOlderResultsDate' => null,
-                    'isExpiredSearch' => $reply->getPageParams()['isExpiredSearch'] ?? false,
+                    'isExpiredSearch'     => $reply->getPageParams()['isExpiredSearch'] ?? false,
                 ];
 
                 $reply = $this->view('XF:Search\Results', 'search_results', $viewParams);
             }
         }
-        if ((\XF::config('svForceSearchQueryNonEmptyOnDisplay') ?? true)  && $reply instanceof ViewReply && ($search = $reply->getParam('search')))
+        if ((\XF::config('svForceSearchQueryNonEmptyOnDisplay') ?? true) && $reply instanceof ViewReply && ($search = $reply->getParam('search')))
         {
             if ($search instanceof SearchEntity && $search->search_query === '')
             {

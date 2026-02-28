@@ -20,6 +20,7 @@ use function array_merge;
 use function array_unique;
 use function array_values;
 use function count;
+use function is_array;
 use function is_subclass_of;
 
 /**

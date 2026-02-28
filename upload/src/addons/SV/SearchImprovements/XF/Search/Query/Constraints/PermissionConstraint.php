@@ -14,7 +14,7 @@ use function count;
  */
 class PermissionConstraint extends AbstractConstraint
 {
-    public const MATCH_PERM = -44;
+    public const MATCH_PERM    = -44;
     public const MATCH_SV_PERM = 'svPerm';
 
     public function __construct(?MetadataConstraint $constraint)
@@ -25,7 +25,7 @@ class PermissionConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_PERM => self::MATCH_PERM,
+            self::MATCH_PERM    => self::MATCH_PERM,
             self::MATCH_SV_PERM => self::MATCH_PERM,
         ];
     }
@@ -41,8 +41,8 @@ class PermissionConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {

@@ -16,6 +16,7 @@ use XFES\Elasticsearch\Api;
 use XFES\Elasticsearch\Exception as ElasticSearchException;
 use XFES\Elasticsearch\RequestException as ElasticSearchRequestException;
 use function is_callable;
+use function key;
 
 /**
  * @Extends \XFES\Service\Optimizer
@@ -26,14 +27,15 @@ class Optimizer extends \XFES\Service\Optimizer
     protected $singleType;
     /** @var AbstractData|null */
     protected $searchHandler;
-    /** @var bool  */
-    protected    $ngramStripeWhiteSpace = true;
     /** @var bool */
-    protected    $isSimpleTypeMapping = true;
+    protected $ngramStripeWhiteSpace = true;
+    /** @var bool */
+    protected $isSimpleTypeMapping = true;
 
     protected function ngramStripWhiteSpace(bool $value = true): self
     {
         $this->ngramStripeWhiteSpace = $value;
+
         return $this;
     }
 
@@ -211,24 +213,24 @@ class Optimizer extends \XFES\Service\Optimizer
                     $mdColumn['type'] = $textType;
                     unset($mdColumn['index']);
                     $mdColumn['fields']['exact'] = [
-                        'type' => $textType,
+                        'type'     => $textType,
                         'analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
-                        'type' => $textType,
-                        'analyzer' => $this->ngramStripeWhiteSpace ? 'sv_keyword_ngram_no_whitespace' : 'sv_keyword_ngram',
+                        'type'            => $textType,
+                        'analyzer'        => $this->ngramStripeWhiteSpace ? 'sv_keyword_ngram_no_whitespace' : 'sv_keyword_ngram',
                         'search_analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                 }
                 else if ($mdColumn['type'] === $textType)
                 {
                     $mdColumn['fields']['exact'] = [
-                        'type' => $textType,
+                        'type'     => $textType,
                         'analyzer' => $stripeWhitespace ? 'sv_near_exact_no_whitespace' : 'sv_near_exact',
                     ];
                     $mdColumn['fields']['ngram'] = [
-                        'type' => $textType,
-                        'analyzer' => 'sv_text_edge_ngram',
+                        'type'            => $textType,
+                        'analyzer'        => 'sv_text_edge_ngram',
                         'search_analyzer' => 'sv_near_exact',
                     ];
                 }

@@ -23,7 +23,7 @@ class TicketParticipant extends XFCP_TicketParticipant
 
     protected function indexTicket(): void
     {
-        \XF::runOnce('nfIndexTicket'.$this->ticket_id, function() {
+        \XF::runOnce('nfIndexTicket' . $this->ticket_id, function () {
             $ticket = $this->Ticket;
             if ($ticket !== null)
             {

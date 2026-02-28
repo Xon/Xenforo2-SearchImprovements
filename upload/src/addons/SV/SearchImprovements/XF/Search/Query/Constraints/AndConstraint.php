@@ -11,7 +11,7 @@ use function count;
 
 class AndConstraint extends AbstractConstraint
 {
-    public const MATCH_AND = -48;
+    public const MATCH_AND    = -48;
     public const MATCH_SV_AND = 'svAND';
 
     public function __construct(?MetadataConstraint ...$constraints)
@@ -22,7 +22,7 @@ class AndConstraint extends AbstractConstraint
     protected function getAllowedMatchTypes(): array
     {
         return [
-            self::MATCH_AND => self::MATCH_AND,
+            self::MATCH_AND    => self::MATCH_AND,
             self::MATCH_SV_AND => self::MATCH_AND,
         ];
     }
@@ -38,8 +38,8 @@ class AndConstraint extends AbstractConstraint
 
     /**
      * @param Elasticsearch|MetadataSearchEnhancements $source
-     * @param array         $filters
-     * @param array         $filtersNot
+     * @param array                                    $filters
+     * @param array                                    $filtersNot
      */
     public function applyMetadataConstraint(Elasticsearch $source, array &$filters, array &$filtersNot)
     {
@@ -49,6 +49,7 @@ class AndConstraint extends AbstractConstraint
         {
             $filters = array_merge($filters, $childFilters);
             $childNotFilters = array_merge($filters, $childNotFilters);
+
             return;
         }
 

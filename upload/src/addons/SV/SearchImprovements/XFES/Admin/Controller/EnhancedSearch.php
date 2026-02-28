@@ -6,9 +6,9 @@ use SV\SearchImprovements\Listener\LinkBuilder;
 use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Repository\SpecializedSearchIndex as SpecializedSearchIndexRepo;
 use SV\SearchImprovements\Search\Specialized\SpecializedData;
+use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\Service\Specialized\Configurer as SpecializedConfigurer;
 use SV\SearchImprovements\Service\Specialized\Optimizer as SpecializedOptimizer;
-use SV\SearchImprovements\Service\Specialized\Analyzer as SpecializedAnalyzer;
 use SV\SearchImprovements\XFES\Elasticsearch\Api as ExtendedApi;
 use SV\StandardLib\Helper;
 use XF\Mvc\ParameterBag;
@@ -69,7 +69,7 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         if ($reply instanceof ViewReply)
         {
             $phrase = $this->svShimContentType !== ''
-                ? \XF::app()->getContentTypePhrase($this->svShimContentType , true)
+                ? \XF::app()->getContentTypePhrase($this->svShimContentType, true)
                 : \XF::phraseDeferred('svSearchImprovements_default_index');
 
             $reply->setParam('contentTypePhrase', $phrase);
@@ -112,14 +112,16 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                     $esClusterStatus = $defaultEs->getClusterInfo();
                 }
             }
-            catch (ElasticSearchException $e) {}
+            catch (ElasticSearchException $e)
+            {
+            }
 
             $this->svSearchHandler = null;
             $this->svShimContentType = '';
             $defaultIndex = $this->analyzeIndex('', '');
             $defaultIndex['phrase'] = \XF::phraseDeferred('svSearchImprovements_default_index');
         }
-        $indexes = [ '' => $defaultIndex];
+        $indexes = ['' => $defaultIndex];
         try
         {
             $indexes = $this->analyzeIndexes($indexes);
@@ -131,11 +133,11 @@ class EnhancedSearch extends XFCP_EnhancedSearch
         }
 
         $viewParams = [
-            'es' => $defaultEs,
-            'esClusterStatus' => $esClusterStatus,
-            'testError' => $indexes['']['testError'] ?? '',
-            'version' => $indexes['']['version'] ?? '',
-            'indexes' => $indexes,
+            'es'                => $defaultEs,
+            'esClusterStatus'   => $esClusterStatus,
+            'testError'         => $indexes['']['testError'] ?? '',
+            'version'           => $indexes['']['version'] ?? '',
+            'indexes'           => $indexes,
             'canViewServerInfo' => SearchRepo::get()->canViewServerInfo(),
         ];
 
@@ -161,8 +163,8 @@ class EnhancedSearch extends XFCP_EnhancedSearch
     }
 
     /**
-     * @param string        $contentType
-     * @param mixed $definition
+     * @param string $contentType
+     * @param mixed  $definition
      * @return array|null
      * @noinspection PhpUnusedParameterInspection
      * @noinspection PhpMissingParamTypeInspection
@@ -198,15 +200,17 @@ class EnhancedSearch extends XFCP_EnhancedSearch
                     }
                 }
             }
-            catch (ElasticSearchException $e) {}
+            catch (ElasticSearchException $e)
+            {
+            }
         }
 
         return [
-            'id'            => $contentType,
-            'version'       => $version,
-            'testError'     => $testError,
-            'stats'         => $stats,
-            'isOptimizable' => $isOptimizable,
+            'id'                => $contentType,
+            'version'           => $version,
+            'testError'         => $testError,
+            'stats'             => $stats,
+            'isOptimizable'     => $isOptimizable,
             'canViewServerInfo' => SearchRepo::get()->canViewServerInfo(),
         ];
     }
