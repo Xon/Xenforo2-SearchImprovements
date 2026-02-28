@@ -3,7 +3,7 @@
     "description": "Inject participants search",
     "execution_order": 10,
     "enabled": true,
-    "action": "str_replace",
-    "find": "<xf:macro template=\"search_form_macros\" name=\"date\"",
+    "action": "preg_replace",
+    "find": "#<xf:macro (?:name|id|template)=\"search_form_macros(::|\"\\s+name=\")date\"#si",
     "replace": "<xf:macro name=\"svSearchImprov_macros::user_field_multi\" arg-name=\"participants\" arg-label=\"{{ phrase('svReportImprov_participants') }}\" />\n$0"
 }
