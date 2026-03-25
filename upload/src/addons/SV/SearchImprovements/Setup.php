@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements;
 
+use SV\StandardLib\Helper;
 use SV\StandardLib\InstallerHelper;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
@@ -9,6 +10,7 @@ use XF\AddOn\StepRunnerUninstallTrait;
 use XF\AddOn\StepRunnerUpgradeTrait;
 use XF\Db\Schema\Alter;
 use XF\Entity\User;
+use XF\Repository\Option as OptionRepository;
 
 class Setup extends AbstractSetup
 {
@@ -109,6 +111,8 @@ class Setup extends AbstractSetup
     {
         parent::postInstall($stateChanges);
 
+        $this->initGuestSearchLimit();
+
         $this->checkElasticSearchOptimizableState();
     }
 
@@ -116,6 +120,11 @@ class Setup extends AbstractSetup
     {
         $previousVersion = (int)$previousVersion;
         parent::postUpgrade($previousVersion, $stateChanges);
+
+        if ($previousVersion <= 1774461381) // 2.19.0
+        {
+            $this->initGuestSearchLimit();
+        }
 
         $this->checkElasticSearchOptimizableState();
     }
@@ -125,6 +134,11 @@ class Setup extends AbstractSetup
         parent::postRebuild();
 
         $this->checkElasticSearchOptimizableState();
+    }
+
+    protected function initGuestSearchLimit(): void
+    {
+        Helper::repository(OptionRepository::class)->updateOption('svMaximumSearchResultsGuest', \XF::options()->maximumSearchResults);
     }
 
     protected function getTables(): array
