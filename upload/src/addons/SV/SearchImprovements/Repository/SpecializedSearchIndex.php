@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\Repository;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as SearchRepo;
 use SV\SearchImprovements\Search\SearchSourceExtractor;
 use SV\SearchImprovements\Search\Specialized\Query as SpecializedQuery;
 use SV\SearchImprovements\Search\Specialized\Source as SpecializedSource;
@@ -244,7 +245,7 @@ class SpecializedSearchIndex extends Repository
 
         if ($maxResults <= 0)
         {
-            $maxResults = max(\XF::visitor()->user_id ? \XF::options()->maximumSearchResults ?? 0 : \XF::options()->svMaximumSearchResultsGuest ?? 0, 20);
+            $maxResults = SearchRepo::get()->getSearchLimit();
         }
 
         $search = $this->search($contentType);

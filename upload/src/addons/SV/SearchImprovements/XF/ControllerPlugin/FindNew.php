@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\ControllerPlugin;
 
+use SV\SearchImprovements\Repository\Search as svSearchRepo;
 use XF\FindNew\AbstractHandler;
 
 /**
@@ -13,7 +14,7 @@ class FindNew extends XFCP_FindNew
     {
         $options = \XF::options();
         $oldLimit = $options->maximumSearchResults ?? 200;
-        $options->maximumSearchResults = $options->svMaximumSearchResultsGuest ?? $oldLimit;
+        $options->maximumSearchResults = svSearchRepo::get()->getSearchLimit();
         try
         {
             return parent::runFindNewSearch($handler, $filters);

@@ -19,6 +19,7 @@ use function array_filter;
 use function count;
 use function implode;
 use function is_callable;
+use function max;
 use function preg_split;
 
 class Search extends Repository
@@ -321,5 +322,15 @@ class Search extends Repository
         }
 
         return \XF::visitor()->hasAdminPermission('serverInfo');
+    }
+
+    public function getSearchLimit(): int
+    {
+        if (\XF::visitor()->user_id)
+        {
+            return max(20, \XF::options()->maximumSearchResults ?? 200);
+        }
+
+        return max(20, \XF::options()->svMaximumSearchResultsGuest ?? \XF::options()->maximumSearchResults ?? 200);
     }
 }

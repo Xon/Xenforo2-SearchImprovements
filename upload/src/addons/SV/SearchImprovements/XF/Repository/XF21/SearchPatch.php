@@ -3,6 +3,7 @@
 namespace SV\SearchImprovements\XF\Repository\XF21;
 
 use SV\SearchImprovements\Globals;
+use SV\SearchImprovements\Repository\Search as svSearchRepo;
 use SV\SearchImprovements\XF\Entity\Search as ExtendedSearchEntity;
 use SV\SearchImprovements\XF\Repository\XFCP_SearchPatch;
 use SV\StandardLib\Helper;
@@ -26,7 +27,7 @@ class SearchPatch extends XFCP_SearchPatch
         }
         $options = \XF::options();
         $oldLimit = $options->maximumSearchResults ?? 200;
-        $options->maximumSearchResults = $options->svMaximumSearchResultsGuest ?? $oldLimit;
+        $options->maximumSearchResults = svSearchRepo::get()->getSearchLimit();
         try
         {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection */
