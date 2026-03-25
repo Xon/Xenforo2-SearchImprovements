@@ -2,6 +2,7 @@
 
 namespace SV\SearchImprovements\XF\Repository;
 
+use SV\SearchImprovements\Job\SearchPruneJob;
 use function array_diff;
 use function count;
 use function in_array;
@@ -61,5 +62,20 @@ class Search extends XFCP_Search
         }
 
         return null;
+    }
+
+    /** @noinspection PhpMissingParentCallCommonInspection */
+    public function pruneSearches($cutOff = null)
+    {
+        if ($cutOff === null)
+        {
+            $cutOff = \XF::$time - 86400;
+        }
+
+        // XF bug: https://xenforo.com/community/threads/mysql-query-error-1105-maximum-writeset-size-exceeded.236578/
+        // return $this->db()->delete('xf_search', 'search_date < ?', $cutOff);
+        SearchPruneJob::enqueue($cutOff);
+
+        return 0;
     }
 }
