@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\ControllerPlugin\\FindNew",
+    "to_class": "SV\\SearchImprovements\\XF\\ControllerPlugin\\FindNew",
+    "execute_order": 10,
+    "active": true
+}

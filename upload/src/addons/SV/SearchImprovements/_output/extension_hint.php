@@ -66,6 +66,11 @@ namespace SV\SearchImprovements\XF\Behavior
 	class XFCP_IndexableContainer extends \XF\Behavior\IndexableContainer {}
 }
 
+namespace SV\SearchImprovements\XF\ControllerPlugin
+{
+	class XFCP_FindNew extends \XF\ControllerPlugin\FindNew {}
+}
+
 namespace SV\SearchImprovements\XF\Entity
 {
 	class XFCP_Search extends \XF\Entity\Search {}

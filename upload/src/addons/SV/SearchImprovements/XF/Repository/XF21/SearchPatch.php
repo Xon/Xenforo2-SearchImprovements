@@ -24,6 +24,9 @@ class SearchPatch extends XFCP_SearchPatch
         {
             Globals::$capturedSearchDebugInfo = [];
         }
+        $options = \XF::options();
+        $oldLimit = $options->maximumSearchResults ?? 200;
+        $options->maximumSearchResults = $options->svMaximumSearchResultsGuest ?? $oldLimit;
         try
         {
             /** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -65,6 +68,7 @@ class SearchPatch extends XFCP_SearchPatch
         finally
         {
             Globals::$capturedSearchDebugInfo = null;
+            $options->maximumSearchResults = $oldLimit;
         }
     }
 }

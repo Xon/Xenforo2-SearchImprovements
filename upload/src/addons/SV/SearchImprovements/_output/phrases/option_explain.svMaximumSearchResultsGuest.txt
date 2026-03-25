@@ -1,0 +1,1 @@
+This number reflects the maximum number of search or find new results that will be found for guest users, before permissions are taken into account. Setting this too high may cause performance problems.
