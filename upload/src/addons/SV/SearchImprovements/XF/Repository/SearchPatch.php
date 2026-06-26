@@ -12,5 +12,6 @@ namespace SV\SearchImprovements\XF\Repository;
     SearchPatch::class,
     \XF::$versionId < 2020000
         ? \SV\SearchImprovements\XF\Repository\XF21\SearchPatch::class
-        : \SV\SearchImprovements\XF\Repository\XF22\SearchPatch::class
+        : \SV\SearchImprovements\XF\Repository\XF22\SearchPatch::class,
+    \XF\Repository\Search::class
 );
