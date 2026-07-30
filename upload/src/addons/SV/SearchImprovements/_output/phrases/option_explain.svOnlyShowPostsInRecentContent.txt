@@ -1,0 +1,1 @@
+XF2.3.8+ only shows posts in a member's recent content tab, this reverts to the previous behavior.

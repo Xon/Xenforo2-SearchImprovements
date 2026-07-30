@@ -19,6 +19,7 @@ namespace XF;
  * @property string|null $svDefaultSearchOrder Default search order
  * @property bool|null $svDumpSearchConstraints List all unphrased search constraints
  * @property positive-int|null $svMaximumSearchResultsGuest Maximum number of search/find new results for guests
+ * @property bool|null $svOnlyShowPostsInRecentContent Only show posts in member's recent content
  * @property bool|null $svPushThreadPrefixesIntoSearch Push thread prefix text into search
  * @property bool|null $svPushViewOtherCheckIntoXFES Push "View X by others" check into XFES
  * @property string|null $svShowSearchDebugInfo Collect search DSL & debug statistics

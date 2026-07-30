@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Pub\\Controller\\Member",
+    "to_class": "SV\\SearchImprovements\\XF\\Pub\\Controller\\Member",
+    "execute_order": 1,
+    "active": true
+}

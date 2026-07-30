@@ -84,6 +84,7 @@ namespace SV\SearchImprovements\XF\Entity
 namespace SV\SearchImprovements\XF\Pub\Controller
 {
 	class XFCP_Account extends \XF\Pub\Controller\Account {}
+	class XFCP_Member extends \XF\Pub\Controller\Member {}
 	class XFCP_Search extends \XF\Pub\Controller\Search {}
 	class XFCP_SearchPatchFirst extends \XF\Pub\Controller\Search {}
 	class XFCP_SearchPatchLast extends \XF\Pub\Controller\Search {}
