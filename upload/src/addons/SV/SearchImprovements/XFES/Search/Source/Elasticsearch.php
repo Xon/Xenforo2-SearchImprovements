@@ -240,7 +240,7 @@ class Elasticsearch extends XFCP_Elasticsearch
     protected function expandContentTypeWeighting($isSingleTypeIndex, $contentType, &$weight)
     {
         $weight = IndexHelper::asIntOrFloat($weight);
-        if ($weight === 1 || $weight === 0)
+        if ($weight === 1 || $weight <= 0)
         {
             return [];
         }
