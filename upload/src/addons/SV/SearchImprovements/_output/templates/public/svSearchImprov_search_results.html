@@ -4,7 +4,7 @@
 		<xf:description meta="false">
 			<ul class="listInline listInline--bullet search-terms">
 				<xf:foreach loop="$search.sv_structured_query" key="$key" value="$phrase">
-					<li class="search-term term--{$key|for_attr}">{$phrase|raw}</li>
+					<li class="search-term term--{$key|for_attr}">{$phrase}</li>
 				</xf:foreach>
 			</ul>
 			<xf:if is="$dumpConstraints">

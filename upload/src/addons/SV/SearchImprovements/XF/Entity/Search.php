@@ -432,14 +432,6 @@ class Search extends XFCP_Search
         }
         unset($searchConstraints['content'], $searchConstraints['type']);
         $this->extractStructuredSearchConstraint($query, $searchConstraints, '');
-        foreach ($query as &$queryPhrase)
-        {
-            if ($queryPhrase instanceof Phrase)
-            {
-                $queryPhrase = $queryPhrase->render('raw');
-            }
-        }
-        unset($queryPhrase);
         $query = $this->sortSearchQueryForDisplay($query);
 
         // add content-type
