@@ -83,12 +83,16 @@ class Search extends XFCP_Search
     ];
 
     protected $svIgnoreConstraint = [
+        'prefixes',
         'child_nodes',
         'nodes',
     ];
 
     /** @var InputFilterer */
     protected $inputFilterer;
+
+    /** @var array<string>  */
+    protected $ambientTypes = [];
 
     public function __construct(Manager $em, Structure $structure, array $values = [], array $relations = [])
     {
@@ -270,6 +274,46 @@ class Search extends XFCP_Search
             return true;
         }
 
+        if (is_array($value) && $key === 'prefixes' &&
+            (in_array('post', $this->ambientTypes, true) || in_array('thread', $this->ambientTypes, true)))
+        {
+            $language = \XF::app()->language();
+            // todo: support other prefix types
+            $contentType = 'thread';
+            $prefixPhrases = [];
+            foreach ($value as $id)
+            {
+                $id = (int)$id;
+                if ($id === 0)
+                {
+                    continue;
+                }
+
+                $phrase = "{$contentType}_prefix.{$id}";
+                if (!is_string($language->getPhraseText($phrase)))
+                {
+                    continue;
+                }
+
+                $prefixPhrases[$id] = \XF::phrase($phrase, [], false);
+            }
+
+            if (count($prefixPhrases) === 1)
+            {
+                $query[$key] = \XF::phrase('svSearchConstraint.prefix', [
+                    'prefix' => new PreEscaped(reset($prefixPhrases)),
+                ]);
+            }
+            else if (count($prefixPhrases) > 1)
+            {
+                $query[$key] = \XF::phrase('svSearchConstraint.prefixes', [
+                    'prefixes' => new PreEscaped(implode(', ', $prefixPhrases)),
+                ]);
+            }
+
+            return true;
+        }
+
         return false;
     }
 
@@ -431,10 +475,9 @@ class Search extends XFCP_Search
             unset($searchConstraints['container_only']);
         }
         unset($searchConstraints['content'], $searchConstraints['type']);
-        $this->extractStructuredSearchConstraint($query, $searchConstraints, '');
-        $query = $this->sortSearchQueryForDisplay($query);
 
-        // add content-type
+        // extract types
+        $types = [];
         if ($addContentTypeTerm)
         {
             try
@@ -448,38 +491,43 @@ class Search extends XFCP_Search
 
             if ($handler !== null)
             {
-                $types = [];
                 $groupType = $handler->getGroupByType();
                 $rawTypes = $handler->getSearchableContentTypes();
                 if ($typeFilter !== null)
                 {
-                    $rawTypes = (array)$typeFilter;
+                    $types = (array)$typeFilter;
                 }
                 else if ($groupType !== null && in_array($groupType, $rawTypes, true))
                 {
                     if ($containerOnly)
                     {
-                        $rawTypes = [$groupType];
+                        $types = [$groupType];
                     }
                     else
                     {
                         // impose a consistent order which is the groupable-type and then other types
-                        $rawTypes = array_merge([$groupType], array_diff($rawTypes, [$groupType]));
+                        $types = array_merge([$groupType], array_diff($rawTypes, [$groupType]));
                     }
                 }
-
-                foreach ($rawTypes as $type)
-                {
-                    $types[$type] = \XF::app()->getContentTypePhrase($type, true);
-                }
-
-                if (count($types) !== 0)
-                {
-                    $query['search-content search-content--' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
-                        'contentTypes' => new PreEscaped(implode(', ', $types)),
-                    ]);
-                }
             }
+        }
+
+        $this->ambientTypes = $types;
+        $this->extractStructuredSearchConstraint($query, $searchConstraints, '');
+        $query = $this->sortSearchQueryForDisplay($query);
+
+        // add content-type
+        if (count($types) !== 0)
+        {
+            $typePhrases = [];
+            foreach ($types as $type)
+            {
+                $typePhrases[$type] = \XF::app()->getContentTypePhrase($type, true);
+            }
+
+            $query['search-content search-content--' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
+                'contentTypes' => new PreEscaped(implode(', ', $typePhrases)),
+            ]);
         }
         // add sort-by clause
         $phrase = $this->getSearchOrderPhrase($this->search_order);
