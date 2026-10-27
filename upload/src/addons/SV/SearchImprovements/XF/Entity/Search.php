@@ -173,7 +173,7 @@ class Search extends XFCP_Search
                 ]));
             }
             /** @noinspection PhpUnnecessaryLocalVariableInspection */
-            $value = implode(', ', $formattedUsernames);
+            $value = new PreEscaped(implode(', ', $formattedUsernames));
 
             return $value;
         }
@@ -476,7 +476,7 @@ class Search extends XFCP_Search
                 if (count($types) !== 0)
                 {
                     $query['search-content search-content--' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
-                        'contentTypes' => implode(', ', $types),
+                        'contentTypes' => new PreEscaped(implode(', ', $types)),
                     ]);
                 }
             }
