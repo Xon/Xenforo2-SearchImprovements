@@ -115,7 +115,7 @@ class Search extends XFCP_Search
     {
         if ($value instanceof Phrase)
         {
-            return $value->render('raw');
+            return $value;
         }
 
         if (in_array($key, $this->svDateConstraint, true))
@@ -337,7 +337,7 @@ class Search extends XFCP_Search
             $phrase = $this->getSearchConstraintPhrase($key, $value);
             if ($phrase !== null)
             {
-                $query[$key] = $phrase->render('raw');
+                $query[$key] = $phrase;
             }
         }
     }
@@ -477,7 +477,7 @@ class Search extends XFCP_Search
                 {
                     $query['search-content search-content--' . $this->search_type] = \XF::phrase('svSearchClauses.content_type', [
                         'contentTypes' => implode(', ', $types),
-                    ])->render('raw');
+                    ]);
                 }
             }
         }
@@ -487,7 +487,7 @@ class Search extends XFCP_Search
         {
             $query['search-order search-order--' . $this->search_order] = \XF::phrase('svSearchClauses.order_by', [
                 'order' => $phrase,
-            ])->render('raw');
+            ]);
         }
         if ($this->search_grouping)
         {
@@ -495,7 +495,7 @@ class Search extends XFCP_Search
             $value = \XF::app()->getContentTypePhrase($contentType, true);
             $query['search-clause search-clause--group_by'] = \XF::phrase('svSearchClauses.group_by', [
                 'value' => $value,
-            ])->render('raw');
+            ]);
         }
 
         return $query;
